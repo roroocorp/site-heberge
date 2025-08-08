@@ -58,11 +58,15 @@
     <p><strong>On peut ajouter le bot sur le serveur.</strong></p>
 
     <!-- Bouton de connexion -->
-    <a class="button" href="[https://discord.com/oauth2/authorize?client_id=1378047791145943141&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&response_type=token&scope=identify](https://discord.com/oauth2/authorize?client_id=TON_CLIENT_ID&redirect_uri=https%3A%2F%2FTONSITE.com%2Fcallback&response_type=token&scope=identify
+    <a class="button" href="[https://discord.com/oauth2/authorize?
+client_id=TON_CLIENT_ID&1378047791145943141
+redirect_uri=https%3A%2F%2Ftonpseudo.github.io%2Fcallback.html&
+response_type=token&
+scope=identify
+](https://discord.com/oauth2/authorize?client_id=TON_CLIENT_ID&redirect_uri=https%3A%2F%2FTONSITE.com%2Fcallback&response_type=token&scope=identify
 )">
   Se connecter avec Discord
 </a>
-
 
     <!-- Bouton pour inviter le bot -->
     <a class="button" href="https://discord.com/oauth2/authorize?client_id=1378047791145943141&scope=bot&permissions=8">
