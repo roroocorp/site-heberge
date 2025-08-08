@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
@@ -56,6 +55,7 @@
   <div class="container">
     <h1>Bienvenue sur le site de mon Bot Discord</h1>
     <p>Connectez-vous avec votre compte Discord pour accéder à vos fonctionnalités personnalisées.</p>
+    <p><strong>On peut ajouter le bot sur le serveur.</strong></p>
 
     <!-- Bouton de connexion -->
     <a class="button" href="https://discord.com/oauth2/authorize?client_id=TON_CLIENT_ID&redirect_uri=TON_REDIRECT_URI&response_type=token&scope=identify">
