@@ -1,1 +1,39 @@
-callback.html
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion réussie</title>
+  <style>
+    body {
+      background-color: #2c2f33;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    .message {
+      background-color: #23272a;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #43b581;
+    }
+    p {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="message">
+    <h1>✅ Connexion réussie !</h1>
+    <p>Vous êtes maintenant connecté avec Discord.<br>Vous pouvez retourner à la page principale.</p>
+  </div>
+</body>
+</html>
