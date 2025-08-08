@@ -59,7 +59,130 @@
 
     <!-- Bouton de connexion -->
     <a class="button" href="[https://discord.com/oauth2/authorize?
-client_id=TON_CLIENT_ID&1378047791145943141
+client_id=TON_CLIENT_ID&CREATE TABLE utilisateurs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+<?php
+$host = "localhost";
+$user = "root";
+$pass = "";
+$dbname = "utilisateurs_db";
+
+$conn = new mysqli($host, $user, $pass, $dbname);
+if ($conn->connect_error) {
+    die("Échec de la connexion : " . $conn->connect_error);
+}
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Inscription</title>
+</head>
+<body>
+  <h2>Inscription</h2>
+  <form action="register.php" method="POST">
+    <input type="text" name="username" placeholder="Nom d'utilisateur" required><br>
+    <input type="password" name="password" placeholder="Mot de passe" required><br>
+    <button type="submit">S'inscrire</button>
+  </form>
+  <a href="login.html">Déjà inscrit ? Se connecter</a>
+</body>
+</html>
+<?php
+require 'db.php';
+
+$username = $_POST['username'];
+$password = password_hash($_POST['password'], PASSWORD_DEFAULT); // hash sécurisé
+
+// Vérifie si le nom est déjà pris
+$sql_check = "SELECT * FROM utilisateurs WHERE username = ?";
+$stmt = $conn->prepare($sql_check);
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    echo "Ce nom d'utilisateur est déjà pris.";
+} else {
+    $sql = "INSERT INTO utilisateurs (username, password) VALUES (?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $username, $password);
+    $stmt->execute();
+    echo "Inscription réussie. <a href='login.html'>Se connecter</a>";
+}
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion</title>
+</head>
+<body>
+  <h2>Connexion</h2>
+  <form action="login.php" method="POST">
+    <input type="text" name="username" placeholder="Nom d'utilisateur" required><br>
+    <input type="password" name="password" placeholder="Mot de passe" required><br>
+    <button type="submit">Se connecter</button>
+  </form>
+  <a href="register.html">Pas encore inscrit ?</a>
+</body>
+</html>
+<?php
+session_start();
+require 'db.php';
+
+$username = $_POST['username'];
+$password = $_POST['password'];
+
+$sql = "SELECT * FROM utilisateurs WHERE username = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 1) {
+    $user = $result->fetch_assoc();
+
+    if (password_verify($password, $user['password'])) {
+        $_SESSION['username'] = $username;
+        header("Location: profil.php");
+        exit();
+    } else {
+        echo "Mot de passe incorrect.";
+    }
+} else {
+    echo "Utilisateur non trouvé.";
+}
+?>
+<?php
+session_start();
+if (!isset($_SESSION['username'])) {
+    header("Location: login.html");
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Profil</title>
+</head>
+<body>
+  <h2>Bienvenue, <?php echo $_SESSION['username']; ?> !</h2>
+  <p>Ceci est votre espace personnel.</p>
+  <a href="logout.php">Se déconnecter</a>
+</body>
+</html>
+<?php
+session_start();
+session_destroy();
+header("Location: login.html");
+exit();
+
 redirect_uri=https%3A%2F%2Ftonpseudo.github.io%2Fcallback.html&
 response_type=token&
 scope=identify
