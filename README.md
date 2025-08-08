@@ -132,7 +132,8 @@
     </a>
 
     <!-- Bouton pour inviter le bot -->
-    <a class="button" href="https://discord.com/oauth2/authorize?client_id=123456789012345678&scope=bot&permissions=8">
+    <a class="button" href="https://discord.com/oauth2/authorize?client_id=[123456789012345678](https://discord.com/oauth2/authorize?client_id=TON_CLIENT_ID&redirect_uri=TON_REDIRECT_URI&response_type=token&scope=identify
+)&scope=bot&permissions=8">
       Inviter le Bot
     </a>
   </div>
