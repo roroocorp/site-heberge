@@ -1,4 +1,4 @@
-<! DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -62,7 +62,7 @@
       margin-top: 10px;
     }
 
-    . btn-discord {
+    .btn-discord {
       background: #5865F2;
       color:  white;
       display: flex;
@@ -130,7 +130,7 @@
       margin-bottom:  8px;
     }
 
-    . user-details p {
+    .user-details p {
       color: #D1D5DB;
       font-size: 14px;
       margin:  5px 0;
@@ -227,7 +227,7 @@
   const supabaseUrl = "https://zhgfnawepsnjhgeftuyr.supabase.co"
   const supabaseKey = "sb_publishable_QgJCBglFkdLIRypJ8Re0Xw_sNOiK4Iz"
 
-  const supabase = window.supabase. createClient(
+  const supabase = window.supabase.createClient(
     supabaseUrl,
     supabaseKey
   )
@@ -258,7 +258,7 @@
     if (show) {
       loadingDiv.classList.add('active')
     } else {
-      loadingDiv. classList.remove('active')
+      loadingDiv.classList.remove('active')
     }
   }
 
@@ -322,21 +322,21 @@
       const discordData = user.user_metadata?.provider_metadata || {}
       const userName = discordData.name || user.email || 'Utilisateur'
       const userEmail = user.email || 'Email non disponible'
-      const userAvatar = discordData.avatar_url || discordData.avatar || 'https://via.placeholder.com/80? text=User'
+      const userAvatar = discordData.avatar_url || discordData.avatar || 'https://via.placeholder.com/80?text=User'
 
       // Remplir les données
       document.getElementById('username').textContent = userName
       document.getElementById('email').textContent = '📧 ' + userEmail
-      document.getElementById('user-id').textContent = '🆔 ' + user.id. substring(0, 8) + '.. .'
+      document.getElementById('user-id').textContent = '🆔 ' + user.id.substring(0, 8) + '...'
       document.getElementById('avatar').src = userAvatar
       document.getElementById('avatar').onerror = () => {
-        document.getElementById('avatar').src = 'https://via.placeholder.com/80? text=User'
+        document.getElementById('avatar').src = 'https://via.placeholder.com/80?text=User'
       }
 
       // Afficher la section utilisateur
       userSection.classList.add('active')
       loginSection.style.display = 'none'
-      showSuccess('Bienvenue ' + userName + ' !').textContent = '✅ Bienvenue ' + userName + ' !'
+      showSuccess('Bienvenue ' + userName + ' !')
 
     } catch (error) {
       console.error('Erreur lors de l\'affichage des données:', error)
@@ -348,7 +348,7 @@
   async function checkSession() {
     showLoading(true)
     try {
-      const { data:  { session } } = await supabase. auth.getSession()
+      const { data: { session } } = await supabase.auth.getSession()
 
       if (session && session.user) {
         // L'utilisateur est connecté
@@ -356,7 +356,7 @@
       } else {
         // L'utilisateur n'est pas connecté
         userSection.classList.remove('active')
-        loginSection. style.display = 'block'
+        loginSection.style.display = 'block'
       }
     } catch (error) {
       console.error('Erreur lors de la vérification de session:', error)
