@@ -1,1 +1,384 @@
-<!-- I need to fetch the current content first to replace the placeholder -->
+<! DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion Discord</title>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background:  linear-gradient(135deg, #5865F2, #9333ea);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #111827;
+      padding: 40px;
+      border-radius:  20px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(88, 101, 242, 0.3);
+    }
+
+    h2 {
+      font-size: 28px;
+      margin-bottom:  10px;
+      background: linear-gradient(135deg, #5865F2, #9333ea);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: #9CA3AF;
+      margin-bottom: 30px;
+      font-size:  14px;
+    }
+
+    button {
+      width: 100%;
+      padding:  14px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    . btn-discord {
+      background: #5865F2;
+      color:  white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-discord:hover {
+      background: #4752c4;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(88, 101, 242, 0.4);
+    }
+
+    .btn-logout {
+      background: #EF4444;
+      color:  white;
+    }
+
+    .btn-logout:hover {
+      background: #DC2626;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+    }
+
+    .user-info {
+      display: none;
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top:  1px solid rgba(88, 101, 242, 0.2);
+    }
+
+    .user-info.active {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .avatar {
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 15px;
+      border: 3px solid #5865F2;
+      object-fit: cover;
+    }
+
+    .user-details {
+      margin:  15px 0;
+    }
+
+    .user-details h3 {
+      color: #5865F2;
+      font-size: 20px;
+      margin-bottom:  8px;
+    }
+
+    . user-details p {
+      color: #D1D5DB;
+      font-size: 14px;
+      margin:  5px 0;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      color: #9CA3AF;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid #5865F2;
+      border-top: 3px solid transparent;
+      border-radius: 50%;
+      width:  30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error {
+      background: #7F1D1D;
+      color:  #FCA5A5;
+      padding:  12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      display: none;
+      border-left: 4px solid #EF4444;
+    }
+
+    .error.active {
+      display: block;
+    }
+
+    .success {
+      background: #064E3B;
+      color: #A7F3D0;
+      padding:  12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      display: none;
+      border-left: 4px solid #10B981;
+    }
+
+    .success.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Bienvenue</h2>
+  <p class="subtitle">Connectez-vous avec votre compte Discord</p>
+
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Vérification de votre session...</p>
+  </div>
+
+  <div id="error" class="error"></div>
+  <div id="success" class="success"></div>
+
+  <div id="login-section">
+    <button class="btn-discord" onclick="loginDiscord()">
+      <span>🔗</span>
+      <span>Se connecter avec Discord</span>
+    </button>
+  </div>
+
+  <div id="user" class="user-info">
+    <img id="avatar" class="avatar" alt="Avatar utilisateur">
+    <div class="user-details">
+      <h3 id="username"></h3>
+      <p id="email"></p>
+      <p id="user-id"></p>
+    </div>
+    <button class="btn-logout" onclick="logout()">🚪 Se déconnecter</button>
+  </div>
+</div>
+
+<script>
+  // Configuration Supabase
+  const supabaseUrl = "https://zhgfnawepsnjhgeftuyr.supabase.co"
+  const supabaseKey = "sb_publishable_QgJCBglFkdLIRypJ8Re0Xw_sNOiK4Iz"
+
+  const supabase = window.supabase. createClient(
+    supabaseUrl,
+    supabaseKey
+  )
+
+  // Éléments DOM
+  const userSection = document.getElementById('user')
+  const loginSection = document.getElementById('login-section')
+  const loadingDiv = document.getElementById('loading')
+  const errorDiv = document.getElementById('error')
+  const successDiv = document.getElementById('success')
+
+  // Afficher un message d'erreur
+  function showError(message) {
+    errorDiv.textContent = '❌ ' + message
+    errorDiv.classList.add('active')
+    setTimeout(() => errorDiv.classList.remove('active'), 5000)
+  }
+
+  // Afficher un message de succès
+  function showSuccess(message) {
+    successDiv.textContent = '✅ ' + message
+    successDiv.classList.add('active')
+    setTimeout(() => successDiv.classList.remove('active'), 5000)
+  }
+
+  // Afficher le loading
+  function showLoading(show) {
+    if (show) {
+      loadingDiv.classList.add('active')
+    } else {
+      loadingDiv. classList.remove('active')
+    }
+  }
+
+  // Connexion Discord
+  async function loginDiscord() {
+    showLoading(true)
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "discord",
+        options:  {
+          redirectTo: window.location.origin + window.location.pathname
+        }
+      })
+
+      if (error) {
+        showError(error.message)
+        console.error(error)
+      }
+    } catch (error) {
+      showError("Une erreur est survenue lors de la connexion")
+      console.error(error)
+    } finally {
+      showLoading(false)
+    }
+  }
+
+  // Déconnexion
+  async function logout() {
+    showLoading(true)
+    try {
+      const { error } = await supabase.auth.signOut()
+
+      if (error) {
+        showError(error.message)
+        console.error(error)
+      } else {
+        showSuccess("Déconnecté avec succès")
+        setTimeout(() => {
+          userSection.classList.remove('active')
+          loginSection.style.display = 'block'
+        }, 1500)
+      }
+    } catch (error) {
+      showError("Erreur lors de la déconnexion")
+      console.error(error)
+    } finally {
+      showLoading(false)
+    }
+  }
+
+  // Afficher les données utilisateur
+  async function displayUserInfo(user) {
+    if (!user) {
+      userSection.classList.remove('active')
+      loginSection.style.display = 'block'
+      return
+    }
+
+    try {
+      // Récupérer les métadonnées Discord
+      const discordData = user.user_metadata?.provider_metadata || {}
+      const userName = discordData.name || user.email || 'Utilisateur'
+      const userEmail = user.email || 'Email non disponible'
+      const userAvatar = discordData.avatar_url || discordData.avatar || 'https://via.placeholder.com/80? text=User'
+
+      // Remplir les données
+      document.getElementById('username').textContent = userName
+      document.getElementById('email').textContent = '📧 ' + userEmail
+      document.getElementById('user-id').textContent = '🆔 ' + user.id. substring(0, 8) + '.. .'
+      document.getElementById('avatar').src = userAvatar
+      document.getElementById('avatar').onerror = () => {
+        document.getElementById('avatar').src = 'https://via.placeholder.com/80? text=User'
+      }
+
+      // Afficher la section utilisateur
+      userSection.classList.add('active')
+      loginSection.style.display = 'none'
+      showSuccess('Bienvenue ' + userName + ' !').textContent = '✅ Bienvenue ' + userName + ' !'
+
+    } catch (error) {
+      console.error('Erreur lors de l\'affichage des données:', error)
+      showError('Erreur lors du chargement des données utilisateur')
+    }
+  }
+
+  // Vérifier la session au chargement
+  async function checkSession() {
+    showLoading(true)
+    try {
+      const { data:  { session } } = await supabase. auth.getSession()
+
+      if (session && session.user) {
+        // L'utilisateur est connecté
+        await displayUserInfo(session.user)
+      } else {
+        // L'utilisateur n'est pas connecté
+        userSection.classList.remove('active')
+        loginSection. style.display = 'block'
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification de session:', error)
+      showError('Erreur lors de la vérification de votre session')
+    } finally {
+      showLoading(false)
+    }
+  }
+
+  // Écouter les changements d'authentification
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN') {
+      displayUserInfo(session.user)
+      showSuccess('Connecté avec succès!')
+    } else if (event === 'SIGNED_OUT') {
+      displayUserInfo(null)
+    }
+  })
+
+  // Vérifier la session au chargement de la page
+  checkSession()
+</script>
+
+</body>
+</html>
