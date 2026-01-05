@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Connexion Discord</title>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #5865F2, #9333ea);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .box {
+      background: #111827;
+      padding: 30px;
+      border-radius: 15px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      background: #5865F2;
+      color: white;
+    }
+
+    button:hover {
+      background: #4752c4;
+    }
+
+    img {
+      border-radius: 50%;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Connexion</h2>
+  <button onclick="loginDiscord()">🔗 Se connecter avec Discord</button>
+
+  <div id="user"></div>
+</div>
+
+<script>
+  // 🔹 REMPLACE PAR TES INFOS SUPABASE
+  const supabaseUrl = "https://zhgfnawepsnjhgeftuyr.supabase.co"
+  const supabaseKey = "sb_publishable_QgJCBglFkdLIRypJ8Re0Xw_sNOiK4Iz"
+
+  const supabase = window.supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+  )
+
+  async function loginDiscord() {
+    await supabase.auth.signInWithOAuth({
+      provider: 'discord',
+      options: {
+        redirectTo: window.location.href
+      }
+    })
+  }
+
+  async function loadUser() {
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return
+
+    const meta = user.user_metadata
+
+    document.getElementById("user").innerHTML = `
+      <p>Connecté en tant que :</p>
+      <img src="https://cdn.discordapp.com/avatars/${meta.provider_id}/${meta.avatar}.png" width="80">
+      <h3>${meta.full_name}</h3>
+      <p>ID Discord : ${meta.provider_id}</p>
+    `
+  }
+
+  loadUser()
+</script>
+
+</body>
+</html>
