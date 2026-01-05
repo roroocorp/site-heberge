@@ -57,7 +57,6 @@
 </div>
 
 <script>
-  // 🔹 REMPLACE PAR TES INFOS SUPABASE
   const supabaseUrl = "https://zhgfnawepsnjhgeftuyr.supabase.co"
   const supabaseKey = "sb_publishable_QgJCBglFkdLIRypJ8Re0Xw_sNOiK4Iz"
 
@@ -67,31 +66,20 @@
   )
 
   async function loginDiscord() {
-    await supabase.auth.signInWithOAuth({
-      provider: 'discord',
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "discord",
       options: {
-        redirectTo: window.location.href
+        redirectTo: window.location.origin + window.location.pathname
       }
     })
+
+    if (error) {
+      alert("Erreur : " + error.message)
+      console.error(error)
+    }
   }
-
-  async function loadUser() {
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) return
-
-    const meta = user.user_metadata
-
-    document.getElementById("user").innerHTML = `
-      <p>Connecté en tant que :</p>
-      <img src="https://cdn.discordapp.com/avatars/${meta.provider_id}/${meta.avatar}.png" width="80">
-      <h3>${meta.full_name}</h3>
-      <p>ID Discord : ${meta.provider_id}</p>
-    `
-  }
-
-  loadUser()
 </script>
+
 
 </body>
 </html>
