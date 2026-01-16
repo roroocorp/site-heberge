@@ -9,19 +9,47 @@
 body.red{--bg:#7f1d1d;--card:#991b1b;--text:#fff;--primary:#ef4444}
 body.blue{--bg:#0f172a;--card:#1e293b;--text:#e0f2fe;--primary:#3b82f6}
 body.green{--bg:#052e16;--card:#064e3b;--text:#ecfdf5;--primary:#22c55e}
-body{margin:0;font-family:Arial;background:var(--bg);color:var(--text);overflow-x:hidden}
-header{background:var(--primary);color:#fff;padding:15px;text-align:center}
-main{max-width:600px;margin:auto;padding:20px;display:flex;flex-direction:column;gap:20px}
-.card{background:var(--card);padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.2);width:100%}
+body{margin:0;font-family:Arial;background:var(--bg);color:var(--text);overflow-x:hidden;position:relative}
+
+/* Header */
+header{background:var(--primary);color:#fff;padding:15px;text-align:center;margin-bottom:10px;border-radius:0 0 15px 15px;}
+
+/* Container principal */
+main{max-width:600px;margin:10px auto;padding:10px;display:flex;flex-direction:column;gap:15px;}
+
+/* Cartes */
+.card{background:var(--card);padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.2);width:100%;box-sizing:border-box;}
+
+/* Inputs et boutons */
 input,textarea,button,select{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box}
 button{background:var(--primary);color:#fff;cursor:pointer;border:none}
-li{cursor:pointer;margin-top:5px;transition:.3s;list-style:none;padding:4px 0}
+
+/* Liste To-Do */
+ul{list-style:none;padding:0;margin:0}
+li{cursor:pointer;margin-top:5px;transition:.3s;padding:4px 0}
 li.done{text-decoration:line-through;opacity:.6}
+
+/* Badges */
 .badge{display:inline-block;margin:5px;padding:5px 10px;border-radius:8px;background:gold;color:#000;animation:pop 0.5s;cursor:pointer}
+@keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+/* Points et output IA */
 #points{transition:transform 0.3s}
 #aiOutput{white-space:pre-line;font-weight:bold}
+
+/* Graphique responsive */
 canvas{width:100% !important;height:150px !important;border-radius:10px}
-@keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+/* Espacement général */
+h2{margin-top:0;margin-bottom:8px;}
+p, label{margin:4px 0;}
+
+/* Confettis */
+.confetti{position:absolute;width:10px;height:10px;background:red;top:0;left:50%;pointer-events:none;animation:fall 3s linear forwards;}
+@keyframes fall{
+  0%{transform:translateY(0) rotate(0deg);}
+  100%{transform:translateY(600px) rotate(360deg);opacity:0;}
+}
 </style>
 </head>
 <body>
@@ -128,13 +156,31 @@ const badgesDiv=document.getElementById('badges');
 
 function saveAll(){localStorage.setItem('todos',JSON.stringify(todos)); localStorage.setItem('points',points); localStorage.setItem('level',level); localStorage.setItem('badge',badge); localStorage.setItem('history',JSON.stringify(history)); pointsEl.textContent=points; levelEl.textContent=level; badgeEl.textContent=badge; renderBadges(); drawChart();}
 
+// ===== CONFETTIS =====
+function spawnConfetti(){
+  for(let i=0;i<30;i++){
+    const c=document.createElement('div');
+    c.classList.add('confetti');
+    c.style.left=Math.random()*window.innerWidth+'px';
+    c.style.background=['#ff0','#f00','#0f0','#0ff','#f0f','#ffa500'][Math.floor(Math.random()*6)];
+    c.style.width=c.style.height=5+Math.random()*5+'px';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),3000);
+  }
+}
+
 // ===== BADGES =====
-function renderBadges(){badgesDiv.innerHTML=''; if(points>=50) badgesDiv.innerHTML+='<span class="badge">🎯 50 points</span>'; if(points>=100) badgesDiv.innerHTML+='<span class="badge">💪 100 points</span>'; if(level>=3) badgesDiv.innerHTML+='<span class="badge">🏅 Niveau 3</span>';}
+function renderBadges(){
+  badgesDiv.innerHTML='';
+  if(points>=50) {badgesDiv.innerHTML+='<span class="badge">🎯 50 points</span>'; spawnConfetti();}
+  if(points>=100) {badgesDiv.innerHTML+='<span class="badge">💪 100 points</span>'; spawnConfetti();}
+  if(level>=3) {badgesDiv.innerHTML+='<span class="badge">🏅 Niveau 3</span>'; spawnConfetti();}
+}
 
 // ===== TODO =====
 function renderTodos(){list.innerHTML=''; todos.forEach((t,i)=>{const li=document.createElement('li'); li.textContent=t.text; if(t.done) li.classList.add('done'); li.onclick=()=>toggleTodo(i); list.appendChild(li);}); saveAll();}
 function addTodo(){const input=document.getElementById('todoInput'); if(input.value.trim()==='')return; todos.push({text:input.value,done:false}); input.value=''; renderTodos();}
-function toggleTodo(i){if(!todos[i].done){points+=10; history.push(points); if(points%50===0){level++;badge='🔥 Motivé'} pointsEl.style.transform='scale(1.3)'; setTimeout(()=>pointsEl.style.transform='scale(1)',300);} todos[i].done=!todos[i].done; renderTodos();}
+function toggleTodo(i){if(!todos[i].done){points+=10; history.push(points); if(points%50===0){level++;badge='🔥 Motivé'; spawnConfetti();} pointsEl.style.transform='scale(1.3)'; setTimeout(()=>pointsEl.style.transform='scale(1)',300);} todos[i].done=!todos[i].done; renderTodos();}
 document.getElementById('addBtn').onclick=addTodo; renderTodos();
 
 // ===== IA =====
