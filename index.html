@@ -22,7 +22,7 @@ li.done{text-decoration:line-through;opacity:.6}
 <body>
 <header>
 <h1>🚀 Daily Life Dashboard</h1>
-<p>Tout-en-un • Fonctionnel • Sauvegardé</p>
+<p>Tout-en-un • Fonctionnel • IA améliorée</p>
 </header>
 
 <main>
@@ -128,19 +128,19 @@ function toggleTodo(i){
 document.getElementById('addBtn').onclick=addTodo;
 renderTodos();
 
-// ===== IA =====
+// ===== IA Améliorée =====
 function runAI(){
- const text=document.getElementById('aiInput').value.toLowerCase();
+ const text=document.getElementById('aiInput').value.trim().toLowerCase();
  let response='';
  if(text==='') response='Écris quelque chose pour que je puisse t’aider.';
- else if(text.includes('fatigu')) response='Tu devrais faire une pause et respirer 5 minutes.';
+ else if(text.includes('fatigu') || text.includes('épuisé')) response='Prends une pause et respire quelques minutes.';
+ else if(text.includes('stress') || text.includes('angoissé')) response='Essaie de te détendre et fais une petite marche.';
  else if(text.includes('procrast')) response='Commence par une tâche très simple pour te lancer.';
- else if(points<30) response='Commence doucement, une petite tâche suffit.';
- else if(points<100) response='Bon rythme, attaque une tâche importante.';
- else response='Excellent travail, pense à garder un équilibre.';
+ else if(text.includes('cava') || text.includes('ça va')) response='Content de l’entendre ! Continue comme ça.';
+ else if(text.length<10) response='Hmm, peux-tu m’en dire un peu plus sur ta journée ?';
+ else response='Très bien, garde le rythme et reste motivé !';
  document.getElementById('aiOutput').textContent=response;
 }
-
 document.getElementById('aiBtn').addEventListener('click',runAI);
 
 // ===== NOTIFICATION =====
@@ -161,7 +161,6 @@ function setNotif(){
   }
  });
 }
-
 document.getElementById('notifBtn').addEventListener('click',setNotif);
 </script>
 </body>
