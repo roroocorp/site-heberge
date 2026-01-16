@@ -1,88 +1,64 @@
 <!DOCTYPE html><html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Daily Life Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <style>
-    :root {
-      --bg:#f4f6f8;--card:#fff;--text:#111;--primary:#2563eb;
-    }
-    body.red{--bg:#7f1d1d;--card:#991b1b;--text:#fff;--primary:#ef4444}
-    body.blue{--bg:#0f172a;--card:#1e293b;--text:#e0f2fe;--primary:#3b82f6}
-    body.green{--bg:#052e16;--card:#064e3b;--text:#ecfdf5;--primary:#22c55e}
-
-    body{margin:0;font-family:Arial;background:var(--bg);color:var(--text)}
-    header{background:var(--primary);color:#fff;padding:20px;text-align:center}
-    main{max-width:900px;margin:auto;padding:20px;display:grid;gap:20px}
-    .card{background:var(--card);padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
-    input,textarea,button,select{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:none}
-    button{background:var(--primary);color:#fff;cursor:pointer}
-    li{cursor:pointer;transition:.3s}
-    li.done{text-decoration:line-through;opacity:.6}
-  </style></head>
-<body><header>
-  <h1>🚀 Daily Life Dashboard</h1>
-  <p id="subtitle">Ton site personnel quotidien</p>
-</header><main>
-  <div class="card">
-    <h2>🎨 Thème</h2>
-    <select id="theme">
-      <option value="">Clair</option>
-      <option value="red">Rouge</option>
-      <option value="blue">Bleu</option>
-      <option value="green">Vert</option>
-    </select><h2>🌍 Langue</h2>
-<select id="lang">
-  <option value="fr">Français</option>
-  <option value="en">English</option>
-</select>
-
-  </div>  <div class="card">
-    <h2>📊 Stats</h2>
-    <p>🏆 Points : <span id="points">0</span></p>
-    <p>🎮 Niveau : <span id="level">1</span></p>
-    <p>🏅 Badge : <span id="badge">Aucun</span></p>
-  </div>  <div class="card">
-    <h2>✅ To‑Do</h2>
-    <input id="todoInput" placeholder="Nouvelle tâche">
-    <button onclick="addTodo()">Ajouter</button>
-    <ul id="list"></ul>
-  </div>  <div class="card">
-    <h2>📊 Productivité (7 jours)</h2>
-    <canvas id="chart" height="200"></canvas>
-  </div>  <div class="card">
-    <h2>⏰ Rappel</h2>
-    <input type="time" id="reminder">
-    <button onclick="setReminder()">Activer</button>
-  </div>
-</main><script>
+<meta charset="UTF-8">
+<title>Daily Life Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--text:#111;--primary:#2563eb}
+body.red{--bg:#7f1d1d;--card:#991b1b;--text:#fff;--primary:#ef4444}
+body.blue{--bg:#0f172a;--card:#1e293b;--text:#e0f2fe;--primary:#3b82f6}
+body.green{--bg:#052e16;--card:#064e3b;--text:#ecfdf5;--primary:#22c55e}
+body{margin:0;font-family:Arial;background:var(--bg);color:var(--text)}
+header{background:var(--primary);color:#fff;padding:20px;text-align:center}
+main{max-width:900px;margin:auto;padding:20px;display:grid;gap:20px}
+.card{background:var(--card);padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+input,textarea,button,select{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:none}
+button{background:var(--primary);color:#fff;cursor:pointer}
+li{cursor:pointer;transition:.3s}
+li.done{text-decoration:line-through;opacity:.6}
+</style>
+</head>
+<body>
+<header>
+<h1>🚀 Daily Life Dashboard</h1>
+<p>Dashboard intelligent & productif</p>
+</header>
+<main>
+<div class="card">
+<h2>🎨 Thème</h2>
+<select id="theme"><option value="">Clair</option><option value="red">Rouge</option><option value="blue">Bleu</option><option value="green">Vert</option></select>
+</div>
+<div class="card">
+<h2>📊 Stats</h2>
+<p>🏆 Points : <span id="points">0</span></p>
+<p>🎮 Niveau : <span id="level">1</span></p>
+<p>🏅 Badge : <span id="badge">Aucun</span></p>
+</div>
+<div class="card">
+<h2>✅ To-Do</h2>
+<input id="todoInput" placeholder="Nouvelle tâche">
+<button onclick="addTodo()">Ajouter</button>
+<ul id="list"></ul>
+</div>
+<div class="card">
+<h2>🤖 IA Conseiller</h2>
+<p id="ai"></p>
+<button onclick="runAI()">Demander conseil</button>
+</div>
+<div class="card">
+<h2>🔔 Notifications</h2>
+<input type="time" id="notifTime">
+<button onclick="setNotif()">Activer notification</button>
+</div>
+</main>
+<script>
 // THEME
-const theme=document.getElementById('theme');
-if(localStorage.theme){document.body.classList.add(localStorage.theme);theme.value=localStorage.theme}
-theme.onchange=()=>{document.body.className='';if(theme.value){document.body.classList.add(theme.value)}localStorage.theme=theme.value}
+const theme=document.getElementById('theme');if(localStorage.theme){document.body.classList.add(localStorage.theme);theme.value=localStorage.theme}
+theme.onchange=()=>{document.body.className='';if(theme.value)document.body.classList.add(theme.value);localStorage.theme=theme.value}// DATA let todos=JSON.parse(localStorage.todos||'[]');let points=+localStorage.points||0;let level=+localStorage.level||1;let badge=localStorage.badge||'Aucun'; const list=document.getElementById('list'); function render(){list.innerHTML='';todos.forEach((t,i)=>{const li=document.createElement('li');li.textContent=t.text;if(t.done)li.classList.add('done');li.onclick=()=>toggle(i);list.appendChild(li)});saveUI()} function addTodo(){const i=document.getElementById('todoInput');if(!i.value)return;todos.push({text:i.value,done:false});i.value='';render()} function toggle(i){if(!todos[i].done){points+=10;if(points%50===0){level++;badge='🔥 Motivé'}}todos[i].done=!todos[i].done;render()} function saveUI(){localStorage.todos=JSON.stringify(todos);localStorage.points=points;localStorage.level=level;localStorage.badge=badge;document.getElementById('points').textContent=points;document.getElementById('level').textContent=level;document.getElementById('badge').textContent=badge} render();
 
-// TODO + GAMIFICATION
-let todos=JSON.parse(localStorage.todos||'[]');
-let points=Number(localStorage.points||0);
-let level=Number(localStorage.level||1);
-let badge=localStorage.badge||'Aucun';
-const list=document.getElementById('list');
+// IA SIMPLE (locale) function runAI(){let msg='';if(points<30)msg='Commence par une petite tâche pour te lancer.';else if(points<100)msg='Bon rythme ! Continue avec une tâche importante.';else msg='Excellent ! Pense à te reposer aussi.';document.getElementById('ai').textContent=msg}
 
-function render(){list.innerHTML='';todos.forEach((t,i)=>{const li=document.createElement('li');li.textContent=t.text;if(t.done)li.classList.add('done');li.onclick=()=>toggle(i);list.appendChild(li)});localStorage.todos=JSON.stringify(todos)}
+// NOTIFICATIONS function setNotif(){if(!('Notification'in window))return alert('Notifications non supportées');Notification.requestPermission().then(p=>{if(p==='granted'){const t=document.getElementById('notifTime').value;if(!t)return;setInterval(()=>{const now=new Date();const cur=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');if(cur===t){new Notification('⏰ Rappel','Il est temps de faire tes tâches !')}},60000)}}) </script>
 
-function addTodo(){const i=document.getElementById('todoInput');if(!i.value)return;todos.push({text:i.value,done:false});i.value='';render()}
-
-function toggle(i){if(!todos[i].done){points+=10;if(points%50===0){level++;badge='🔥 Motivé'}}todos[i].done=!todos[i].done;save()}
-
-function save(){document.getElementById('points').textContent=points;document.getElementById('level').textContent=level;document.getElementById('badge').textContent=badge;localStorage.points=points;localStorage.level=level;localStorage.badge=badge;render();updateChart()}
-
-// CHART
-const ctx=document.getElementById('chart').getContext('2d');
-let history=JSON.parse(localStorage.history||'[0,0,0,0,0,0,0]');
-function updateChart(){history.shift();history.push(points);localStorage.history=JSON.stringify(history);ctx.clearRect(0,0,300,200);ctx.beginPath();history.forEach((v,i)=>{ctx.lineTo(i*40,200-v/2)});ctx.stroke()}
-
-// REMINDER
-function setReminder(){const t=document.getElementById('reminder').value;if(!t)return;alert('⏰ Rappel activé à '+t)}
-
-save();
-</script></body>
+</body>
   </html>
