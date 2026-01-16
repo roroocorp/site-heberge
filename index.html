@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="fr">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <title>Daily Life Dashboard</title>
@@ -12,53 +13,157 @@ body{margin:0;font-family:Arial;background:var(--bg);color:var(--text)}
 header{background:var(--primary);color:#fff;padding:20px;text-align:center}
 main{max-width:900px;margin:auto;padding:20px;display:grid;gap:20px}
 .card{background:var(--card);padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
-input,textarea,button,select{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:none}
-button{background:var(--primary);color:#fff;cursor:pointer}
-li{cursor:pointer;transition:.3s}
+input,textarea,button,select{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #ccc}
+button{background:var(--primary);color:#fff;cursor:pointer;border:none}
+li{cursor:pointer;transition:.3s;margin-top:5px}
 li.done{text-decoration:line-through;opacity:.6}
 </style>
 </head>
 <body>
 <header>
 <h1>🚀 Daily Life Dashboard</h1>
-<p>Dashboard intelligent & productif</p>
+<p>Tout-en-un • Fonctionnel • Sauvegardé</p>
 </header>
+
 <main>
 <div class="card">
 <h2>🎨 Thème</h2>
-<select id="theme"><option value="">Clair</option><option value="red">Rouge</option><option value="blue">Bleu</option><option value="green">Vert</option></select>
+<select id="theme">
+<option value="">Clair</option>
+<option value="red">Rouge</option>
+<option value="blue">Bleu</option>
+<option value="green">Vert</option>
+</select>
 </div>
+
 <div class="card">
 <h2>📊 Stats</h2>
 <p>🏆 Points : <span id="points">0</span></p>
 <p>🎮 Niveau : <span id="level">1</span></p>
 <p>🏅 Badge : <span id="badge">Aucun</span></p>
 </div>
+
 <div class="card">
 <h2>✅ To-Do</h2>
-<input id="todoInput" placeholder="Nouvelle tâche">
-<button onclick="addTodo()">Ajouter</button>
+<input id="todoInput" placeholder="Écris une tâche puis clique Ajouter">
+<button id="addBtn">Ajouter</button>
 <ul id="list"></ul>
 </div>
+
 <div class="card">
 <h2>🤖 IA Conseiller</h2>
-<p id="ai"></p>
-<button onclick="runAI()">Demander conseil</button>
+<textarea id="aiInput" placeholder="Explique ton problème ou ta journée"></textarea>
+<button id="aiBtn">Demander conseil</button>
+<p id="aiOutput"></p>
 </div>
+
 <div class="card">
-<h2>🔔 Notifications</h2>
+<h2>🔔 Notification</h2>
 <input type="time" id="notifTime">
-<button onclick="setNotif()">Activer notification</button>
+<button id="notifBtn">Activer rappel</button>
 </div>
 </main>
+
 <script>
-// THEME
-const theme=document.getElementById('theme');if(localStorage.theme){document.body.classList.add(localStorage.theme);theme.value=localStorage.theme}
-theme.onchange=()=>{document.body.className='';if(theme.value)document.body.classList.add(theme.value);localStorage.theme=theme.value}// DATA let todos=JSON.parse(localStorage.todos||'[]');let points=+localStorage.points||0;let level=+localStorage.level||1;let badge=localStorage.badge||'Aucun'; const list=document.getElementById('list'); function render(){list.innerHTML='';todos.forEach((t,i)=>{const li=document.createElement('li');li.textContent=t.text;if(t.done)li.classList.add('done');li.onclick=()=>toggle(i);list.appendChild(li)});saveUI()} function addTodo(){const i=document.getElementById('todoInput');if(!i.value)return;todos.push({text:i.value,done:false});i.value='';render()} function toggle(i){if(!todos[i].done){points+=10;if(points%50===0){level++;badge='🔥 Motivé'}}todos[i].done=!todos[i].done;render()} function saveUI(){localStorage.todos=JSON.stringify(todos);localStorage.points=points;localStorage.level=level;localStorage.badge=badge;document.getElementById('points').textContent=points;document.getElementById('level').textContent=level;document.getElementById('badge').textContent=badge} render();
+// ===== THEME =====
+const themeSel=document.getElementById('theme');
+const savedTheme=localStorage.getItem('theme');
+if(savedTheme){document.body.classList.add(savedTheme);themeSel.value=savedTheme}
 
-// IA SIMPLE (locale) function runAI(){let msg='';if(points<30)msg='Commence par une petite tâche pour te lancer.';else if(points<100)msg='Bon rythme ! Continue avec une tâche importante.';else msg='Excellent ! Pense à te reposer aussi.';document.getElementById('ai').textContent=msg}
+themeSel.addEventListener('change',()=>{
+ document.body.className='';
+ if(themeSel.value)document.body.classList.add(themeSel.value);
+ localStorage.setItem('theme',themeSel.value);
+});
 
-// NOTIFICATIONS function setNotif(){if(!('Notification'in window))return alert('Notifications non supportées');Notification.requestPermission().then(p=>{if(p==='granted'){const t=document.getElementById('notifTime').value;if(!t)return;setInterval(()=>{const now=new Date();const cur=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');if(cur===t){new Notification('⏰ Rappel','Il est temps de faire tes tâches !')}},60000)}}) </script>
+// ===== DATA =====
+let todos=JSON.parse(localStorage.getItem('todos')||'[]');
+let points=parseInt(localStorage.getItem('points')||'0');
+let level=parseInt(localStorage.getItem('level')||'1');
+let badge=localStorage.getItem('badge')||'Aucun';
 
+const list=document.getElementById('list');
+const pointsEl=document.getElementById('points');
+const levelEl=document.getElementById('level');
+const badgeEl=document.getElementById('badge');
+
+function saveAll(){
+ localStorage.setItem('todos',JSON.stringify(todos));
+ localStorage.setItem('points',points);
+ localStorage.setItem('level',level);
+ localStorage.setItem('badge',badge);
+ pointsEl.textContent=points;
+ levelEl.textContent=level;
+ badgeEl.textContent=badge;
+}
+
+function renderTodos(){
+ list.innerHTML='';
+ todos.forEach((t,i)=>{
+  const li=document.createElement('li');
+  li.textContent=t.text;
+  if(t.done)li.classList.add('done');
+  li.onclick=()=>toggleTodo(i);
+  list.appendChild(li);
+ });
+ saveAll();
+}
+
+function addTodo(){
+ const input=document.getElementById('todoInput');
+ if(input.value.trim()==='')return;
+ todos.push({text:input.value,done:false});
+ input.value='';
+ renderTodos();
+}
+
+function toggleTodo(i){
+ if(!todos[i].done){
+  points+=10;
+  if(points%50===0){level++;badge='🔥 Motivé'}
+ }
+ todos[i].done=!todos[i].done;
+ renderTodos();
+}
+
+document.getElementById('addBtn').onclick=addTodo;
+renderTodos();
+
+// ===== IA =====
+function runAI(){
+ const text=document.getElementById('aiInput').value.toLowerCase();
+ let response='';
+ if(text==='') response='Écris quelque chose pour que je puisse t’aider.';
+ else if(text.includes('fatigu')) response='Tu devrais faire une pause et respirer 5 minutes.';
+ else if(text.includes('procrast')) response='Commence par une tâche très simple pour te lancer.';
+ else if(points<30) response='Commence doucement, une petite tâche suffit.';
+ else if(points<100) response='Bon rythme, attaque une tâche importante.';
+ else response='Excellent travail, pense à garder un équilibre.';
+ document.getElementById('aiOutput').textContent=response;
+}
+
+document.getElementById('aiBtn').onclick=runAI;
+
+// ===== NOTIFICATION =====
+function setNotif(){
+ if(!('Notification'in window)) return alert('Notifications non supportées');
+ const time=document.getElementById('notifTime').value;
+ if(!time) return alert('Choisis une heure');
+ Notification.requestPermission().then(p=>{
+  if(p==='granted'){
+   setInterval(()=>{
+    const now=new Date();
+    const cur=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+    if(cur===time){
+     new Notification('⏰ Rappel','Il est temps de travailler sur tes tâches');
+    }
+   },60000);
+   alert('Rappel activé à '+time);
+  }
+ });
+}
+
+document.getElementById('notifBtn').onclick=setNotif;
+</script>
 </body>
   </html>
