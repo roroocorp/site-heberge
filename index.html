@@ -2,245 +2,241 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Daily Life Dashboard</title>
+<title>Daily Life Assistant</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-:root{--bg:#f4f6f8;--card:#fff;--text:#111;--primary:#2563eb}
-body.red{--bg:#7f1d1d;--card:#991b1b;--text:#fff;--primary:#ef4444}
-body.blue{--bg:#0f172a;--card:#1e293b;--text:#e0f2fe;--primary:#3b82f6}
-body.green{--bg:#052e16;--card:#064e3b;--text:#ecfdf5;--primary:#22c55e}
-body{margin:0;font-family:Arial;background:var(--bg);color:var(--text);overflow-x:hidden;position:relative}
-
-/* Header */
-header{background:var(--primary);color:#fff;padding:15px;text-align:center;margin-bottom:10px;border-radius:0 0 15px 15px;}
-
-/* Container principal */
-main{max-width:600px;margin:10px auto;padding:10px;display:flex;flex-direction:column;gap:15px;}
-
-/* Cartes */
-.card{background:var(--card);padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.2);width:100%;box-sizing:border-box;}
-
-/* Inputs et boutons */
-input,textarea,button,select{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box}
-button{background:var(--primary);color:#fff;cursor:pointer;border:none}
-
-/* Liste To-Do */
-ul{list-style:none;padding:0;margin:0}
-li{cursor:pointer;margin-top:5px;transition:.3s;padding:4px 0}
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#0f172a;
+  color:#e5e7eb;
+}
+header{
+  background:#2563eb;
+  padding:15px;
+  text-align:center;
+}
+main{
+  max-width:600px;
+  margin:auto;
+  padding:10px;
+}
+.card{
+  background:#1e293b;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+}
+input, textarea, button{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+  border:none;
+  box-sizing:border-box;
+}
+button{
+  background:#2563eb;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+ul{padding:0;list-style:none}
+li{padding:6px;cursor:pointer}
 li.done{text-decoration:line-through;opacity:.6}
-
-/* Badges */
-.badge{display:inline-block;margin:5px;padding:5px 10px;border-radius:8px;background:gold;color:#000;animation:pop 0.5s;cursor:pointer}
-@keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
-
-/* Points et output IA */
-#points{transition:transform 0.3s}
-#aiOutput{white-space:pre-line;font-weight:bold}
-
-/* Graphique responsive */
-canvas{width:100% !important;height:150px !important;border-radius:10px}
-
-/* Espacement général */
-h2{margin-top:0;margin-bottom:8px;}
-p, label{margin:4px 0;}
-
-/* Confettis */
-.confetti{position:absolute;width:10px;height:10px;background:red;top:0;left:50%;pointer-events:none;animation:fall 3s linear forwards;}
-@keyframes fall{
-  0%{transform:translateY(0) rotate(0deg);}
-  100%{transform:translateY(600px) rotate(360deg);opacity:0;}
+.badge{
+  display:inline-block;
+  background:gold;
+  color:black;
+  padding:5px 10px;
+  border-radius:8px;
+  margin:4px;
+}
+.chat{
+  background:#020617;
+  padding:10px;
+  border-radius:10px;
+  margin-top:10px;
+  max-height:200px;
+  overflow-y:auto;
+  font-size:14px;
+}
+.user{color:#93c5fd;margin-bottom:6px}
+.ai{color:#a7f3d0;margin-bottom:10px}
+.category{
+  font-size:13px;
+  opacity:.8;
+  margin-top:5px;
 }
 </style>
 </head>
+
 <body>
 <header>
-<h1 id="title">🚀 Daily Life Dashboard</h1>
-<p id="subtitle">IA + Graphique + Badges animés</p>
+<h1>🤖 IA Daily Assistant</h1>
+<p>Aide • Recettes • Organisation • Définitions</p>
 </header>
 
 <main>
-<div class="card">
-<h2 id="themeLabel">🎨 Thème</h2>
-<select id="theme">
-<option value="">Clair</option>
-<option value="red">Rouge</option>
-<option value="blue">Bleu</option>
-<option value="green">Vert</option>
-</select>
-<h2 id="langLabel">🌍 Langue</h2>
-<select id="lang">
-<option value="fr">Français</option>
-<option value="en">English</option>
-</select>
-</div>
 
 <div class="card">
-<h2 id="statsTitle">📊 Stats</h2>
-<p>🏆 <span id="pointsLabel">Points</span> : <span id="points">0</span></p>
-<p>🎮 <span id="levelLabel">Niveau</span> : <span id="level">1</span></p>
-<p>🏅 <span id="badgeLabel">Badge</span> : <span id="badge">Aucun</span></p>
+<h2>📊 Progression</h2>
+<p>⭐ Points : <span id="points">0</span></p>
+<p>🎮 Niveau : <span id="level">1</span></p>
 <div id="badges"></div>
 </div>
 
 <div class="card">
-<h2 id="todoTitle">✅ To-Do</h2>
-<input id="todoInput" placeholder="Écris une tâche puis clique Ajouter">
-<button id="addBtn">Ajouter</button>
+<h2>✅ Tâches</h2>
+<input id="todoInput" placeholder="Écris une tâche">
+<button onclick="addTodo()">Ajouter</button>
 <ul id="list"></ul>
 </div>
 
 <div class="card">
-<h2 id="aiTitle">🤖 IA Conseiller</h2>
-<textarea id="aiInput" placeholder="Écris ton message ici"></textarea>
-<button id="aiBtn">Demander conseil</button>
-<p id="aiOutput"></p>
+<h2>🧠 IA intelligente</h2>
+<textarea id="aiInput" placeholder="Ex : recette pâtes, idée de repas, c'est quoi motivation..."></textarea>
+<button onclick="runAI()">Envoyer</button>
+<div class="category" id="aiCategory"></div>
+<div class="chat" id="chat"></div>
 </div>
 
-<div class="card">
-<h2 id="chartTitle">📊 Graphique de productivité</h2>
-<canvas id="chart"></canvas>
-</div>
-
-<div class="card">
-<h2 id="notifTitle">🔔 Notification</h2>
-<input type="time" id="notifTime">
-<button id="notifBtn">Activer rappel</button>
-</div>
 </main>
 
 <script>
-// ===== LANGUE =====
-let lang=localStorage.getItem('lang')||'fr';
-document.getElementById('lang').value=lang;
-const texts = {
-  fr: {title:'🚀 Daily Life Dashboard', subtitle:'IA + Graphique + Badges animés', theme:'🎨 Thème', lang:'🌍 Langue', stats:'📊 Stats', points:'Points', level:'Niveau', badge:'Badge', todo:'✅ To-Do', add:'Ajouter', ai:'🤖 IA Conseiller', chart:'📊 Graphique de productivité', notif:'🔔 Notification', notifMsg:'Il est temps de travailler sur tes tâches', notifActivated:'Rappel activé à '},
-  en: {title:'🚀 Daily Life Dashboard', subtitle:'AI + Chart + Animated Badges', theme:'🎨 Theme', lang:'🌍 Language', stats:'📊 Stats', points:'Points', level:'Level', badge:'Badge', todo:'✅ To-Do', add:'Add', ai:'🤖 AI Advisor', chart:'📊 Productivity Chart', notif:'🔔 Notification', notifMsg:'Time to work on your tasks', notifActivated:'Reminder set for '}
-};
-function setLanguage(l){
-  const t=texts[l];
-  document.getElementById('title').textContent=t.title;
-  document.getElementById('subtitle').textContent=t.subtitle;
-  document.getElementById('themeLabel').textContent=t.theme;
-  document.getElementById('langLabel').textContent=t.lang;
-  document.getElementById('statsTitle').textContent=t.stats;
-  document.getElementById('pointsLabel').textContent=t.points;
-  document.getElementById('levelLabel').textContent=t.level;
-  document.getElementById('badgeLabel').textContent=t.badge;
-  document.getElementById('todoTitle').textContent=t.todo;
-  document.getElementById('addBtn').textContent=t.add;
-  document.getElementById('aiTitle').textContent=t.ai;
-  document.getElementById('chartTitle').textContent=t.chart;
-  document.getElementById('notifTitle').textContent=t.notif;
-}
-setLanguage(lang);
-document.getElementById('lang').addEventListener('change',(e)=>{lang=e.target.value; localStorage.setItem('lang',lang); setLanguage(lang);});
+let todos=JSON.parse(localStorage.getItem("todos")||"[]");
+let chatHistory=JSON.parse(localStorage.getItem("chat")||"[]");
+let points=Number(localStorage.getItem("points")||0);
+let level=Number(localStorage.getItem("level")||1);
 
-// ===== THEME =====
-const themeSel=document.getElementById('theme');
-const savedTheme=localStorage.getItem('theme');
-if(savedTheme){document.body.classList.add(savedTheme);themeSel.value=savedTheme}
-themeSel.addEventListener('change',()=>{document.body.className=''; if(themeSel.value)document.body.classList.add(themeSel.value); localStorage.setItem('theme',themeSel.value);});
+const list=document.getElementById("list");
+const pointsEl=document.getElementById("points");
+const levelEl=document.getElementById("level");
+const badgesDiv=document.getElementById("badges");
+const chat=document.getElementById("chat");
 
-// ===== DATA =====
-let todos=JSON.parse(localStorage.getItem('todos')||'[]');
-let points=parseInt(localStorage.getItem('points')||'0');
-let level=parseInt(localStorage.getItem('level')||'1');
-let badge=localStorage.getItem('badge')||'Aucun';
-let history=JSON.parse(localStorage.getItem('history')||'[]');
-
-const list=document.getElementById('list');
-const pointsEl=document.getElementById('points');
-const levelEl=document.getElementById('level');
-const badgeEl=document.getElementById('badge');
-const badgesDiv=document.getElementById('badges');
-
-function saveAll(){localStorage.setItem('todos',JSON.stringify(todos)); localStorage.setItem('points',points); localStorage.setItem('level',level); localStorage.setItem('badge',badge); localStorage.setItem('history',JSON.stringify(history)); pointsEl.textContent=points; levelEl.textContent=level; badgeEl.textContent=badge; renderBadges(); drawChart();}
-
-// ===== CONFETTIS =====
-function spawnConfetti(){
-  for(let i=0;i<30;i++){
-    const c=document.createElement('div');
-    c.classList.add('confetti');
-    c.style.left=Math.random()*window.innerWidth+'px';
-    c.style.background=['#ff0','#f00','#0f0','#0ff','#f0f','#ffa500'][Math.floor(Math.random()*6)];
-    c.style.width=c.style.height=5+Math.random()*5+'px';
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),3000);
-  }
+function save(){
+  localStorage.setItem("todos",JSON.stringify(todos));
+  localStorage.setItem("chat",JSON.stringify(chatHistory));
+  localStorage.setItem("points",points);
+  localStorage.setItem("level",level);
+  pointsEl.textContent=points;
+  levelEl.textContent=level;
+  renderBadges();
 }
 
-// ===== BADGES =====
 function renderBadges(){
-  badgesDiv.innerHTML='';
-  if(points>=10) {badgesDiv.innerHTML+='<span class="badge">🎯 10 points</span>'; spawnConfetti();}
-  if(points>=25) {badgesDiv.innerHTML+='<span class="badge">💪 25 points</span>'; spawnConfetti();}
-  if(level>=3) {badgesDiv.innerHTML+='<span class="badge">🏅 Niveau 3</span>'; spawnConfetti();}
+  badgesDiv.innerHTML="";
+  if(points>=10) badgesDiv.innerHTML+='<span class="badge">🔥 Débutant</span>';
+  if(points>=25) badgesDiv.innerHTML+='<span class="badge">💪 Motivé</span>';
+  if(points>=50) badgesDiv.innerHTML+='<span class="badge">🏆 Expert</span>';
 }
 
-// ===== TODO =====
 function renderTodos(){
-  list.innerHTML=''; 
+  list.innerHTML="";
   todos.forEach((t,i)=>{
-    if(!t.text) return;
-    const li=document.createElement('li');
-    li.textContent = t.text;
-    if(t.done) li.classList.add('done');
+    const li=document.createElement("li");
+    li.textContent=t.text;
+    if(t.done) li.classList.add("done");
 
-    // Cliquer pour cocher/décocher
-    li.onclick = () => toggleTodo(i);
-
-    // Maintenir appuyé (1s) pour supprimer
-    let pressTimer;
-    li.onmousedown = li.ontouchstart = (e) => {
-      e.preventDefault();
-      pressTimer = setTimeout(()=>{
-        todos.splice(i,1);
-        renderTodos();
-      }, 1000);
+    li.onclick=()=>{
+      if(!t.done){
+        points+=5;
+        if(points%20===0) level++;
+      }
+      t.done=!t.done;
+      save(); renderTodos();
     };
-    li.onmouseup = li.onmouseleave = li.ontouchend = () => clearTimeout(pressTimer);
+
+    let timer;
+    li.onmousedown=li.ontouchstart=()=>{
+      timer=setTimeout(()=>{
+        todos.splice(i,1);
+        renderTodos(); save();
+      },800);
+    };
+    li.onmouseup=li.ontouchend=()=>clearTimeout(timer);
 
     list.appendChild(li);
   });
-  saveAll();
 }
 
-function addTodo(){const input=document.getElementById('todoInput'); if(input.value.trim()==='')return; todos.push({text:input.value,done:false}); input.value=''; renderTodos();}
-function toggleTodo(i){if(!todos[i].done){points += 10; history.push(points); if(points % 25 === 0){level++;badge='🔥 Motivé'; spawnConfetti();} pointsEl.style.transform='scale(1.3)'; setTimeout(()=>pointsEl.style.transform='scale(1)',300);} todos[i].done=!todos[i].done; renderTodos();}
-document.getElementById('addBtn').onclick=addTodo; renderTodos();
+function addTodo(){
+  const v=todoInput.value.trim();
+  if(!v) return;
+  todos.push({text:v,done:false});
+  todoInput.value="";
+  renderTodos(); save();
+}
 
-// ===== IA =====
+function renderChat(){
+  chat.innerHTML="";
+  chatHistory.forEach(m=>{
+    chat.innerHTML+=`<div class="${m.from}">${m.text}</div>`;
+  });
+  chat.scrollTop=chat.scrollHeight;
+}
+
+renderTodos(); renderChat(); save();
+
+// ================= IA =================
+
 function runAI(){
-  const input = document.getElementById('aiInput');
-  const text = input.value.trim().toLowerCase(); 
-  if(text==='') return;
+  const input=document.getElementById("aiInput");
+  const cat=document.getElementById("aiCategory");
+  const q=input.value.trim().toLowerCase();
+  if(!q) return;
 
-  // Points par longueur du texte
-  let pts = Math.max(1, Math.floor(text.length / 5));
-  points += pts;
-  history.push(points);
-  if(text.length>50) spawnConfetti();
+  points+=Math.max(1,Math.floor(q.length/6));
+  save();
 
-  let responses=[];
-  if(text.includes('fatigu') || text.includes('épuisé')) responses=['Prends une pause','Respire 5 minutes','Écoute de la musique'];
-  else if(text.includes('stress') || text.includes('angoissé')) responses=['Fais une marche','Bois de l’eau','Respire calmement'];
-  else if(text.includes('procrast')) responses=['Commence par une petite tâche','Découpe ton objectif','Supprime les distractions'];
-  else if(text.includes('cava') || text.includes('ça va')) responses=['Content de l’entendre !','Super, continue !','Garde le rythme !'];
-  else responses=['Reste concentré','Planifie tes tâches','N’oublie pas de prendre des pauses','Sois fier de toi'];
+  let r="", c="";
 
-  document.getElementById('aiOutput').textContent='• '+responses.join('\n• ');
-  input.value='';
-  saveAll();
+  if(q.includes("recette") && q.includes("pâtes")){
+    c="🍝 Recette";
+    r=
+"Recette des pâtes 🍝\n\n"+
+"Ingrédients :\n- Pâtes\n- Sel\n- Sauce tomate\n\n"+
+"Étapes :\n1️⃣ Eau bouillante salée\n2️⃣ Cuire 8–10 min\n3️⃣ Égoutter\n4️⃣ Ajouter la sauce";
+  }
+  else if(q.includes("recette") && q.includes("riz")){
+    c="🍚 Recette";
+    r=
+"Recette du riz 🍚\n\n"+
+"Ingrédients :\n- Riz\n- Eau\n- Sel\n\n"+
+"Étapes :\n1️⃣ Rincer le riz\n2️⃣ 2x eau\n3️⃣ Cuire 12 min";
+  }
+  else if(q.includes("omelette")){
+    c="🍳 Recette";
+    r=
+"Omelette simple 🍳\n\n"+
+"Ingrédients : œufs, sel\n\n"+
+"Étapes : battre, cuire 3 min";
+  }
+  else if(q.includes("repas")){
+    c="🍽️ Idées de repas";
+    r=
+"- Riz + poulet\n- Omelette + salade\n- Pâtes + légumes\n- Sandwich maison";
+  }
+  else if(q.startsWith("c'est quoi")||q.startsWith("c’est quoi")){
+    c="📖 Définition";
+    r="C’est une explication simple pour comprendre un mot ou une idée.";
+  }
+  else if(q.includes("stress")||q.includes("fatigu")){
+    c="💙 Aide";
+    r="Respire lentement, bois de l’eau, repose-toi. Tu gères 👍";
+  }
+  else{
+    c="🤖 Aide générale";
+    r="Je peux aider pour recettes, repas, définitions et conseils.";
+  }
+
+  chatHistory.push({from:"user",text:"👤 "+input.value});
+  chatHistory.push({from:"ai",text:"🤖 "+r});
+  cat.textContent=c;
+  input.value="";
+  renderChat(); save();
 }
-document.getElementById('aiBtn').addEventListener('click',runAI);
-
-// ===== NOTIFICATION =====
-function setNotif(){if(!('Notification' in window)) return alert('Notifications non supportées'); const time=document.getElementById('notifTime').value; if(!time) return alert(texts[lang].notifActivated); Notification.requestPermission().then(p=>{if(p==='granted'){setInterval(()=>{const now=new Date(); const cur=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0'); if(cur===time){new Notification(texts[lang].notifMsg);}},60000); alert(texts[lang].notifActivated+time);}});}
-document.getElementById('notifBtn').addEventListener('click',setNotif);
-
-// ===== GRAPH =====
-function drawChart(){const c=document.getElementById('chart'); const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); if(history.length===0) return; const max=Math.max(...history); const margin=20; const w=(c.width-margin*2)/7; const hScale=(c.height-margin*2)/max; for(let i=0;i<history.length;i++){ctx.fillStyle='#3b82f6'; const barHeight=history[i]*hScale; ctx.fillRect(margin+i*w, c.height-margin-barHeight, w*0.6, barHeight); ctx.fillStyle='#000'; ctx.fillText(history[i], margin+i*w+5, c.height-margin-barHeight-5);}}
-drawChart();
 </script>
 </body>
 </html>
