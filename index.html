@@ -2,47 +2,43 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Assistant Quotidien</title>
+<title>Assistant Quotidien Chill</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 :root{
-  --bg:#f1f5f9; --card:#ffffff; --text:#020617; --primary:#2563eb;
+  --primary:#3b82f6; --text:#020617; --bg:#f1f5f9;
 }
-body.red{--bg:#7f1d1d;--card:#991b1b;--text:#fff;--primary:#ef4444}
-body.blue{--bg:#0f172a;--card:#1e293b;--text:#e5e7eb;--primary:#3b82f6}
-body.green{--bg:#052e16;--card:#064e3b;--text:#ecfdf5;--primary:#22c55e}
-body.purple{--bg:#3f0d5f;--card:#5b21b6;--text:#fff;--primary:#d8b4fe}
-body.orange{--bg:#7c2d12;--card:#f97316;--text:#fff;--primary:#fbbf24}
-body.pink{--bg:#831843;--card:#f472b6;--text:#fff;--primary:#f9a8d4}
-
-body{
-  margin:0; font-family:Arial; background:var(--bg); color:var(--text);
-}
-header{
-  background:var(--primary); color:#fff; padding:15px; text-align:center;
-}
-main{max-width:600px; margin:auto; padding:10px;}
-.card{background:var(--card); padding:15px; border-radius:12px; margin-bottom:15px;}
-input,textarea,button,select{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:none;box-sizing:border-box;}
-button{background:var(--primary);color:white;font-weight:bold;cursor:pointer;}
+body{margin:0; font-family:Arial,sans-serif; background:var(--bg); color:var(--text);}
+header{display:flex; justify-content:space-between; align-items:center; padding:15px; background:var(--primary); color:#fff; border-bottom:3px solid #fff;}
+main{max-width:600px;margin:auto;padding:10px;}
+.card{padding:15px;border-radius:12px;margin-bottom:15px;background:linear-gradient(135deg,#fff,#e2e8f0);box-shadow:0 4px 6px rgba(0,0,0,0.1);transition:all 0.3s;}
+input,textarea,select,button{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:none;box-sizing:border-box;}
+button{background:var(--primary);color:white;font-weight:bold;cursor:pointer;transition:0.3s;}
+button:hover{opacity:0.85;}
 ul{padding:0;list-style:none;}
-li{padding:6px;cursor:pointer;}
+li{padding:6px;margin-bottom:4px;border-radius:8px;background:#ffffff70;cursor:pointer;transition:all 0.3s;}
 li.done{text-decoration:line-through;opacity:.6;}
-.chat{background:#00000020;padding:10px;border-radius:10px;max-height:220px;overflow-y:auto;}
-.msg{margin-bottom:6px;}
+li:hover{transform:scale(1.02);}
+.chat{background:#00000020;padding:10px;border-radius:10px;max-height:220px;overflow-y:auto;scroll-behavior:smooth;}
+.msg{margin-bottom:6px;transition:0.3s;}
 .user{color:#2563eb;}
 .ai{color:#16a34a;}
 .category{font-size:13px;opacity:.8;}
 .badge{display:inline-block;background:gold;color:black;padding:5px 10px;border-radius:8px;margin:4px;}
-.menu-day,.item{padding:6px;border-bottom:1px solid #ffffff20;cursor:pointer;}
-.menu-day input{width:90%;padding:5px;margin-top:2px;margin-bottom:2px;border-radius:5px;}
+.menu-day,.item{padding:6px;border-radius:8px;margin-bottom:4px;background:#ffffff70;cursor:pointer;transition:all 0.3s;}
+.menu-day:hover,.item:hover{transform:scale(1.02);}
+#chatWrapper{position:fixed;bottom:10px;left:10px;right:10px;max-width:600px;}
+#clock{font-weight:bold;}
 </style>
 </head>
 <body class="blue">
 
 <header>
-<h1 id="title">🤖 Assistant Quotidien</h1>
+<div>
+<h1 id="title">🤖 Assistant Quotidien Chill</h1>
 <p id="subtitle">Tâches • Menu • IA • Recettes</p>
+</div>
+<div id="clock"></div>
 </header>
 
 <main>
@@ -57,7 +53,6 @@ li.done{text-decoration:line-through;opacity:.6;}
 <option value="orange">Orange</option>
 <option value="pink">Rose</option>
 </select>
-
 <select id="lang">
 <option value="fr">Français</option>
 <option value="en">English</option>
@@ -80,15 +75,6 @@ li.done{text-decoration:line-through;opacity:.6;}
 <ul id="list"></ul>
 </div>
 
-<!-- IA Chat -->
-<div class="card">
-<h2>🧠 IA intelligente</h2>
-<textarea id="aiInput" placeholder="J’ai faim / recette poulet / aide..."></textarea>
-<button onclick="runAI()">Envoyer</button>
-<div class="category" id="aiCategory"></div>
-<div class="chat" id="chat"></div>
-</div>
-
 <!-- Menu Semaine -->
 <div class="card">
 <h2>🍳 Menu de la semaine</h2>
@@ -103,165 +89,99 @@ li.done{text-decoration:line-through;opacity:.6;}
 <ul id="groceries"></ul>
 </div>
 
+<!-- Chat IA flottant -->
+<div id="chatWrapper" class="card">
+<h2>🧠 IA intelligente</h2>
+<textarea id="aiInput" placeholder="J’ai faim / recette poulet / aide..."></textarea>
+<button onclick="runAI()">Envoyer</button>
+<div class="category" id="aiCategory"></div>
+<div class="chat" id="chat"></div>
+</div>
+
 </main>
 
 <script>
-/* ======= DATA ======= */
+/* ===== DATA ===== */
 let todos=JSON.parse(localStorage.getItem("todos")||"[]");
-let chat=JSON.parse(localStorage.getItem("chat")||"[]");
 let menu=JSON.parse(localStorage.getItem("menu")||"[]");
 let groceries=JSON.parse(localStorage.getItem("groceries")||"[]");
+let chat=JSON.parse(localStorage.getItem("chat")||"[]");
 let memory=JSON.parse(localStorage.getItem("memory")||"{}");
 let points=+localStorage.getItem("points")||0;
 let level=+localStorage.getItem("level")||1;
 
-/* ======= LANGUES ======= */
-const texts={
-fr:{title:"🤖 Assistant Quotidien",sub:"Tâches • Menu • IA • Recettes",todo:"Écris une tâche"},
-en:{title:"🤖 Daily Assistant",sub:"Tasks • Menu • AI • Recipes",todo:"Write a task"},
-de:{title:"🤖 Täglicher Assistent",sub:"Aufgaben • Menü • KI • Rezepte",todo:"Aufgabe eingeben"}
-};
+/* LANGUES */
+const texts={fr:{title:"🤖 Assistant Quotidien Chill",sub:"Tâches • Menu • IA • Recettes",todo:"Écris une tâche"},
+en:{title:"🤖 Daily Assistant Chill",sub:"Tasks • Menu • AI • Recipes",todo:"Write a task"},
+de:{title:"🤖 Täglicher Assistent Chill",sub:"Aufgaben • Menü • KI • Rezepte",todo:"Aufgabe eingeben"}};
 const langSel=document.getElementById("lang");
-const savedLang=localStorage.getItem("lang")||"fr";
-langSel.value=savedLang;
-function setLang(l){
-  document.getElementById("title").textContent=texts[l].title;
-  document.getElementById("subtitle").textContent=texts[l].sub;
-  todoInput.placeholder=texts[l].todo;
-}
+const savedLang=localStorage.getItem("lang")||"fr"; langSel.value=savedLang;
+function setLang(l){document.getElementById("title").textContent=texts[l].title;document.getElementById("subtitle").textContent=texts[l].sub;todoInput.placeholder=texts[l].todo;}
 setLang(savedLang);
 langSel.onchange=()=>{setLang(langSel.value);localStorage.setItem("lang",langSel.value)};
 
-/* ======= THEME ======= */
+/* THEME */
 const themeSel=document.getElementById("theme");
 const savedTheme=localStorage.getItem("theme");
 if(savedTheme){document.body.className=savedTheme;themeSel.value=savedTheme}
 themeSel.onchange=()=>{document.body.className=themeSel.value;localStorage.setItem("theme",themeSel.value)};
 
-/* ======= POINTS / BADGES ======= */
+/* POINTS / BADGES */
 function save(){
-  localStorage.setItem("todos",JSON.stringify(todos));
-  localStorage.setItem("chat",JSON.stringify(chat));
-  localStorage.setItem("menu",JSON.stringify(menu));
-  localStorage.setItem("groceries",JSON.stringify(groceries));
-  localStorage.setItem("memory",JSON.stringify(memory));
-  localStorage.setItem("points",points);
-  localStorage.setItem("level",level);
-  document.getElementById("points").textContent=points;
-  document.getElementById("level").textContent=level;
-  renderBadges();
+localStorage.setItem("todos",JSON.stringify(todos));
+localStorage.setItem("menu",JSON.stringify(menu));
+localStorage.setItem("groceries",JSON.stringify(groceries));
+localStorage.setItem("chat",JSON.stringify(chat));
+localStorage.setItem("memory",JSON.stringify(memory));
+localStorage.setItem("points",points);
+localStorage.setItem("level",level);
+document.getElementById("points").textContent=points;
+document.getElementById("level").textContent=level;
+renderBadges();
 }
 function renderBadges(){
-  const b=document.getElementById("badges"); b.innerHTML="";
-  if(points>=10)b.innerHTML+='<span class="badge">🔥 Débutant</span>';
-  if(points>=30)b.innerHTML+='<span class="badge">💪 Actif</span>';
-  if(points>=60)b.innerHTML+='<span class="badge">🏆 Expert</span>';
+const b=document.getElementById("badges"); b.innerHTML="";
+if(points>=10)b.innerHTML+='<span class="badge">🔥 Débutant</span>';
+if(points>=30)b.innerHTML+='<span class="badge">💪 Actif</span>';
+if(points>=60)b.innerHTML+='<span class="badge">🏆 Expert</span>';
 }
 
-/* ======= TODO ======= */
-function renderTodos(){
-  const ul=document.getElementById("list"); ul.innerHTML="";
-  todos.forEach((t,i)=>{
-    const li=document.createElement("li"); li.textContent=t.text;
-    if(t.done)li.classList.add("done");
-    li.onclick=()=>{t.done=!t.done;if(t.done)points+=5;save();renderTodos();}
-    let timer;
-    li.onmousedown=li.ontouchstart=()=>timer=setTimeout(()=>{todos.splice(i,1);save();renderTodos()},800);
-    li.onmouseup=li.ontouchend=()=>clearTimeout(timer);
-    ul.appendChild(li);
-  });
-}
-function addTodo(){
-  const v=todoInput.value.trim(); if(!v) return;
-  todos.push({text:v,done:false}); todoInput.value=""; save(); renderTodos();
-}
+/* TODO */
+function renderTodos(){const ul=document.getElementById("list");ul.innerHTML="";todos.forEach((t,i)=>{const li=document.createElement("li");li.textContent=t.text;if(t.done)li.classList.add("done");li.onclick=()=>{t.done=!t.done;if(t.done)points+=5;save();renderTodos();};let timer;li.onmousedown=li.ontouchstart=()=>timer=setTimeout(()=>{todos.splice(i,1);save();renderTodos();},800);li.onmouseup=li.ontouchend=()=>clearTimeout(timer);ul.appendChild(li);});}
+function addTodo(){const v=todoInput.value.trim();if(!v)return;todos.push({text:v,done:false});todoInput.value="";save();renderTodos();}
 
-/* ======= IA / Chat ======= */
+/* MENU / COURSES */
+const days=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 const recipes=[
-  {n:"Pâtes bolognaise",i:["pâtes","viande","tomate"]},
-  {n:"Pâtes carbonara",i:["pâtes","œufs","lardons"]},
-  {n:"Riz poulet",i:["riz","poulet"]},
-  {n:"Poulet rôti",i:["poulet","épices"]},
-  {n:"Omelette",i:["œufs"]},
-  {n:"Salade",i:["salade","tomate"]},
-  {n:"Burger",i:["pain","viande"]},
-  {n:"Pizza",i:["pâte","fromage","tomate"]},
-  {n:"Soupe",i:["légumes"]},
-  {n:"Crêpes",i:["farine","œufs","lait"]}
+{n:"Pâtes bolognaise",i:["pâtes","viande","tomate"]},
+{n:"Pizza",i:["pâte","fromage","tomate"]},
+{n:"Burger",i:["pain","viande","salade"]},
+{n:"Salade",i:["salade","tomate","concombre"]},
+{n:"Omelette",i:["œufs","sel","poivre"]},
+{n:"Riz au poulet",i:["riz","poulet","épices"]},
+{n:"Soupe légumes",i:["légumes","eau","sel"]},
+{n:"Crêpes",i:["farine","œufs","lait"]},
+{n:"Spaghetti carbonara",i:["spaghetti","lardons","œufs","fromage"]},
+{n:"Poisson rôti",i:["poisson","citron","herbes"]}
 ];
+function generateMenu(){menu=days.map(d=>{const old=menu.find(x=>x.startsWith(d)); return old||d+" : "+random(recipes).n;});renderMenu();save();}
+function renderMenu(){const ul=document.getElementById("menu");ul.innerHTML="";menu.forEach((l,i)=>{const li=document.createElement("li");const day=l.split(" : ")[0];const meal=l.split(" : ")[1];const input=document.createElement("input");input.value=meal;input.onchange=()=>{menu[i]=day+" : "+input.value;save();};let t;li.onmousedown=li.ontouchstart=()=>t=setTimeout(()=>{menu.splice(i,1);save();renderMenu();},800);li.onmouseup=li.ontouchend=()=>clearTimeout(t);li.appendChild(document.createTextNode(day+" : "));li.appendChild(input);ul.appendChild(li);});}
+function generateGroceries(){let set=new Set();menu.forEach(m=>{const name=m.split(" : ")[1];const r=recipes.find(x=>x.n===name);if(r)r.i.forEach(i=>set.add(i));});groceries=[...set];renderGroceries();save();}
+function renderGroceries(){const ul=document.getElementById("groceries");ul.innerHTML="";groceries.forEach((it,i)=>{const li=document.createElement("li");li.textContent="🛒 "+it;let t;li.onmousedown=li.ontouchstart=()=>t=setTimeout(()=>{groceries.splice(i,1);save();renderGroceries();},800);li.onmouseup=li.ontouchend=()=>clearTimeout(t);ul.appendChild(li);});}
+
+/* IA */
 function random(arr){return arr[Math.floor(Math.random()*arr.length)];}
 function remember(key){memory[key]=(memory[key]||0)+1;}
-function detectIntent(q){
-  if(/faim|repas|menu/.test(q))return"meal";
-  if(/recette|cuisine/.test(q))return"recipe";
-  if(/stress|fatigue|mal/.test(q))return"help";
-  if(/c'est quoi|explique/.test(q))return"define";
-  return"general";
-}
-function runAI(){
-  const q=aiInput.value.trim().toLowerCase(); if(!q) return;
-  points+=Math.max(1,Math.floor(q.length/6));
-  const intent=detectIntent(q); let r="",c="";
-  if(intent==="meal"){c="🍽️ Repas"; const fav=Object.keys(memory).sort((a,b)=>memory[b]-memory[a])[0]; const choice=fav?recipes.find(x=>x.n.toLowerCase().includes(fav))||random(recipes):random(recipes); r="Je te conseille : "+choice.n; remember(choice.n.split(" ")[0].toLowerCase());}
-  else if(intent==="recipe"){c="🧑‍🍳 Recette"; const rec=random(recipes); r="Recette "+rec.n+"\nIngrédients : "+rec.i.join(", "); remember(rec.n.split(" ")[0].toLowerCase());}
-  else if(intent==="help"){c="💙 Aide"; r="Respire, fais une pause, tu fais de ton mieux 👍";}
-  else if(intent==="define"){c="📖 Définition"; r="C’est une explication simple pour mieux comprendre.";}
-  else{c="🤖 Général"; r="Je peux aider pour manger, cuisiner, organiser et conseiller.";}
-  chat.push({from:"user",text:"👤 "+aiInput.value});
-  chat.push({from:"ai",text:"🤖 "+r});
-  document.getElementById("aiCategory").textContent=c;
-  aiInput.value="";
-  save();renderChat();
-}
-function renderChat(){
-  const c=document.getElementById("chat"); c.innerHTML="";
-  chat.forEach((m,i)=>{
-    const d=document.createElement("div"); d.className="msg "+m.from; d.textContent=m.text;
-    let t;
-    d.onmousedown=d.ontouchstart=()=>t=setTimeout(()=>{chat.splice(i,1);save();renderChat()},800);
-    d.onmouseup=d.ontouchend=()=>clearTimeout(t);
-    c.appendChild(d);
-  }); c.scrollTop=c.scrollHeight;
-}
+function detectIntent(q){if(/faim|repas|menu/.test(q))return"meal";if(/recette|cuisine/.test(q))return"recipe";if(/stress|fatigue|mal/.test(q))return"help";if(/c'est quoi|explique/.test(q))return"define";return"general";}
+function runAI(){const q=aiInput.value.trim().toLowerCase();if(!q)return;points+=Math.max(1,Math.floor(q.length/6));const intent=detectIntent(q);let r="",c="";if(intent==="meal"){c="🍽️ Repas";const fav=Object.keys(memory).sort((a,b)=>memory[b]-memory[a])[0];const choice=fav?recipes.find(x=>x.n.toLowerCase().includes(fav))||random(recipes):random(recipes);r="Je te conseille : "+choice.n;remember(choice.n.split(" ")[0].toLowerCase());}else if(intent==="recipe"){c="🧑‍🍳 Recette";const rec=random(recipes);r="Recette "+rec.n+"\nIngrédients : "+rec.i.join(", ");remember(rec.n.split(" ")[0].toLowerCase());}else if(intent==="help"){c="💙 Aide";r="Respire, fais une pause, tu fais de ton mieux 👍";}else if(intent==="define"){c="📖 Définition";r="C’est une explication simple pour mieux comprendre.";}else{c="🤖 Général";r="Je peux aider pour manger, cuisiner, organiser et conseiller.";}chat.push({from:"user",text:"👤 "+aiInput.value});chat.push({from:"ai",text:"🤖 "+r});document.getElementById("aiCategory").textContent=c;aiInput.value="";save();renderChat();}
+function renderChat(){const c=document.getElementById("chat");c.innerHTML="";chat.forEach((m,i)=>{const d=document.createElement("div");d.className="msg "+m.from;d.textContent=m.text;let t;d.onmousedown=d.ontouchstart=()=>t=setTimeout(()=>{chat.splice(i,1);save();renderChat()},800);d.onmouseup=d.ontouchend=()=>clearTimeout(t);c.appendChild(d);});c.scrollTop=c.scrollHeight;}
 
-/* ======= MENU / COURSES ======= */
-const days=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
-function generateMenu(){
-  menu=days.map(d=>{const old=menu.find(x=>x.startsWith(d)); return old||d+" : "+random(recipes).n;});
-  renderMenu(); save();
-}
-function renderMenu(){
-  const ul=document.getElementById("menu"); ul.innerHTML="";
-  menu.forEach((l,i)=>{
-    const li=document.createElement("li"); 
-    const day=l.split(" : ")[0];
-    const meal=l.split(" : ")[1];
-    const input=document.createElement("input"); input.value=meal;
-    input.onchange=()=>{menu[i]=day+" : "+input.value; save();}
-    let t; li.onmousedown=li.ontouchstart=()=>t=setTimeout(()=>{menu.splice(i,1);save();renderMenu()},800);
-    li.onmouseup=li.ontouchend=()=>clearTimeout(t);
-    li.appendChild(document.createTextNode(day+" : "));
-    li.appendChild(input);
-    ul.appendChild(li);
-  });
-}
-function generateGroceries(){
-  let set=new Set();
-  menu.forEach(m=>{const name=m.split(" : ")[1]; const r=recipes.find(x=>x.n===name); if(r) r.i.forEach(i=>set.add(i));});
-  groceries=[...set]; renderGroceries(); save();
-}
-function renderGroceries(){
-  const ul=document.getElementById("groceries"); ul.innerHTML="";
-  groceries.forEach((it,i)=>{
-    const li=document.createElement("li"); li.textContent="🛒 "+it;
-    let t; li.onmousedown=li.ontouchstart=()=>t=setTimeout(()=>{groceries.splice(i,1);save();renderGroceries()},800);
-    li.onmouseup=li.ontouchend=()=>clearTimeout(t);
-    ul.appendChild(li);
-  });
-}
+/* Horloge */
+function updateClock(){const c=document.getElementById("clock");const d=new Date();c.textContent=d.toLocaleTimeString();}
+setInterval(updateClock,1000);updateClock();
 
-renderTodos(); renderChat(); renderMenu(); renderGroceries(); save();
+/* INITIAL RENDER */
+renderTodos();renderMenu();renderGroceries();renderChat();save();
 </script>
-
 </body>
-  </html>
+                </html>
