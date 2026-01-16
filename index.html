@@ -2,33 +2,71 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Assistant Quotidien Ultra Animé</title>
+<title>Assistant Quotidien Ultra Fluide</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-:root{--blue:#3b82f6;--red:#ef4444;--green:#22c55e;--purple:#a855f7;--orange:#f97316;--pink:#ec4899;}
-body{margin:0;font-family:Arial,sans-serif;transition:background 0.5s,color 0.5s;}
-header{display:flex;justify-content:space-between;align-items:center;padding:10px 15px;background:inherit;color:white;position:sticky;top:0;z-index:10;transition:background 0.5s;}
-main{max-width:900px;margin:auto;padding:10px;display:flex;flex-direction:column;gap:10px;}
-.card{padding:15px;border-radius:12px;background:rgba(255,255,255,0.9);box-shadow:0 4px 6px rgba(0,0,0,0.1);opacity:0;transform:translateY(20px);animation:fadeIn 0.5s forwards;}
+:root{
+  --blue:#3b82f6; --red:#ef4444; --green:#22c55e; --purple:#a855f7; --orange:#f97316; --pink:#ec4899;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  transition:background 0.5s;
+  background:var(--blue);
+  color:white;
+}
+header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 15px;
+  position:sticky;top:0;z-index:10;
+}
+main{
+  max-width:900px;margin:auto;padding:10px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.card{
+  padding:15px;border-radius:12px;background:rgba(255,255,255,0.9);
+  color:black;box-shadow:0 4px 6px rgba(0,0,0,0.1);
+  opacity:0;transform:translateY(20px);animation:fadeIn 0.5s forwards;
+  transition:all 0.3s;
+}
 @keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
 .fadeOut{opacity:0 !important;transform:translateY(-20px);transition:all 0.3s;}
-input,textarea,select,button{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:none;box-sizing:border-box;}
+input,textarea,select,button{
+  width:100%;padding:10px;margin-top:8px;border-radius:8px;border:none;
+}
 button{background:rgba(0,0,0,0.1);color:black;font-weight:bold;cursor:pointer;transition:0.3s;}
 button:hover{opacity:0.85;}
-ul{padding:0;list-style:none;max-height:250px;overflow-y:auto;}
+ul{padding:0;list-style:none;max-height:250px;overflow-y:auto;scroll-behavior:smooth;}
 li{padding:6px;margin-bottom:4px;border-radius:8px;background:#ffffff70;cursor:pointer;transition:all 0.3s;}
 li.done{text-decoration:line-through;opacity:.6;}
 li:hover{transform:scale(1.02);}
 #clock{font-weight:bold;margin-left:10px;}
 #aiMenu{cursor:pointer;font-weight:bold;margin-left:10px;}
-#aiSidebar{position:fixed;top:0;left:-350px;width:350px;height:100%;background:white;box-shadow:2px 0 10px rgba(0,0,0,0.2);transition:left 0.5s;z-index:100;padding:10px;overflow-y:auto;}
+/* Sidebar */
+#aiSidebar{
+  position:fixed;top:0;left:-400px;width:400px;height:100%;
+  background:white;color:black;
+  box-shadow:2px 0 15px rgba(0,0,0,0.3);
+  transition:left 0.5s ease;
+  z-index:100;padding:10px;overflow-y:auto;
+}
+#aiSidebar.show{left:0;}
 #aiSidebar h2{margin-top:0;}
 #aiSidebar ul{list-style:none;padding:0;}
-#aiSidebar li{padding:6px;margin-bottom:4px;border-radius:6px;background:#f1f5f9;cursor:pointer;transition:background 0.3s;}
+#aiSidebar li{padding:6px;margin-bottom:4px;border-radius:6px;background:#f1f5f9;cursor:pointer;transition:all 0.3s;}
 #aiSidebar li:hover{background:#e2e8f0;}
-#chatBox{display:none;position:fixed;bottom:10px;left:370px;right:10px;max-width:600px;background:white;border-radius:12px;padding:10px;box-shadow:0 4px 10px rgba(0,0,0,0.2);transition:all 0.5s;}
+/* Chat */
+#chatBox{
+  display:none;position:fixed;bottom:10px;left:420px;right:10px;
+  max-width:600px;background:white;border-radius:12px;padding:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  transition:all 0.5s ease-in-out;
+}
+#chatBox.show{display:block;}
 .chat{max-height:220px;overflow-y:auto;scroll-behavior:smooth;margin-bottom:10px;padding:5px;border:1px solid #ccc;border-radius:10px;background:#f0f0f0;transition:all 0.3s;}
-.msg{margin-bottom:6px;opacity:0;transform:translateY(10px);transition:all 0.3s;}
+.msg{margin-bottom:6px;opacity:0;transform:translateY(20px);transition:all 0.3s;}
 .msg.show{opacity:1;transform:translateY(0);}
 .user{color:#2563eb;}
 .ai{color:#16a34a;}
@@ -37,7 +75,7 @@ li:hover{transform:scale(1.02);}
 #searchInput{padding:8px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;}
 </style>
 </head>
-<body class="blue">
+<body>
 
 <header>
 <div>
@@ -101,10 +139,10 @@ li:hover{transform:scale(1.02);}
 </div>
 
 <div class="card" id="chatBox">
-<textarea id="aiInput" placeholder="J’ai faim / recette / aide..."></textarea>
+<div class="chat" id="chat"></div>
+<textarea id="aiInput" placeholder="Pose ta question..."></textarea>
 <button onclick="runAI()">Envoyer</button>
 <div class="category" id="aiCategory"></div>
-<div class="chat" id="chat"></div>
 </div>
 
 <div class="card">
@@ -135,7 +173,7 @@ setLang(savedLang); langSel.onchange=()=>{setLang(langSel.value);localStorage.se
 
 // THEME
 const themeSel=document.getElementById("theme"); const savedTheme=localStorage.getItem("theme"); 
-if(savedTheme){document.body.className=savedTheme;themeSel.value=savedTheme; document.body.style.background="var(--"+savedTheme+")";}
+if(savedTheme){document.body.className=savedTheme;document.body.style.background="var(--"+savedTheme+")"; themeSel.value=savedTheme;}
 themeSel.onchange=()=>{
   const t=themeSel.value;
   document.body.className=t;
@@ -145,7 +183,7 @@ themeSel.onchange=()=>{
 
 // POINTS / BADGES
 function save(){localStorage.setItem("todos",JSON.stringify(todos));localStorage.setItem("menu",JSON.stringify(menu));localStorage.setItem("groceries",JSON.stringify(groceries));localStorage.setItem("chat",JSON.stringify(chat));localStorage.setItem("history",JSON.stringify(history));localStorage.setItem("points",points);localStorage.setItem("level",level);renderBadges();}
-function renderBadges(){const b=document.getElementById("badges");b.innerHTML="";if(points>=10)b.innerHTML+='<span class="badge">🔥 Débutant</span>';if(points>=30)b.innerHTML+='<span class="badge">💪 Actif</span>';if(points>=60)b.innerHTML+='<span class="badge">🏆 Expert</span>';}
+function renderBadges(){const b=document.getElementById("badges");b.innerHTML="";if(points>=10)b.innerHTML+='<span class="badge">🔥 Débutant</span>';if(points>=30)b.innerHTML+='<span class="badge">💪 Actif</span>';if(points>=60)b.innerHTML+='<span class="badge">🏆 Expert</span>;}
 
 // TODO
 function renderTodos(){const ul=document.getElementById("list");ul.innerHTML="";todos.forEach((t,i)=>{const li=document.createElement("li");li.textContent=t.text;if(t.done)li.classList.add("done");li.onclick=()=>{t.done=!t.done;if(t.done)points+=5;save();renderTodos();};let timer;li.onmousedown=li.ontouchstart=()=>timer=setTimeout(()=>{li.classList.add("fadeOut");setTimeout(()=>{todos.splice(i,1);save();renderTodos();},300)},800);li.onmouseup=li.ontouchend=()=>clearTimeout(timer);ul.appendChild(li);});}
@@ -160,13 +198,17 @@ function renderMenu(){const ul=document.getElementById("menu");ul.innerHTML="";m
 function generateGroceries(){let set=new Set();menu.forEach(m=>{const name=m.split(" : ")[1];const r=recipes.find(x=>x.n===name);if(r)r.i.forEach(i=>set.add(i));});groceries=[...set];renderGroceries();save();}
 function renderGroceries(){const ul=document.getElementById("groceries");ul.innerHTML="";groceries.forEach((it,i)=>{const li=document.createElement("li");li.textContent="🛒 "+it;let t;li.onmousedown=li.ontouchstart=()=>t=setTimeout(()=>{li.classList.add("fadeOut");setTimeout(()=>{groceries.splice(i,1);save();renderGroceries();},300)},800);li.onmouseup=li.ontouchend=()=>clearTimeout(t);ul.appendChild(li);});}
 
-// AI Sidebar
+// AI Sidebar Animation
 const aiSidebar=document.getElementById("aiSidebar"); const aiMenuBtn=document.getElementById("aiMenu"); const chatBox=document.getElementById("chatBox"); 
-aiMenuBtn.onclick=()=>{aiSidebar.style.left=aiSidebar.style.left==="0px"?"-350px":"0px";chatBox.style.display=chatBox.style.display==="block"?"none":"block"; renderHistory();}
+aiMenuBtn.onclick=()=>{
+  aiSidebar.classList.toggle("show");
+  chatBox.classList.toggle("show");
+  renderHistory();
+}
 function renderHistory(){const ul=document.getElementById("chatHistory");ul.innerHTML="";history.forEach((conv,i)=>{const li=document.createElement("li");li.textContent="Conversation "+(i+1);li.onclick=()=>{chat=[...history[i]];renderChat();};ul.appendChild(li);});}
 function newChat(){chat=[];renderChat();}
 function runAI(){const q=aiInput.value.trim();if(!q)return;points+=Math.max(1,Math.floor(q.length/6));let r="Je peux aider pour repas, recettes et organisation.";chat.push({from:"user",text:"👤 "+aiInput.value});chat.push({from:"ai",text:"🤖 "+r});history.push([...chat]);aiInput.value="";save();renderChat();}
-function renderChat(){const c=document.getElementById("chat");c.innerHTML="";chat.forEach((m,i)=>{const d=document.createElement("div");d.className="msg "+m.from;setTimeout(()=>{d.classList.add("show");},50);let t;d.onmousedown=d.ontouchstart=()=>t=setTimeout(()=>{d.classList.add("fadeOut");setTimeout(()=>{chat.splice(i,1);save();renderChat();},300)},800);d.onmouseup=d.ontouchend=()=>clearTimeout(t);c.appendChild(d);});c.scrollTop=c.scrollHeight;}
+function renderChat(){const c=document.getElementById("chat");c.innerHTML="";chat.forEach((m,i)=>{const d=document.createElement("div");d.className="msg "+m.from;setTimeout(()=>{d.classList.add("show");},50);let t;d.onmousedown=d.ontouchstart=()=>t=setTimeout(()=>{d.classList.add("fadeOut");setTimeout(()=>{chat.splice(i,1);save();renderChat();},300)},800);d.onmouseup=d.ontouchend=()=>clearTimeout(t);d.textContent=m.text;c.appendChild(d);});c.scrollTop=c.scrollHeight;}
 
 // Horloge
 function updateClock(){document.getElementById("clock").textContent=new Date().toLocaleTimeString();}
@@ -183,4 +225,4 @@ document.getElementById("searchInput").oninput=function(){const q=this.value.toL
 renderTodos();renderMenu();renderGroceries();renderChat();save();
 </script>
 </body>
-</html>
+  </html>
