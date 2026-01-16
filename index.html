@@ -54,7 +54,7 @@ li.done{text-decoration:line-through;opacity:.6}
 <h2>🤖 IA Conseiller</h2>
 <textarea id="aiInput" placeholder="Explique ton problème ou ta journée"></textarea>
 <button id="aiBtn">Demander conseil</button>
-<p id="aiOutput"></p>
+<p id="aiOutput" style="font-weight:bold;"></p>
 </div>
 
 <div class="card">
@@ -69,7 +69,6 @@ li.done{text-decoration:line-through;opacity:.6}
 const themeSel=document.getElementById('theme');
 const savedTheme=localStorage.getItem('theme');
 if(savedTheme){document.body.classList.add(savedTheme);themeSel.value=savedTheme}
-
 themeSel.addEventListener('change',()=>{
  document.body.className='';
  if(themeSel.value)document.body.classList.add(themeSel.value);
@@ -142,7 +141,7 @@ function runAI(){
  document.getElementById('aiOutput').textContent=response;
 }
 
-document.getElementById('aiBtn').onclick=runAI;
+document.getElementById('aiBtn').addEventListener('click',runAI);
 
 // ===== NOTIFICATION =====
 function setNotif(){
@@ -163,7 +162,7 @@ function setNotif(){
  });
 }
 
-document.getElementById('notifBtn').onclick=setNotif;
+document.getElementById('notifBtn').addEventListener('click',setNotif);
 </script>
 </body>
-  </html>
+ </html>
