@@ -17,54 +17,131 @@ input,textarea,button,select{width:100%;padding:8px;margin-top:6px;border-radius
 button{background:var(--primary);color:#fff;cursor:pointer;border:none}
 li{cursor:pointer;transition:.3s;margin-top:5px}
 li.done{text-decoration:line-through;opacity:.6}
+#aiOutput{white-space:pre-line;font-weight:bold}
+.badge{display:inline-block;margin:5px;padding:5px 10px;border-radius:8px;background:gold;color:#000;animation:pop 0.5s}
+@keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+canvas{background:#fff;border-radius:10px;padding:10px}
 </style>
 </head>
 <body>
 <header>
-<h1>🚀 Daily Life Dashboard</h1>
-<p>Tout-en-un • Fonctionnel • IA améliorée</p>
+<h1 id="title">🚀 Daily Life Dashboard</h1>
+<p id="subtitle">IA + Graphique + Badges animés</p>
 </header>
 
 <main>
 <div class="card">
-<h2>🎨 Thème</h2>
+<h2 id="themeLabel">🎨 Thème</h2>
 <select id="theme">
 <option value="">Clair</option>
 <option value="red">Rouge</option>
 <option value="blue">Bleu</option>
 <option value="green">Vert</option>
 </select>
+<h2 id="langLabel">🌍 Langue</h2>
+<select id="lang">
+<option value="fr">Français</option>
+<option value="en">English</option>
+</select>
 </div>
 
 <div class="card">
-<h2>📊 Stats</h2>
-<p>🏆 Points : <span id="points">0</span></p>
-<p>🎮 Niveau : <span id="level">1</span></p>
-<p>🏅 Badge : <span id="badge">Aucun</span></p>
+<h2 id="statsTitle">📊 Stats</h2>
+<p>🏆 <span id="pointsLabel">Points</span> : <span id="points">0</span></p>
+<p>🎮 <span id="levelLabel">Level</span> : <span id="level">1</span></p>
+<p>🏅 <span id="badgeLabel">Badge</span> : <span id="badge">Aucun</span></p>
+<div id="badges"></div>
 </div>
 
 <div class="card">
-<h2>✅ To-Do</h2>
+<h2 id="todoTitle">✅ To-Do</h2>
 <input id="todoInput" placeholder="Écris une tâche puis clique Ajouter">
 <button id="addBtn">Ajouter</button>
 <ul id="list"></ul>
 </div>
 
 <div class="card">
-<h2>🤖 IA Conseiller</h2>
-<textarea id="aiInput" placeholder="Explique ton problème ou ta journée"></textarea>
+<h2 id="aiTitle">🤖 IA Conseiller</h2>
+<textarea id="aiInput" placeholder="Écris ton message ici"></textarea>
 <button id="aiBtn">Demander conseil</button>
-<p id="aiOutput" style="font-weight:bold;"></p>
+<p id="aiOutput"></p>
 </div>
 
 <div class="card">
-<h2>🔔 Notification</h2>
+<h2 id="chartTitle">📊 Graphique de productivité</h2>
+<canvas id="chart" width="400" height="150"></canvas>
+</div>
+
+<div class="card">
+<h2 id="notifTitle">🔔 Notification</h2>
 <input type="time" id="notifTime">
 <button id="notifBtn">Activer rappel</button>
 </div>
 </main>
 
 <script>
+// ===== LANGUE =====
+let lang=localStorage.getItem('lang')||'fr';
+document.getElementById('lang').value=lang;
+const texts = {
+  fr: {
+    title:'🚀 Daily Life Dashboard',
+    subtitle:'IA + Graphique + Badges animés',
+    theme:'🎨 Thème',
+    lang:'🌍 Langue',
+    stats:'📊 Stats',
+    points:'Points',
+    level:'Niveau',
+    badge:'Badge',
+    todo:'✅ To-Do',
+    add:'Ajouter',
+    ai:'🤖 IA Conseiller',
+    chart:'📊 Graphique de productivité',
+    notif:'🔔 Notification',
+    notifMsg:'Il est temps de travailler sur tes tâches',
+    notifActivated:'Rappel activé à '
+  },
+  en: {
+    title:'🚀 Daily Life Dashboard',
+    subtitle:'AI + Chart + Animated Badges',
+    theme:'🎨 Theme',
+    lang:'🌍 Language',
+    stats:'📊 Stats',
+    points:'Points',
+    level:'Level',
+    badge:'Badge',
+    todo:'✅ To-Do',
+    add:'Add',
+    ai:'🤖 AI Advisor',
+    chart:'📊 Productivity Chart',
+    notif:'🔔 Notification',
+    notifMsg:'Time to work on your tasks',
+    notifActivated:'Reminder set for '
+  }
+};
+function setLanguage(l){
+  const t=texts[l];
+  document.getElementById('title').textContent=t.title;
+  document.getElementById('subtitle').textContent=t.subtitle;
+  document.getElementById('themeLabel').textContent=t.theme;
+  document.getElementById('langLabel').textContent=t.lang;
+  document.getElementById('statsTitle').textContent=t.stats;
+  document.getElementById('pointsLabel').textContent=t.points;
+  document.getElementById('levelLabel').textContent=t.level;
+  document.getElementById('badgeLabel').textContent=t.badge;
+  document.getElementById('todoTitle').textContent=t.todo;
+  document.getElementById('addBtn').textContent=t.add;
+  document.getElementById('aiTitle').textContent=t.ai;
+  document.getElementById('chartTitle').textContent=t.chart;
+  document.getElementById('notifTitle').textContent=t.notif;
+}
+setLanguage(lang);
+document.getElementById('lang').addEventListener('change',(e)=>{
+  lang=e.target.value;
+  localStorage.setItem('lang',lang);
+  setLanguage(lang);
+});
+
 // ===== THEME =====
 const themeSel=document.getElementById('theme');
 const savedTheme=localStorage.getItem('theme');
@@ -80,28 +157,42 @@ let todos=JSON.parse(localStorage.getItem('todos')||'[]');
 let points=parseInt(localStorage.getItem('points')||'0');
 let level=parseInt(localStorage.getItem('level')||'1');
 let badge=localStorage.getItem('badge')||'Aucun';
+let history=JSON.parse(localStorage.getItem('history')||'[]');
 
 const list=document.getElementById('list');
 const pointsEl=document.getElementById('points');
 const levelEl=document.getElementById('level');
 const badgeEl=document.getElementById('badge');
+const badgesDiv=document.getElementById('badges');
 
 function saveAll(){
  localStorage.setItem('todos',JSON.stringify(todos));
  localStorage.setItem('points',points);
  localStorage.setItem('level',level);
  localStorage.setItem('badge',badge);
+ localStorage.setItem('history',JSON.stringify(history));
  pointsEl.textContent=points;
  levelEl.textContent=level;
  badgeEl.textContent=badge;
+ renderBadges();
+ drawChart();
 }
 
+// ===== BADGES =====
+function renderBadges(){
+ badgesDiv.innerHTML='';
+ if(points>=50) badgesDiv.innerHTML+='<span class="badge">🎯 50 points</span>';
+ if(points>=100) badgesDiv.innerHTML+='<span class="badge">💪 100 points</span>';
+ if(level>=3) badgesDiv.innerHTML+='<span class="badge">🏅 Niveau 3</span>';
+}
+
+// ===== TODO =====
 function renderTodos(){
  list.innerHTML='';
  todos.forEach((t,i)=>{
   const li=document.createElement('li');
   li.textContent=t.text;
-  if(t.done)li.classList.add('done');
+  if(t.done) li.classList.add('done');
   li.onclick=()=>toggleTodo(i);
   list.appendChild(li);
  });
@@ -119,7 +210,9 @@ function addTodo(){
 function toggleTodo(i){
  if(!todos[i].done){
   points+=10;
+  history.push(points);
   if(points%50===0){level++;badge='🔥 Motivé'}
+  renderBadges(); // animation badge quand tâche finie
  }
  todos[i].done=!todos[i].done;
  renderTodos();
@@ -128,18 +221,18 @@ function toggleTodo(i){
 document.getElementById('addBtn').onclick=addTodo;
 renderTodos();
 
-// ===== IA Améliorée =====
+// ===== IA MULTI-REPONSES =====
 function runAI(){
  const text=document.getElementById('aiInput').value.trim().toLowerCase();
- let response='';
- if(text==='') response='Écris quelque chose pour que je puisse t’aider.';
- else if(text.includes('fatigu') || text.includes('épuisé')) response='Prends une pause et respire quelques minutes.';
- else if(text.includes('stress') || text.includes('angoissé')) response='Essaie de te détendre et fais une petite marche.';
- else if(text.includes('procrast')) response='Commence par une tâche très simple pour te lancer.';
- else if(text.includes('cava') || text.includes('ça va')) response='Content de l’entendre ! Continue comme ça.';
- else if(text.length<10) response='Hmm, peux-tu m’en dire un peu plus sur ta journée ?';
- else response='Très bien, garde le rythme et reste motivé !';
- document.getElementById('aiOutput').textContent=response;
+ let responses=[];
+ if(text==='') responses=['Écris quelque chose pour que je puisse t’aider.'];
+ else if(text.includes('fatigu') || text.includes('épuisé')) responses=['Prends une pause', 'Respire 5 minutes', 'Écoute de la musique'];
+ else if(text.includes('stress') || text.includes('angoissé')) responses=['Fais une marche', 'Bois de l’eau', 'Respire calmement'];
+ else if(text.includes('procrast')) responses=['Commence par une petite tâche', 'Découpe ton objectif', 'Supprime les distractions'];
+ else if(text.includes('cava') || text.includes('ça va')) responses=['Content de l’entendre !', 'Super, continue !', 'Garde le rythme !'];
+ else responses=['Reste concentré', 'Planifie tes tâches', 'N’oublie pas de prendre des pauses', 'Sois fier de toi'];
+ document.getElementById('aiOutput').textContent='• '+responses.join('\n• ');
+ document.getElementById('aiInput').value='';
 }
 document.getElementById('aiBtn').addEventListener('click',runAI);
 
@@ -147,21 +240,41 @@ document.getElementById('aiBtn').addEventListener('click',runAI);
 function setNotif(){
  if(!('Notification'in window)) return alert('Notifications non supportées');
  const time=document.getElementById('notifTime').value;
- if(!time) return alert('Choisis une heure');
+ if(!time) return alert(texts[lang].notifActivated);
  Notification.requestPermission().then(p=>{
   if(p==='granted'){
    setInterval(()=>{
     const now=new Date();
     const cur=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
     if(cur===time){
-     new Notification('⏰ Rappel','Il est temps de travailler sur tes tâches');
+     new Notification(texts[lang].notifMsg);
     }
    },60000);
-   alert('Rappel activé à '+time);
+   alert(texts[lang].notifActivated+time);
   }
  });
 }
 document.getElementById('notifBtn').addEventListener('click',setNotif);
+
+// ===== CHART =====
+function drawChart(){
+ const c=document.getElementById('chart');
+ const ctx=c.getContext('2d');
+ ctx.clearRect(0,0,c.width,c.height);
+ if(history.length===0) return;
+ const max=Math.max(...history);
+ const margin=20;
+ const w=(c.width-margin*2)/7;
+ const hScale=(c.height-margin*2)/max;
+ for(let i=0;i<history.length;i++){
+  ctx.fillStyle='#3b82f6';
+  const barHeight=history[i]*hScale;
+  ctx.fillRect(margin+i*w, c.height-margin-barHeight, w*0.6, barHeight);
+  ctx.fillStyle='#000';
+  ctx.fillText(history[i], margin+i*w+5, c.height-margin-barHeight-5);
+ }
+}
+drawChart();
 </script>
 </body>
  </html>
