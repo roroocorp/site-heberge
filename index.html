@@ -5,238 +5,209 @@
 <title>Daily Life Assistant</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#0f172a;
-  color:#e5e7eb;
-}
-header{
-  background:#2563eb;
-  padding:15px;
-  text-align:center;
-}
-main{
-  max-width:600px;
-  margin:auto;
-  padding:10px;
-}
-.card{
-  background:#1e293b;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:15px;
-}
-input, textarea, button{
-  width:100%;
-  padding:10px;
-  margin-top:8px;
-  border-radius:8px;
-  border:none;
-  box-sizing:border-box;
-}
-button{
-  background:#2563eb;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-}
-ul{padding:0;list-style:none}
-li{padding:6px;cursor:pointer}
-li.done{text-decoration:line-through;opacity:.6}
-.badge{
-  display:inline-block;
-  background:gold;
-  color:black;
-  padding:5px 10px;
-  border-radius:8px;
-  margin:4px;
-}
-.chat{
-  background:#020617;
-  padding:10px;
-  border-radius:10px;
-  margin-top:10px;
-  max-height:200px;
-  overflow-y:auto;
-  font-size:14px;
-}
-.user{color:#93c5fd;margin-bottom:6px}
-.ai{color:#a7f3d0;margin-bottom:10px}
-.category{
-  font-size:13px;
-  opacity:.8;
-  margin-top:5px;
-}
+:root{--bg:#0f172a;--card:#1e293b;--text:#e5e7eb;--primary:#3b82f6}
+body.red{--bg:#7f1d1d;--card:#991b1b;--text:#fff;--primary:#ef4444}
+body.blue{--bg:#0f172a;--card:#1e293b;--text:#e5e7eb;--primary:#3b82f6}
+body.green{--bg:#052e16;--card:#064e3b;--text:#ecfdf5;--primary:#22c55e}
+
+body{margin:0;font-family:Arial;background:var(--bg);color:var(--text)}
+header{background:var(--primary);color:#fff;padding:15px;text-align:center}
+main{max-width:600px;margin:auto;padding:10px}
+.card{background:var(--card);padding:15px;border-radius:12px;margin-bottom:15px}
+input,textarea,button,select{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:none}
+button{background:var(--primary);color:#fff;font-weight:bold}
+.chat{background:#00000030;padding:10px;border-radius:10px;max-height:220px;overflow-y:auto}
+.msg{margin-bottom:6px}
+.user{color:#93c5fd}
+.ai{color:#86efac}
+.category{font-size:13px;opacity:.8}
+.badge{background:gold;color:#000;padding:5px 10px;border-radius:8px;margin:4px;display:inline-block}
+.menu-day,.item{padding:6px;border-bottom:1px solid #ffffff20;cursor:pointer}
 </style>
 </head>
 
-<body>
+<body class="blue">
 <header>
 <h1>🤖 IA Daily Assistant</h1>
-<p>Aide • Recettes • Organisation • Définitions</p>
+<p>Mémoire • Menu • Courses • Recettes</p>
 </header>
 
 <main>
 
 <div class="card">
-<h2>📊 Progression</h2>
+<select id="theme">
+<option value="blue">Bleu</option>
+<option value="red">Rouge</option>
+<option value="green">Vert</option>
+</select>
+</div>
+
+<div class="card">
 <p>⭐ Points : <span id="points">0</span></p>
 <p>🎮 Niveau : <span id="level">1</span></p>
 <div id="badges"></div>
 </div>
 
 <div class="card">
-<h2>✅ Tâches</h2>
-<input id="todoInput" placeholder="Écris une tâche">
-<button onclick="addTodo()">Ajouter</button>
-<ul id="list"></ul>
+<h2>🧠 IA intelligente</h2>
+<textarea id="aiInput" placeholder="J’ai faim / recette poulet / aide..."></textarea>
+<button onclick="runAI()">Envoyer</button>
+<div class="category" id="cat"></div>
+<div class="chat" id="chat"></div>
 </div>
 
 <div class="card">
-<h2>🧠 IA intelligente</h2>
-<textarea id="aiInput" placeholder="Ex : recette pâtes, idée de repas, c'est quoi motivation..."></textarea>
-<button onclick="runAI()">Envoyer</button>
-<div class="category" id="aiCategory"></div>
-<div class="chat" id="chat"></div>
+<h2>🍳 Menu de la semaine</h2>
+<button onclick="generateMenu()">Générer menu</button>
+<div id="menu"></div>
+</div>
+
+<div class="card">
+<h2>🛒 Liste de courses</h2>
+<button onclick="generateGroceries()">Générer liste</button>
+<div id="groceries"></div>
 </div>
 
 </main>
 
 <script>
-let todos=JSON.parse(localStorage.getItem("todos")||"[]");
-let chatHistory=JSON.parse(localStorage.getItem("chat")||"[]");
-let points=Number(localStorage.getItem("points")||0);
-let level=Number(localStorage.getItem("level")||1);
+let chat=JSON.parse(localStorage.getItem("chat")||"[]");
+let menu=JSON.parse(localStorage.getItem("menu")||"[]");
+let groceries=JSON.parse(localStorage.getItem("groceries")||"[]");
+let memory=JSON.parse(localStorage.getItem("memory")||"{}");
+let points=+localStorage.getItem("points")||0;
+let level=+localStorage.getItem("level")||1;
 
-const list=document.getElementById("list");
-const pointsEl=document.getElementById("points");
-const levelEl=document.getElementById("level");
-const badgesDiv=document.getElementById("badges");
-const chat=document.getElementById("chat");
+const recipes=[
+{n:"Pâtes bolognaise",i:["pâtes","viande","tomate"]},
+{n:"Pâtes carbonara",i:["pâtes","œufs","lardons"]},
+{n:"Riz poulet",i:["riz","poulet"]},
+{n:"Poulet rôti",i:["poulet","épices"]},
+{n:"Omelette",i:["œufs"]},
+{n:"Salade",i:["salade","tomate"]},
+{n:"Burger",i:["pain","viande"]},
+{n:"Pizza",i:["pâte","fromage","tomate"]},
+{n:"Soupe",i:["légumes"]},
+{n:"Crêpes",i:["farine","œufs","lait"]}
+];
 
 function save(){
-  localStorage.setItem("todos",JSON.stringify(todos));
-  localStorage.setItem("chat",JSON.stringify(chatHistory));
-  localStorage.setItem("points",points);
-  localStorage.setItem("level",level);
-  pointsEl.textContent=points;
-  levelEl.textContent=level;
-  renderBadges();
+localStorage.setItem("chat",JSON.stringify(chat));
+localStorage.setItem("menu",JSON.stringify(menu));
+localStorage.setItem("groceries",JSON.stringify(groceries));
+localStorage.setItem("memory",JSON.stringify(memory));
+localStorage.setItem("points",points);
+localStorage.setItem("level",level);
+document.getElementById("points").textContent=points;
+document.getElementById("level").textContent=level;
+renderBadges();
 }
 
 function renderBadges(){
-  badgesDiv.innerHTML="";
-  if(points>=10) badgesDiv.innerHTML+='<span class="badge">🔥 Débutant</span>';
-  if(points>=25) badgesDiv.innerHTML+='<span class="badge">💪 Motivé</span>';
-  if(points>=50) badgesDiv.innerHTML+='<span class="badge">🏆 Expert</span>';
-}
-
-function renderTodos(){
-  list.innerHTML="";
-  todos.forEach((t,i)=>{
-    const li=document.createElement("li");
-    li.textContent=t.text;
-    if(t.done) li.classList.add("done");
-
-    li.onclick=()=>{
-      if(!t.done){
-        points+=5;
-        if(points%20===0) level++;
-      }
-      t.done=!t.done;
-      save(); renderTodos();
-    };
-
-    let timer;
-    li.onmousedown=li.ontouchstart=()=>{
-      timer=setTimeout(()=>{
-        todos.splice(i,1);
-        renderTodos(); save();
-      },800);
-    };
-    li.onmouseup=li.ontouchend=()=>clearTimeout(timer);
-
-    list.appendChild(li);
-  });
-}
-
-function addTodo(){
-  const v=todoInput.value.trim();
-  if(!v) return;
-  todos.push({text:v,done:false});
-  todoInput.value="";
-  renderTodos(); save();
+const b=document.getElementById("badges");
+b.innerHTML="";
+if(points>=10)b.innerHTML+='<span class="badge">🔥 Débutant</span>';
+if(points>=30)b.innerHTML+='<span class="badge">💪 Actif</span>';
+if(points>=60)b.innerHTML+='<span class="badge">🏆 Expert</span>';
 }
 
 function renderChat(){
-  chat.innerHTML="";
-  chatHistory.forEach(m=>{
-    chat.innerHTML+=`<div class="${m.from}">${m.text}</div>`;
-  });
-  chat.scrollTop=chat.scrollHeight;
+const c=document.getElementById("chat");
+c.innerHTML="";
+chat.forEach((m,i)=>{
+const d=document.createElement("div");
+d.className="msg "+m.from;
+d.textContent=m.text;
+let t;
+d.onmousedown=d.ontouchstart=()=>t=setTimeout(()=>{chat.splice(i,1);save();renderChat()},800);
+d.onmouseup=d.ontouchend=()=>clearTimeout(t);
+c.appendChild(d);
+});
+c.scrollTop=c.scrollHeight;
 }
 
-renderTodos(); renderChat(); save();
+function random(arr){return arr[Math.floor(Math.random()*arr.length)]}
 
-// ================= IA =================
+function remember(key){memory[key]=(memory[key]||0)+1;}
 
 function runAI(){
-  const input=document.getElementById("aiInput");
-  const cat=document.getElementById("aiCategory");
-  const q=input.value.trim().toLowerCase();
-  if(!q) return;
+const input=document.getElementById("aiInput");
+const q=input.value.trim().toLowerCase();
+if(!q)return;
 
-  points+=Math.max(1,Math.floor(q.length/6));
-  save();
+points+=Math.max(1,Math.floor(q.length/6));
+let r="",c="";
 
-  let r="", c="";
-
-  if(q.includes("recette") && q.includes("pâtes")){
-    c="🍝 Recette";
-    r=
-"Recette des pâtes 🍝\n\n"+
-"Ingrédients :\n- Pâtes\n- Sel\n- Sauce tomate\n\n"+
-"Étapes :\n1️⃣ Eau bouillante salée\n2️⃣ Cuire 8–10 min\n3️⃣ Égoutter\n4️⃣ Ajouter la sauce";
-  }
-  else if(q.includes("recette") && q.includes("riz")){
-    c="🍚 Recette";
-    r=
-"Recette du riz 🍚\n\n"+
-"Ingrédients :\n- Riz\n- Eau\n- Sel\n\n"+
-"Étapes :\n1️⃣ Rincer le riz\n2️⃣ 2x eau\n3️⃣ Cuire 12 min";
-  }
-  else if(q.includes("omelette")){
-    c="🍳 Recette";
-    r=
-"Omelette simple 🍳\n\n"+
-"Ingrédients : œufs, sel\n\n"+
-"Étapes : battre, cuire 3 min";
-  }
-  else if(q.includes("repas")){
-    c="🍽️ Idées de repas";
-    r=
-"- Riz + poulet\n- Omelette + salade\n- Pâtes + légumes\n- Sandwich maison";
-  }
-  else if(q.startsWith("c'est quoi")||q.startsWith("c’est quoi")){
-    c="📖 Définition";
-    r="C’est une explication simple pour comprendre un mot ou une idée.";
-  }
-  else if(q.includes("stress")||q.includes("fatigu")){
-    c="💙 Aide";
-    r="Respire lentement, bois de l’eau, repose-toi. Tu gères 👍";
-  }
-  else{
-    c="🤖 Aide générale";
-    r="Je peux aider pour recettes, repas, définitions et conseils.";
-  }
-
-  chatHistory.push({from:"user",text:"👤 "+input.value});
-  chatHistory.push({from:"ai",text:"🤖 "+r});
-  cat.textContent=c;
-  input.value="";
-  renderChat(); save();
+if(/faim|repas|menu/.test(q)){
+c="🍽️ Repas";
+const fav=Object.keys(memory).sort((a,b)=>memory[b]-memory[a])[0];
+const choice=fav?recipes.find(x=>x.n.toLowerCase().includes(fav))||random(recipes):random(recipes);
+r="Je te conseille : "+choice.n;
+remember(choice.n.split(" ")[0].toLowerCase());
 }
+else if(/recette|cuisine/.test(q)){
+c="🧑‍🍳 Recette";
+const rec=random(recipes);
+r="Recette "+rec.n+"\nIngrédients : "+rec.i.join(", ");
+remember(rec.n.split(" ")[0].toLowerCase());
+}
+else{
+c="🤖 Général";
+r="Je peux t’aider à manger, organiser et cuisiner.";
+}
+
+chat.push({from:"user",text:"👤 "+input.value});
+chat.push({from:"ai",text:"🤖 "+r});
+document.getElementById("cat").textContent=c;
+input.value="";
+save();renderChat();
+}
+
+function generateMenu(){
+const days=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+menu=days.map(d=>d+" : "+random(recipes).n);
+renderMenu();save();
+}
+
+function renderMenu(){
+const m=document.getElementById("menu");
+m.innerHTML="";
+menu.forEach(l=>{
+const d=document.createElement("div");
+d.className="menu-day";
+d.textContent=l;
+m.appendChild(d);
+});
+}
+
+function generateGroceries(){
+let set=new Set();
+menu.forEach(m=>{
+const name=m.split(": ")[1];
+const r=recipes.find(x=>x.n===name);
+if(r)r.i.forEach(i=>set.add(i));
+});
+groceries=[...set];
+renderGroceries();save();
+}
+
+function renderGroceries(){
+const g=document.getElementById("groceries");
+g.innerHTML="";
+groceries.forEach((it,i)=>{
+const d=document.createElement("div");
+d.className="item";
+d.textContent="🛒 "+it;
+let t;
+d.onmousedown=d.ontouchstart=()=>t=setTimeout(()=>{groceries.splice(i,1);save();renderGroceries()},800);
+d.onmouseup=d.ontouchend=()=>clearTimeout(t);
+g.appendChild(d);
+});
+}
+
+document.getElementById("theme").onchange=e=>document.body.className=e.target.value;
+
+renderChat();renderMenu();renderGroceries();save();
 </script>
 </body>
-</html>
+  </html>
