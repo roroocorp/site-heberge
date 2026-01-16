@@ -35,6 +35,7 @@ li.done{text-decoration:line-through;opacity:.6;}
 .category{font-size:13px;opacity:.8;}
 .badge{display:inline-block;background:gold;color:black;padding:5px 10px;border-radius:8px;margin:4px;}
 .menu-day,.item{padding:6px;border-bottom:1px solid #ffffff20;cursor:pointer;}
+.menu-day input{width:90%;padding:5px;margin-top:2px;margin-bottom:2px;border-radius:5px;}
 </style>
 </head>
 <body class="blue">
@@ -46,6 +47,7 @@ li.done{text-decoration:line-through;opacity:.6;}
 
 <main>
 
+<!-- Theme + Langue -->
 <div class="card">
 <select id="theme">
 <option value="blue">Bleu</option>
@@ -63,12 +65,14 @@ li.done{text-decoration:line-through;opacity:.6;}
 </select>
 </div>
 
+<!-- Points / Badges -->
 <div class="card">
 <p>⭐ Points : <span id="points">0</span></p>
 <p>🎮 Niveau : <span id="level">1</span></p>
 <div id="badges"></div>
 </div>
 
+<!-- Tâches -->
 <div class="card">
 <h2>✅ Tâches</h2>
 <input id="todoInput" placeholder="Écris une tâche">
@@ -76,6 +80,7 @@ li.done{text-decoration:line-through;opacity:.6;}
 <ul id="list"></ul>
 </div>
 
+<!-- IA Chat -->
 <div class="card">
 <h2>🧠 IA intelligente</h2>
 <textarea id="aiInput" placeholder="J’ai faim / recette poulet / aide..."></textarea>
@@ -84,16 +89,18 @@ li.done{text-decoration:line-through;opacity:.6;}
 <div class="chat" id="chat"></div>
 </div>
 
+<!-- Menu Semaine -->
 <div class="card">
 <h2>🍳 Menu de la semaine</h2>
 <button onclick="generateMenu()">Générer menu</button>
-<div id="menu"></div>
+<ul id="menu"></ul>
 </div>
 
+<!-- Liste Courses -->
 <div class="card">
 <h2>🛒 Liste de courses</h2>
 <button onclick="generateGroceries()">Générer liste</button>
-<div id="groceries"></div>
+<ul id="groceries"></ul>
 </div>
 
 </main>
@@ -110,9 +117,9 @@ let level=+localStorage.getItem("level")||1;
 
 /* ======= LANGUES ======= */
 const texts={
-fr:{title:"🤖 Assistant Quotidien",sub:"Tâches • Menu • IA • Recettes",todo:"Écris une tâche",menu:"Menu de la semaine",courses:"Liste de courses"},
-en:{title:"🤖 Daily Assistant",sub:"Tasks • Menu • AI • Recipes",todo:"Write a task",menu:"Weekly Menu",courses:"Shopping List"},
-de:{title:"🤖 Täglicher Assistent",sub:"Aufgaben • Menü • KI • Rezepte",todo:"Aufgabe eingeben",menu:"Wochenmenü",courses:"Einkaufsliste"}
+fr:{title:"🤖 Assistant Quotidien",sub:"Tâches • Menu • IA • Recettes",todo:"Écris une tâche"},
+en:{title:"🤖 Daily Assistant",sub:"Tasks • Menu • AI • Recipes",todo:"Write a task"},
+de:{title:"🤖 Täglicher Assistent",sub:"Aufgaben • Menü • KI • Rezepte",todo:"Aufgabe eingeben"}
 };
 const langSel=document.getElementById("lang");
 const savedLang=localStorage.getItem("lang")||"fr";
@@ -169,7 +176,7 @@ function addTodo(){
   todos.push({text:v,done:false}); todoInput.value=""; save(); renderTodos();
 }
 
-/* ======= CHAT / IA ======= */
+/* ======= IA / Chat ======= */
 const recipes=[
   {n:"Pâtes bolognaise",i:["pâtes","viande","tomate"]},
   {n:"Pâtes carbonara",i:["pâtes","œufs","lardons"]},
@@ -217,38 +224,44 @@ function renderChat(){
   }); c.scrollTop=c.scrollHeight;
 }
 
-/* ======= MENU ======= */
+/* ======= MENU / COURSES ======= */
+const days=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 function generateMenu(){
-  const days=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
-  menu=days.map(d=>d+" : "+random(recipes).n); renderMenu(); save();
+  menu=days.map(d=>{const old=menu.find(x=>x.startsWith(d)); return old||d+" : "+random(recipes).n;});
+  renderMenu(); save();
 }
 function renderMenu(){
-  const m=document.getElementById("menu"); m.innerHTML="";
+  const ul=document.getElementById("menu"); ul.innerHTML="";
   menu.forEach((l,i)=>{
-    const d=document.createElement("div"); d.className="menu-day"; d.textContent=l;
-    let t; d.onmousedown=d.ontouchstart=()=>t=setTimeout(()=>{menu.splice(i,1);save();renderMenu()},800);
-    d.onmouseup=d.ontouchend=()=>clearTimeout(t);
-    m.appendChild(d);
+    const li=document.createElement("li"); 
+    const day=l.split(" : ")[0];
+    const meal=l.split(" : ")[1];
+    const input=document.createElement("input"); input.value=meal;
+    input.onchange=()=>{menu[i]=day+" : "+input.value; save();}
+    let t; li.onmousedown=li.ontouchstart=()=>t=setTimeout(()=>{menu.splice(i,1);save();renderMenu()},800);
+    li.onmouseup=li.ontouchend=()=>clearTimeout(t);
+    li.appendChild(document.createTextNode(day+" : "));
+    li.appendChild(input);
+    ul.appendChild(li);
   });
 }
-
-/* ======= COURSES ======= */
 function generateGroceries(){
   let set=new Set();
-  menu.forEach(m=>{const name=m.split(": ")[1]; const r=recipes.find(x=>x.n===name); if(r) r.i.forEach(i=>set.add(i));});
+  menu.forEach(m=>{const name=m.split(" : ")[1]; const r=recipes.find(x=>x.n===name); if(r) r.i.forEach(i=>set.add(i));});
   groceries=[...set]; renderGroceries(); save();
 }
 function renderGroceries(){
-  const g=document.getElementById("groceries"); g.innerHTML="";
+  const ul=document.getElementById("groceries"); ul.innerHTML="";
   groceries.forEach((it,i)=>{
-    const d=document.createElement("div"); d.className="item"; d.textContent="🛒 "+it;
-    let t; d.onmousedown=d.ontouchstart=()=>t=setTimeout(()=>{groceries.splice(i,1);save();renderGroceries()},800);
-    d.onmouseup=d.ontouchend=()=>clearTimeout(t);
-    g.appendChild(d);
+    const li=document.createElement("li"); li.textContent="🛒 "+it;
+    let t; li.onmousedown=li.ontouchstart=()=>t=setTimeout(()=>{groceries.splice(i,1);save();renderGroceries()},800);
+    li.onmouseup=li.ontouchend=()=>clearTimeout(t);
+    ul.appendChild(li);
   });
 }
 
 renderTodos(); renderChat(); renderMenu(); renderGroceries(); save();
 </script>
+
 </body>
   </html>
