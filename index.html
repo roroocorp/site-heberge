@@ -2,24 +2,26 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Assistant Quotidien Ultra Fluide</title>
+<title>Assistant Quotidien Ultra</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 :root{
-  --blue:#3b82f6; --red:#ef4444; --green:#22c55e; --purple:#a855f7; --orange:#f97316; --pink:#ec4899;
+  --blue:#3b82f6; --red:#ef4444; --green:#22c55e;
+  --purple:#a855f7; --orange:#f97316; --pink:#ec4899;
 }
 *{box-sizing:border-box;}
 body{
   margin:0;
   font-family:Arial,sans-serif;
   transition:background 0.5s;
-  background:var(--blue);
+  background:var(--pink);
   color:white;
 }
 header{
   display:flex;justify-content:space-between;align-items:center;
   padding:10px 15px;
   position:sticky;top:0;z-index:10;
+  background:rgba(0,0,0,0.05);
 }
 main{
   max-width:900px;margin:auto;padding:10px;
@@ -44,6 +46,7 @@ li.done{text-decoration:line-through;opacity:.6;}
 li:hover{transform:scale(1.02);}
 #clock{font-weight:bold;margin-left:10px;}
 #aiMenu{cursor:pointer;font-weight:bold;margin-left:10px;}
+
 /* Sidebar */
 #aiSidebar{
   position:fixed;top:0;left:-400px;width:400px;height:100%;
@@ -57,6 +60,7 @@ li:hover{transform:scale(1.02);}
 #aiSidebar ul{list-style:none;padding:0;}
 #aiSidebar li{padding:6px;margin-bottom:4px;border-radius:6px;background:#f1f5f9;cursor:pointer;transition:all 0.3s;}
 #aiSidebar li:hover{background:#e2e8f0;}
+
 /* Chat */
 #chatBox{
   display:none;position:fixed;bottom:10px;left:420px;right:10px;
@@ -173,17 +177,16 @@ setLang(savedLang); langSel.onchange=()=>{setLang(langSel.value);localStorage.se
 
 // THEME
 const themeSel=document.getElementById("theme"); const savedTheme=localStorage.getItem("theme"); 
-if(savedTheme){document.body.className=savedTheme;document.body.style.background="var(--"+savedTheme+")"; themeSel.value=savedTheme;}
+if(savedTheme){document.body.style.background="var(--"+savedTheme+")"; themeSel.value=savedTheme;}
 themeSel.onchange=()=>{
   const t=themeSel.value;
-  document.body.className=t;
   document.body.style.background="var(--"+t+")";
   localStorage.setItem("theme",t);
 };
 
 // POINTS / BADGES
 function save(){localStorage.setItem("todos",JSON.stringify(todos));localStorage.setItem("menu",JSON.stringify(menu));localStorage.setItem("groceries",JSON.stringify(groceries));localStorage.setItem("chat",JSON.stringify(chat));localStorage.setItem("history",JSON.stringify(history));localStorage.setItem("points",points);localStorage.setItem("level",level);renderBadges();}
-function renderBadges(){const b=document.getElementById("badges");b.innerHTML="";if(points>=10)b.innerHTML+='<span class="badge">🔥 Débutant</span>';if(points>=30)b.innerHTML+='<span class="badge">💪 Actif</span>';if(points>=60)b.innerHTML+='<span class="badge">🏆 Expert</span>;}
+function renderBadges(){const b=document.getElementById("badges");b.innerHTML="";if(points>=10)b.innerHTML+='<span class="badge">🔥 Débutant</span>';if(points>=30)b.innerHTML+='<span class="badge">💪 Actif</span>';if(points>=60)b.innerHTML+='<span class="badge">🏆 Expert</span>'}
 
 // TODO
 function renderTodos(){const ul=document.getElementById("list");ul.innerHTML="";todos.forEach((t,i)=>{const li=document.createElement("li");li.textContent=t.text;if(t.done)li.classList.add("done");li.onclick=()=>{t.done=!t.done;if(t.done)points+=5;save();renderTodos();};let timer;li.onmousedown=li.ontouchstart=()=>timer=setTimeout(()=>{li.classList.add("fadeOut");setTimeout(()=>{todos.splice(i,1);save();renderTodos();},300)},800);li.onmouseup=li.ontouchend=()=>clearTimeout(timer);ul.appendChild(li);});}
@@ -194,27 +197,23 @@ const days=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 const recipes=[{n:"Pâtes bolognaise",i:["pâtes","viande","tomate"]},{n:"Pizza",i:["pâte","fromage","tomate"]},{n:"Burger",i:["pain","viande","salade"]},{n:"Salade",i:["salade","tomate","concombre"]},{n:"Omelette",i:["œufs","sel","poivre"]},{n:"Riz au poulet",i:["riz","poulet","épices"]},{n:"Soupe légumes",i:["légumes","eau","sel"]},{n:"Crêpes",i:["farine","œufs","lait"]},{n:"Spaghetti carbonara",i:["spaghetti","lardons","œufs","fromage"]},{n:"Poisson rôti",i:["poisson","citron","herbes"]}];
 function random(arr){return arr[Math.floor(Math.random()*arr.length)];}
 function generateMenu(){menu=days.map(d=>{const old=menu.find(x=>x.startsWith(d)); return old||d+" : "+random(recipes).n;});renderMenu();save();}
-function renderMenu(){const ul=document.getElementById("menu");ul.innerHTML="";menu.forEach((l,i)=>{const li=document.createElement("li");const day=l.split(" : ")[0];const meal=l.split(" : ")[1];const input=document.createElement("input");input.value=meal;input.onchange=()=>{menu[i]=day+" : "+input.value;save();};let t;li.onmousedown=li.ontouchstart=()=>t=setTimeout(()=>{li.classList.add("fadeOut");setTimeout(()=>{menu.splice(i,1);save();renderMenu();},300)},800);li.onmouseup=li.ontouchend=()=>clearTimeout(t);li.appendChild(document.createTextNode(day+" : "));li.appendChild(input);ul.appendChild(li);});}
+function renderMenu(){const ul=document.getElementById("menu");ul.innerHTML="";menu.forEach((l,i)=>{const li=document.createElement("li");const day=l.split(" : ")[0];const meal=l.split(" : ")[1];const input=document.createElement("input");input.value=meal;input.onchange=()=>{menu[i]=day+" : "+input.value;save();};li.appendChild(document.createTextNode(day+" : "));li.appendChild(input);ul.appendChild(li);});}
 function generateGroceries(){let set=new Set();menu.forEach(m=>{const name=m.split(" : ")[1];const r=recipes.find(x=>x.n===name);if(r)r.i.forEach(i=>set.add(i));});groceries=[...set];renderGroceries();save();}
-function renderGroceries(){const ul=document.getElementById("groceries");ul.innerHTML="";groceries.forEach((it,i)=>{const li=document.createElement("li");li.textContent="🛒 "+it;let t;li.onmousedown=li.ontouchstart=()=>t=setTimeout(()=>{li.classList.add("fadeOut");setTimeout(()=>{groceries.splice(i,1);save();renderGroceries();},300)},800);li.onmouseup=li.ontouchend=()=>clearTimeout(t);ul.appendChild(li);});}
+function renderGroceries(){const ul=document.getElementById("groceries");ul.innerHTML="";groceries.forEach((it,i)=>{const li=document.createElement("li");li.textContent="🛒 "+it;ul.appendChild(li);});}
 
-// AI Sidebar Animation
+// AI Sidebar
 const aiSidebar=document.getElementById("aiSidebar"); const aiMenuBtn=document.getElementById("aiMenu"); const chatBox=document.getElementById("chatBox"); 
-aiMenuBtn.onclick=()=>{
-  aiSidebar.classList.toggle("show");
-  chatBox.classList.toggle("show");
-  renderHistory();
-}
+aiMenuBtn.onclick=()=>{aiSidebar.classList.toggle("show");chatBox.classList.toggle("show");renderHistory();}
 function renderHistory(){const ul=document.getElementById("chatHistory");ul.innerHTML="";history.forEach((conv,i)=>{const li=document.createElement("li");li.textContent="Conversation "+(i+1);li.onclick=()=>{chat=[...history[i]];renderChat();};ul.appendChild(li);});}
 function newChat(){chat=[];renderChat();}
 function runAI(){const q=aiInput.value.trim();if(!q)return;points+=Math.max(1,Math.floor(q.length/6));let r="Je peux aider pour repas, recettes et organisation.";chat.push({from:"user",text:"👤 "+aiInput.value});chat.push({from:"ai",text:"🤖 "+r});history.push([...chat]);aiInput.value="";save();renderChat();}
-function renderChat(){const c=document.getElementById("chat");c.innerHTML="";chat.forEach((m,i)=>{const d=document.createElement("div");d.className="msg "+m.from;setTimeout(()=>{d.classList.add("show");},50);let t;d.onmousedown=d.ontouchstart=()=>t=setTimeout(()=>{d.classList.add("fadeOut");setTimeout(()=>{chat.splice(i,1);save();renderChat();},300)},800);d.onmouseup=d.ontouchend=()=>clearTimeout(t);d.textContent=m.text;c.appendChild(d);});c.scrollTop=c.scrollHeight;}
+function renderChat(){const c=document.getElementById("chat");c.innerHTML="";chat.forEach((m,i)=>{const d=document.createElement("div");d.className="msg "+m.from;setTimeout(()=>{d.classList.add("show");},50);d.textContent=m.text;c.appendChild(d);c.scrollTop=c.scrollHeight;});}
 
-// Horloge
+// Clock
 function updateClock(){document.getElementById("clock").textContent=new Date().toLocaleTimeString();}
 setInterval(updateClock,1000);updateClock();
 
-// Réveil simple
+// Alarm
 let alarmTimeout;
 function setAlarm(){const time=document.getElementById("alarmTime").value;if(!time)return;const now=new Date();const parts=time.split(":");const alarm=new Date();alarm.setHours(parts[0],parts[1],0,0);if(alarm<now)alarm.setDate(alarm.getDate()+1);const diff=alarm-now;clearTimeout(alarmTimeout);alarmTimeout=setTimeout(()=>{alert("⏰ Réveil !");},diff);document.getElementById("alarmMsg").textContent="Réveil programmé à "+time;}
 
@@ -225,4 +224,4 @@ document.getElementById("searchInput").oninput=function(){const q=this.value.toL
 renderTodos();renderMenu();renderGroceries();renderChat();save();
 </script>
 </body>
-  </html>
+</html>
