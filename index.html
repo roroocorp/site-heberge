@@ -9,18 +9,19 @@
 body.red{--bg:#7f1d1d;--card:#991b1b;--text:#fff;--primary:#ef4444}
 body.blue{--bg:#0f172a;--card:#1e293b;--text:#e0f2fe;--primary:#3b82f6}
 body.green{--bg:#052e16;--card:#064e3b;--text:#ecfdf5;--primary:#22c55e}
-body{margin:0;font-family:Arial;background:var(--bg);color:var(--text)}
-header{background:var(--primary);color:#fff;padding:20px;text-align:center}
-main{max-width:900px;margin:auto;padding:20px;display:grid;gap:20px}
-.card{background:var(--card);padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
-input,textarea,button,select{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #ccc}
+body{margin:0;font-family:Arial;background:var(--bg);color:var(--text);overflow-x:hidden}
+header{background:var(--primary);color:#fff;padding:15px;text-align:center}
+main{max-width:600px;margin:auto;padding:20px;display:flex;flex-direction:column;gap:20px}
+.card{background:var(--card);padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.2);width:100%}
+input,textarea,button,select{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box}
 button{background:var(--primary);color:#fff;cursor:pointer;border:none}
-li{cursor:pointer;transition:.3s;margin-top:5px}
+li{cursor:pointer;margin-top:5px;transition:.3s;list-style:none;padding:4px 0}
 li.done{text-decoration:line-through;opacity:.6}
+.badge{display:inline-block;margin:5px;padding:5px 10px;border-radius:8px;background:gold;color:#000;animation:pop 0.5s;cursor:pointer}
+#points{transition:transform 0.3s}
 #aiOutput{white-space:pre-line;font-weight:bold}
-.badge{display:inline-block;margin:5px;padding:5px 10px;border-radius:8px;background:gold;color:#000;animation:pop 0.5s}
+canvas{width:100% !important;height:150px !important;border-radius:10px}
 @keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
-canvas{background:#fff;border-radius:10px;padding:10px}
 </style>
 </head>
 <body>
@@ -48,7 +49,7 @@ canvas{background:#fff;border-radius:10px;padding:10px}
 <div class="card">
 <h2 id="statsTitle">📊 Stats</h2>
 <p>🏆 <span id="pointsLabel">Points</span> : <span id="points">0</span></p>
-<p>🎮 <span id="levelLabel">Level</span> : <span id="level">1</span></p>
+<p>🎮 <span id="levelLabel">Niveau</span> : <span id="level">1</span></p>
 <p>🏅 <span id="badgeLabel">Badge</span> : <span id="badge">Aucun</span></p>
 <div id="badges"></div>
 </div>
@@ -69,7 +70,7 @@ canvas{background:#fff;border-radius:10px;padding:10px}
 
 <div class="card">
 <h2 id="chartTitle">📊 Graphique de productivité</h2>
-<canvas id="chart" width="400" height="150"></canvas>
+<canvas id="chart"></canvas>
 </div>
 
 <div class="card">
@@ -84,40 +85,8 @@ canvas{background:#fff;border-radius:10px;padding:10px}
 let lang=localStorage.getItem('lang')||'fr';
 document.getElementById('lang').value=lang;
 const texts = {
-  fr: {
-    title:'🚀 Daily Life Dashboard',
-    subtitle:'IA + Graphique + Badges animés',
-    theme:'🎨 Thème',
-    lang:'🌍 Langue',
-    stats:'📊 Stats',
-    points:'Points',
-    level:'Niveau',
-    badge:'Badge',
-    todo:'✅ To-Do',
-    add:'Ajouter',
-    ai:'🤖 IA Conseiller',
-    chart:'📊 Graphique de productivité',
-    notif:'🔔 Notification',
-    notifMsg:'Il est temps de travailler sur tes tâches',
-    notifActivated:'Rappel activé à '
-  },
-  en: {
-    title:'🚀 Daily Life Dashboard',
-    subtitle:'AI + Chart + Animated Badges',
-    theme:'🎨 Theme',
-    lang:'🌍 Language',
-    stats:'📊 Stats',
-    points:'Points',
-    level:'Level',
-    badge:'Badge',
-    todo:'✅ To-Do',
-    add:'Add',
-    ai:'🤖 AI Advisor',
-    chart:'📊 Productivity Chart',
-    notif:'🔔 Notification',
-    notifMsg:'Time to work on your tasks',
-    notifActivated:'Reminder set for '
-  }
+  fr: {title:'🚀 Daily Life Dashboard', subtitle:'IA + Graphique + Badges animés', theme:'🎨 Thème', lang:'🌍 Langue', stats:'📊 Stats', points:'Points', level:'Niveau', badge:'Badge', todo:'✅ To-Do', add:'Ajouter', ai:'🤖 IA Conseiller', chart:'📊 Graphique de productivité', notif:'🔔 Notification', notifMsg:'Il est temps de travailler sur tes tâches', notifActivated:'Rappel activé à '},
+  en: {title:'🚀 Daily Life Dashboard', subtitle:'AI + Chart + Animated Badges', theme:'🎨 Theme', lang:'🌍 Language', stats:'📊 Stats', points:'Points', level:'Level', badge:'Badge', todo:'✅ To-Do', add:'Add', ai:'🤖 AI Advisor', chart:'📊 Productivity Chart', notif:'🔔 Notification', notifMsg:'Time to work on your tasks', notifActivated:'Reminder set for '}
 };
 function setLanguage(l){
   const t=texts[l];
@@ -136,21 +105,13 @@ function setLanguage(l){
   document.getElementById('notifTitle').textContent=t.notif;
 }
 setLanguage(lang);
-document.getElementById('lang').addEventListener('change',(e)=>{
-  lang=e.target.value;
-  localStorage.setItem('lang',lang);
-  setLanguage(lang);
-});
+document.getElementById('lang').addEventListener('change',(e)=>{lang=e.target.value; localStorage.setItem('lang',lang); setLanguage(lang);});
 
 // ===== THEME =====
 const themeSel=document.getElementById('theme');
 const savedTheme=localStorage.getItem('theme');
 if(savedTheme){document.body.classList.add(savedTheme);themeSel.value=savedTheme}
-themeSel.addEventListener('change',()=>{
- document.body.className='';
- if(themeSel.value)document.body.classList.add(themeSel.value);
- localStorage.setItem('theme',themeSel.value);
-});
+themeSel.addEventListener('change',()=>{document.body.className=''; if(themeSel.value)document.body.classList.add(themeSel.value); localStorage.setItem('theme',themeSel.value);});
 
 // ===== DATA =====
 let todos=JSON.parse(localStorage.getItem('todos')||'[]');
@@ -165,116 +126,28 @@ const levelEl=document.getElementById('level');
 const badgeEl=document.getElementById('badge');
 const badgesDiv=document.getElementById('badges');
 
-function saveAll(){
- localStorage.setItem('todos',JSON.stringify(todos));
- localStorage.setItem('points',points);
- localStorage.setItem('level',level);
- localStorage.setItem('badge',badge);
- localStorage.setItem('history',JSON.stringify(history));
- pointsEl.textContent=points;
- levelEl.textContent=level;
- badgeEl.textContent=badge;
- renderBadges();
- drawChart();
-}
+function saveAll(){localStorage.setItem('todos',JSON.stringify(todos)); localStorage.setItem('points',points); localStorage.setItem('level',level); localStorage.setItem('badge',badge); localStorage.setItem('history',JSON.stringify(history)); pointsEl.textContent=points; levelEl.textContent=level; badgeEl.textContent=badge; renderBadges(); drawChart();}
 
 // ===== BADGES =====
-function renderBadges(){
- badgesDiv.innerHTML='';
- if(points>=50) badgesDiv.innerHTML+='<span class="badge">🎯 50 points</span>';
- if(points>=100) badgesDiv.innerHTML+='<span class="badge">💪 100 points</span>';
- if(level>=3) badgesDiv.innerHTML+='<span class="badge">🏅 Niveau 3</span>';
-}
+function renderBadges(){badgesDiv.innerHTML=''; if(points>=50) badgesDiv.innerHTML+='<span class="badge">🎯 50 points</span>'; if(points>=100) badgesDiv.innerHTML+='<span class="badge">💪 100 points</span>'; if(level>=3) badgesDiv.innerHTML+='<span class="badge">🏅 Niveau 3</span>';}
 
 // ===== TODO =====
-function renderTodos(){
- list.innerHTML='';
- todos.forEach((t,i)=>{
-  const li=document.createElement('li');
-  li.textContent=t.text;
-  if(t.done) li.classList.add('done');
-  li.onclick=()=>toggleTodo(i);
-  list.appendChild(li);
- });
- saveAll();
-}
+function renderTodos(){list.innerHTML=''; todos.forEach((t,i)=>{const li=document.createElement('li'); li.textContent=t.text; if(t.done) li.classList.add('done'); li.onclick=()=>toggleTodo(i); list.appendChild(li);}); saveAll();}
+function addTodo(){const input=document.getElementById('todoInput'); if(input.value.trim()==='')return; todos.push({text:input.value,done:false}); input.value=''; renderTodos();}
+function toggleTodo(i){if(!todos[i].done){points+=10; history.push(points); if(points%50===0){level++;badge='🔥 Motivé'} pointsEl.style.transform='scale(1.3)'; setTimeout(()=>pointsEl.style.transform='scale(1)',300);} todos[i].done=!todos[i].done; renderTodos();}
+document.getElementById('addBtn').onclick=addTodo; renderTodos();
 
-function addTodo(){
- const input=document.getElementById('todoInput');
- if(input.value.trim()==='')return;
- todos.push({text:input.value,done:false});
- input.value='';
- renderTodos();
-}
-
-function toggleTodo(i){
- if(!todos[i].done){
-  points+=10;
-  history.push(points);
-  if(points%50===0){level++;badge='🔥 Motivé'}
-  renderBadges(); // animation badge quand tâche finie
- }
- todos[i].done=!todos[i].done;
- renderTodos();
-}
-
-document.getElementById('addBtn').onclick=addTodo;
-renderTodos();
-
-// ===== IA MULTI-REPONSES =====
-function runAI(){
- const text=document.getElementById('aiInput').value.trim().toLowerCase();
- let responses=[];
- if(text==='') responses=['Écris quelque chose pour que je puisse t’aider.'];
- else if(text.includes('fatigu') || text.includes('épuisé')) responses=['Prends une pause', 'Respire 5 minutes', 'Écoute de la musique'];
- else if(text.includes('stress') || text.includes('angoissé')) responses=['Fais une marche', 'Bois de l’eau', 'Respire calmement'];
- else if(text.includes('procrast')) responses=['Commence par une petite tâche', 'Découpe ton objectif', 'Supprime les distractions'];
- else if(text.includes('cava') || text.includes('ça va')) responses=['Content de l’entendre !', 'Super, continue !', 'Garde le rythme !'];
- else responses=['Reste concentré', 'Planifie tes tâches', 'N’oublie pas de prendre des pauses', 'Sois fier de toi'];
- document.getElementById('aiOutput').textContent='• '+responses.join('\n• ');
- document.getElementById('aiInput').value='';
-}
+// ===== IA =====
+function runAI(){const text=document.getElementById('aiInput').value.trim().toLowerCase(); let responses=[]; if(text==='') responses=['Écris quelque chose pour que je puisse t’aider.']; else if(text.includes('fatigu') || text.includes('épuisé')) responses=['Prends une pause','Respire 5 minutes','Écoute de la musique']; else if(text.includes('stress') || text.includes('angoissé')) responses=['Fais une marche','Bois de l’eau','Respire calmement']; else if(text.includes('procrast')) responses=['Commence par une petite tâche','Découpe ton objectif','Supprime les distractions']; else if(text.includes('cava') || text.includes('ça va')) responses=['Content de l’entendre !','Super, continue !','Garde le rythme !']; else responses=['Reste concentré','Planifie tes tâches','N’oublie pas de prendre des pauses','Sois fier de toi']; document.getElementById('aiOutput').textContent='• '+responses.join('\n• '); document.getElementById('aiInput').value='';}
 document.getElementById('aiBtn').addEventListener('click',runAI);
 
 // ===== NOTIFICATION =====
-function setNotif(){
- if(!('Notification'in window)) return alert('Notifications non supportées');
- const time=document.getElementById('notifTime').value;
- if(!time) return alert(texts[lang].notifActivated);
- Notification.requestPermission().then(p=>{
-  if(p==='granted'){
-   setInterval(()=>{
-    const now=new Date();
-    const cur=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-    if(cur===time){
-     new Notification(texts[lang].notifMsg);
-    }
-   },60000);
-   alert(texts[lang].notifActivated+time);
-  }
- });
-}
+function setNotif(){if(!('Notification' in window)) return alert('Notifications non supportées'); const time=document.getElementById('notifTime').value; if(!time) return alert(texts[lang].notifActivated); Notification.requestPermission().then(p=>{if(p==='granted'){setInterval(()=>{const now=new Date(); const cur=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0'); if(cur===time){new Notification(texts[lang].notifMsg);}},60000); alert(texts[lang].notifActivated+time);}});}
 document.getElementById('notifBtn').addEventListener('click',setNotif);
 
-// ===== CHART =====
-function drawChart(){
- const c=document.getElementById('chart');
- const ctx=c.getContext('2d');
- ctx.clearRect(0,0,c.width,c.height);
- if(history.length===0) return;
- const max=Math.max(...history);
- const margin=20;
- const w=(c.width-margin*2)/7;
- const hScale=(c.height-margin*2)/max;
- for(let i=0;i<history.length;i++){
-  ctx.fillStyle='#3b82f6';
-  const barHeight=history[i]*hScale;
-  ctx.fillRect(margin+i*w, c.height-margin-barHeight, w*0.6, barHeight);
-  ctx.fillStyle='#000';
-  ctx.fillText(history[i], margin+i*w+5, c.height-margin-barHeight-5);
- }
-}
+// ===== GRAPH =====
+function drawChart(){const c=document.getElementById('chart'); const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); if(history.length===0) return; const max=Math.max(...history); const margin=20; const w=(c.width-margin*2)/7; const hScale=(c.height-margin*2)/max; for(let i=0;i<history.length;i++){ctx.fillStyle='#3b82f6'; const barHeight=history[i]*hScale; ctx.fillRect(margin+i*w, c.height-margin-barHeight, w*0.6, barHeight); ctx.fillStyle='#000'; ctx.fillText(history[i], margin+i*w+5, c.height-margin-barHeight-5);}}
 drawChart();
 </script>
 </body>
- </html>
+  </html>
