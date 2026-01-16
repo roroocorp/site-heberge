@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Assistant Quotidien Ultra</title>
+<title>Assistant Quotidien Ultra IA</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 :root{
@@ -12,15 +12,13 @@
 *{box-sizing:border-box;}
 body{
   margin:0;font-family:Arial,sans-serif;
-  background:var(--pink);
-  color:white;
-  transition:background 0.5s;
+  background:rgba(236,72,153,0.8);
+  color:white;transition:background 0.5s;
   overflow-x:hidden;
 }
 header{
   display:flex;justify-content:space-between;align-items:center;
-  padding:10px 15px;
-  position:sticky;top:0;z-index:10;
+  padding:10px 15px;position:sticky;top:0;z-index:10;
   background:rgba(0,0,0,0.05);
 }
 main{
@@ -28,7 +26,8 @@ main{
   display:flex;flex-direction:column;gap:10px;
 }
 .card{
-  padding:15px;border-radius:12px;background:rgba(255,255,255,0.9);
+  padding:15px;border-radius:12px;
+  background:rgba(255,255,255,0.4);
   color:black;box-shadow:0 4px 6px rgba(0,0,0,0.1);
   opacity:0;transform:translateY(20px);animation:fadeIn 0.5s forwards;
   transition:all 0.3s;
@@ -39,7 +38,7 @@ input,textarea,select,button{width:100%;padding:10px;margin-top:8px;border-radiu
 button{background:rgba(0,0,0,0.1);color:black;font-weight:bold;cursor:pointer;transition:0.3s;}
 button:hover{opacity:0.85;}
 ul{padding:0;list-style:none;max-height:250px;overflow-y:auto;scroll-behavior:smooth;}
-li{padding:6px;margin-bottom:4px;border-radius:8px;background:#ffffff70;cursor:pointer;transition:all 0.3s;}
+li{padding:6px;margin-bottom:4px;border-radius:8px;background:#ffffff50;cursor:pointer;transition:all 0.3s;}
 li.done{text-decoration:line-through;opacity:.6;}
 li:hover{transform:scale(1.02);}
 #clock{font-weight:bold;margin-left:10px;}
@@ -68,11 +67,12 @@ li:hover{transform:scale(1.02);}
   transition:all 0.5s ease-in-out;
 }
 #chatBox.show{display:block;}
-.chat{max-height:220px;overflow-y:auto;scroll-behavior:smooth;margin-bottom:10px;padding:5px;border:1px solid #ccc;border-radius:10px;background:#f0f0f0;transition:all 0.3s;}
-.msg{margin-bottom:6px;opacity:0;transform:translateY(20px);transition:all 0.3s;}
+.chat{max-height:300px;overflow-y:auto;scroll-behavior:smooth;margin-bottom:10px;padding:5px;border:1px solid #ccc;border-radius:10px;background:#f0f0f0;transition:all 0.3s;}
+.msg{margin-bottom:6px;opacity:0;transform:translateY(20px);transition:all 0.3s;position:relative;padding-right:30px;}
 .msg.show{opacity:1;transform:translateY(0);}
 .user{color:#2563eb;}
 .ai{color:#16a34a;}
+.deleteBtn{position:absolute;right:5px;top:2px;cursor:pointer;color:red;font-weight:bold;}
 .category{font-size:13px;opacity:.8;}
 .badge{display:inline-block;background:gold;color:black;padding:5px 10px;border-radius:8px;margin:4px;}
 #searchInput{padding:8px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;}
@@ -103,7 +103,7 @@ li:hover{transform:scale(1.02);}
 <ul id="chatHistory"></ul>
 </div>
 
-<main>
+<main id="mainContent">
 <div class="card" id="themeLang">
 <select id="theme">
 <option value="blue">Bleu</option>
@@ -204,17 +204,34 @@ function renderMenu(){const ul=document.getElementById("menu");ul.innerHTML="";m
 function generateGroceries(){let set=new Set();menu.forEach(m=>{const name=m.split(" : ")[1];const r=recipes.find(x=>x.n===name);if(r)r.i.forEach(i=>set.add(i));});groceries=[...set];renderGroceries();save();}
 function renderGroceries(){const ul=document.getElementById("groceries");ul.innerHTML="";groceries.forEach((it,i)=>{const li=document.createElement("li");li.textContent="🛒 "+it;ul.appendChild(li);});}
 
-// Hamburger
+// Hamburger toggle
 const hamburger=document.getElementById("hamburger");
 const aiSidebar=document.getElementById("aiSidebar");
 const chatBox=document.getElementById("chatBox");
-hamburger.onclick=()=>{aiSidebar.classList.toggle("show");chatBox.classList.toggle("show");renderHistory();}
+let mainVisible=true;
+hamburger.onclick=()=>{
+  if(mainVisible){
+    aiSidebar.classList.toggle("show");
+    chatBox.classList.toggle("show");
+  } else {
+    mainVisible=true;
+    aiSidebar.classList.remove("show");
+    chatBox.classList.remove("show");
+    document.getElementById("mainContent").style.display="flex";
+  }
+}
 
-// Chat
-function renderHistory(){const ul=document.getElementById("chatHistory");ul.innerHTML="";history.forEach((conv,i)=>{const li=document.createElement("li");li.textContent="Conversation "+(i+1);li.onclick=()=>{chat=[...history[i]];renderChat();aiSidebar.classList.remove("show");chatBox.classList.add("show");};ul.appendChild(li);});}
+// Chat with delete & categories
+function renderHistory(){const ul=document.getElementById("chatHistory");ul.innerHTML="";history.forEach((conv,i)=>{const li=document.createElement("li");li.textContent="Conversation "+(i+1);li.onclick=()=>{chat=[...history[i]];renderChat();mainVisible=false;document.getElementById("mainContent").style.display="none";aiSidebar.classList.remove("show");chatBox.classList.add("show");};ul.appendChild(li);});}
 function newChat(){chat=[];renderChat();}
-function runAI(){const q=aiInput.value.trim();if(!q)return;points+=Math.max(1,Math.floor(q.length/6));let r="🤖 Réponse simulée.";chat.push({from:"user",text:"👤 "+aiInput.value});chat.push({from:"ai",text:r});history.push([...chat]);aiInput.value="";save();renderChat();}
-function renderChat(){const c=document.getElementById("chat");c.innerHTML="";chat.forEach((m,i)=>{const d=document.createElement("div");d.className="msg "+m.from;setTimeout(()=>{d.classList.add("show");},50);d.textContent=m.text;c.appendChild(d);c.scrollTop=c.scrollHeight;});}
+function runAI(){const q=aiInput.value.trim();if(!q)return;points+=Math.max(1,Math.floor(q.length/6));
+chat.push({from:"user",text:"👤 "+aiInput.value,category:"Question"});
+let r="🤖 Réponse simulée: exemple."; // Ici tu peux ajouter IA réelle ou recettes
+chat.push({from:"ai",text:r,category:"Réponse"});
+history.push([...chat]);aiInput.value="";save();renderChat();}
+function renderChat(){const c=document.getElementById("chat");c.innerHTML="";chat.forEach((m,i)=>{const d=document.createElement("div");d.className="msg "+m.from;setTimeout(()=>{d.classList.add("show");},50);d.textContent=m.text;
+const del=document.createElement("span");del.textContent="✖";del.className="deleteBtn";del.onclick=(e)=>{e.stopPropagation();chat.splice(i,1);save();renderChat();};d.appendChild(del);
+const cat=document.createElement("div");cat.textContent=m.category;cat.className="category";d.appendChild(cat);c.appendChild(d);c.scrollTop=c.scrollHeight;});}
 
 // Clock
 function updateClock(){document.getElementById("clock").textContent=new Date().toLocaleTimeString();}
@@ -231,4 +248,4 @@ document.getElementById("searchInput").oninput=function(){const q=this.value.toL
 renderTodos();renderMenu();renderGroceries();renderChat();save();
 </script>
 </body>
-</html>
+  </html>
