@@ -2,165 +2,87 @@
 <head>
   <meta charset="UTF-8">
   <title>Daily Life Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <style>
     :root {
-      --bg: #f4f6f8;
-      --card: #ffffff;
-      --text: #111827;
-      --primary: #2563eb;
-    }body.dark {
-  --bg: #0f172a;
-  --card: #1e293b;
-  --text: #f8fafc;
-}
+      --bg:#f4f6f8;--card:#fff;--text:#111;--primary:#2563eb;
+    }
+    body.red{--bg:#7f1d1d;--card:#991b1b;--text:#fff;--primary:#ef4444}
+    body.blue{--bg:#0f172a;--card:#1e293b;--text:#e0f2fe;--primary:#3b82f6}
+    body.green{--bg:#052e16;--card:#064e3b;--text:#ecfdf5;--primary:#22c55e}
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  transition: 0.3s;
-}
-
-header {
-  background: var(--primary);
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
-
-header button {
-  margin-top: 10px;
-  background: white;
-  color: var(--primary);
-  font-weight: bold;
-}
-
-main {
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
-  display: grid;
-  gap: 20px;
-}
-
-.card {
-  background: var(--card);
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-input, textarea, button {
-  width: 100%;
-  margin-top: 8px;
-  padding: 8px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-button {
-  background: var(--primary);
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-ul { padding-left: 20px; }
-
-li.done { text-decoration: line-through; color: gray; }
-
-footer {
-  text-align: center;
-  padding: 15px;
-  font-size: 14px;
-  opacity: 0.7;
-}
-
-  </style>
-</head>
+    body{margin:0;font-family:Arial;background:var(--bg);color:var(--text)}
+    header{background:var(--primary);color:#fff;padding:20px;text-align:center}
+    main{max-width:900px;margin:auto;padding:20px;display:grid;gap:20px}
+    .card{background:var(--card);padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+    input,textarea,button,select{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:none}
+    button{background:var(--primary);color:#fff;cursor:pointer}
+    li{cursor:pointer;transition:.3s}
+    li.done{text-decoration:line-through;opacity:.6}
+  </style></head>
 <body><header>
   <h1>🚀 Daily Life Dashboard</h1>
-  <p>Ton site personnel à utiliser tous les jours</p>
-  <button onclick="toggleDark()">🌙 Dark Mode</button>
+  <p id="subtitle">Ton site personnel quotidien</p>
 </header><main>
   <div class="card">
-    <h2>📅 Aujourd'hui</h2>
-    <p id="date"></p>
+    <h2>🎨 Thème</h2>
+    <select id="theme">
+      <option value="">Clair</option>
+      <option value="red">Rouge</option>
+      <option value="blue">Bleu</option>
+      <option value="green">Vert</option>
+    </select><h2>🌍 Langue</h2>
+<select id="lang">
+  <option value="fr">Français</option>
+  <option value="en">English</option>
+</select>
+
   </div>  <div class="card">
-    <h2>✅ To‑Do List</h2>
+    <h2>📊 Stats</h2>
+    <p>🏆 Points : <span id="points">0</span></p>
+    <p>🎮 Niveau : <span id="level">1</span></p>
+    <p>🏅 Badge : <span id="badge">Aucun</span></p>
+  </div>  <div class="card">
+    <h2>✅ To‑Do</h2>
     <input id="todoInput" placeholder="Nouvelle tâche">
     <button onclick="addTodo()">Ajouter</button>
-    <ul id="todoList"></ul>
+    <ul id="list"></ul>
   </div>  <div class="card">
-    <h2>📝 Notes</h2>
-    <textarea id="notes" rows="6" placeholder="Écris ici..."></textarea>
+    <h2>📊 Productivité (7 jours)</h2>
+    <canvas id="chart" height="200"></canvas>
   </div>  <div class="card">
-    <h2>🔥 Habitude du jour</h2>
-    <input id="habitInput" placeholder="Ex: Lire 10 min">
-    <button onclick="saveHabit()">Sauvegarder</button>
-    <p id="habit"></p>
+    <h2>⏰ Rappel</h2>
+    <input type="time" id="reminder">
+    <button onclick="setReminder()">Activer</button>
   </div>
-</main><footer>
-  <p>Créé par moi • Hébergé sur GitHub Pages</p>
-</footer><script>
-  // DATE
-  document.getElementById('date').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+</main><script>
+// THEME
+const theme=document.getElementById('theme');
+if(localStorage.theme){document.body.classList.add(localStorage.theme);theme.value=localStorage.theme}
+theme.onchange=()=>{document.body.className='';if(theme.value){document.body.classList.add(theme.value)}localStorage.theme=theme.value}
 
-  // DARK MODE
-  if (localStorage.getItem('dark') === 'true') document.body.classList.add('dark');
+// TODO + GAMIFICATION
+let todos=JSON.parse(localStorage.todos||'[]');
+let points=Number(localStorage.points||0);
+let level=Number(localStorage.level||1);
+let badge=localStorage.badge||'Aucun';
+const list=document.getElementById('list');
 
-  function toggleDark() {
-    document.body.classList.toggle('dark');
-    localStorage.setItem('dark', document.body.classList.contains('dark'));
-  }
+function render(){list.innerHTML='';todos.forEach((t,i)=>{const li=document.createElement('li');li.textContent=t.text;if(t.done)li.classList.add('done');li.onclick=()=>toggle(i);list.appendChild(li)});localStorage.todos=JSON.stringify(todos)}
 
-  // TODO LIST
-  let todos = JSON.parse(localStorage.getItem('todos')) || [];
-  const list = document.getElementById('todoList');
+function addTodo(){const i=document.getElementById('todoInput');if(!i.value)return;todos.push({text:i.value,done:false});i.value='';render()}
 
-  function renderTodos() {
-    list.innerHTML = '';
-    todos.forEach((t, i) => {
-      const li = document.createElement('li');
-      li.textContent = t.text;
-      if (t.done) li.classList.add('done');
-      li.onclick = () => toggleTodo(i);
-      list.appendChild(li);
-    });
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }
+function toggle(i){if(!todos[i].done){points+=10;if(points%50===0){level++;badge='🔥 Motivé'}}todos[i].done=!todos[i].done;save()}
 
-  function addTodo() {
-    const input = document.getElementById('todoInput');
-    if (!input.value) return;
-    todos.push({ text: input.value, done: false });
-    input.value = '';
-    renderTodos();
-  }
+function save(){document.getElementById('points').textContent=points;document.getElementById('level').textContent=level;document.getElementById('badge').textContent=badge;localStorage.points=points;localStorage.level=level;localStorage.badge=badge;render();updateChart()}
 
-  function toggleTodo(i) {
-    todos[i].done = !todos[i].done;
-    renderTodos();
-  }
+// CHART
+const ctx=document.getElementById('chart').getContext('2d');
+let history=JSON.parse(localStorage.history||'[0,0,0,0,0,0,0]');
+function updateChart(){history.shift();history.push(points);localStorage.history=JSON.stringify(history);ctx.clearRect(0,0,300,200);ctx.beginPath();history.forEach((v,i)=>{ctx.lineTo(i*40,200-v/2)});ctx.stroke()}
 
-  renderTodos();
+// REMINDER
+function setReminder(){const t=document.getElementById('reminder').value;if(!t)return;alert('⏰ Rappel activé à '+t)}
 
-  // NOTES
-  const notes = document.getElementById('notes');
-  notes.value = localStorage.getItem('notes') || '';
-  notes.oninput = () => localStorage.setItem('notes', notes.value);
-
-  // HABIT
-  const habitP = document.getElementById('habit');
-  habitP.textContent = localStorage.getItem('habit') || '';
-
-  function saveHabit() {
-    const h = document.getElementById('habitInput').value;
-    localStorage.setItem('habit', h);
-    habitP.textContent = h;
-  }
+save();
 </script></body>
-  </html>
+</html>
