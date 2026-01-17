@@ -49,7 +49,7 @@ li.done{text-decoration:line-through;opacity:.6}
 #chatSend{padding:10px;border-radius:12px;background:#38bdf8;color:#fff;font-weight:bold;cursor:pointer;}
 </style>
 </head>
-<body class="green">
+<body>
 
 <!-- SIDEBAR -->
 <div id="sidebar">
@@ -81,7 +81,7 @@ li.done{text-decoration:line-through;opacity:.6}
 
 <div class="card">
 <h3>🌍 Langue</h3>
-<select onchange="changeLang(this.value)">
+<select id="langSelect">
 <option value="fr">Français</option>
 <option value="en">English</option>
 <option value="es">Español</option>
@@ -91,7 +91,7 @@ li.done{text-decoration:line-through;opacity:.6}
 
 <div class="card">
 <h3>🎨 Thème</h3>
-<select onchange="changeTheme(this.value)">
+<select id="themeSelect">
 <option value="green">Vert</option>
 <option value="red">Rouge</option>
 <option value="blue">Bleu</option>
@@ -133,175 +133,183 @@ li.done{text-decoration:line-through;opacity:.6}
 </div>
 
 <script>
-/* ===== GLOBAL ===== */
-let lang=localStorage.lang||"fr"
-let conversations=JSON.parse(localStorage.conversations||"[]")
-let currentConv=null
-let tasks=JSON.parse(localStorage.tasks||"[]")
-let points=Number(localStorage.points||0)
-let menu=JSON.parse(localStorage.menu||"[]")
-let courses=JSON.parse(localStorage.courses||"[]")
+// ==== GLOBAL VARIABLES ====
+let lang=localStorage.getItem("lang")||"fr";
+let theme=localStorage.getItem("theme")||"green";
+document.body.className=theme;
+document.getElementById("langSelect").value=lang;
+document.getElementById("themeSelect").value=theme;
+
+let conversations=JSON.parse(localStorage.getItem("conversations")||"[]");
+let currentConv=null;
+let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
+let points=Number(localStorage.getItem("points")||0);
+let menu=JSON.parse(localStorage.getItem("menu")||"[]");
+let courses=JSON.parse(localStorage.getItem("courses")||"[]");
+
 const meals=[
 "Spaghetti Bolognese","Poulet Curry","Salade César","Pizza Margherita","Tacos","Riz sauté","Soupe légumes","Burger","Poisson grillé","Paella","Quiche","Ratatouille",
 "Pad Thaï","Sushi","Chili con Carne","Falafel","Couscous","Pâtes au pesto","Lasagne","Boeuf Stroganoff","Moussaka","Gyoza"
-]
+];
 
-/* ===== SAVE ===== */
+// ==== SAVE FUNCTION ====
 function saveAll(){
-localStorage.conversations=JSON.stringify(conversations)
-localStorage.tasks=JSON.stringify(tasks)
-localStorage.points=points
-localStorage.lang=lang
-localStorage.menu=JSON.stringify(menu)
-localStorage.courses=JSON.stringify(courses)
-renderAll()
+localStorage.setItem("conversations",JSON.stringify(conversations));
+localStorage.setItem("tasks",JSON.stringify(tasks));
+localStorage.setItem("points",points);
+localStorage.setItem("lang",lang);
+localStorage.setItem("theme",theme);
+localStorage.setItem("menu",JSON.stringify(menu));
+localStorage.setItem("courses",JSON.stringify(courses));
+renderAll();
 }
 
-/* ===== RENDER ===== */
+// ==== RENDER FUNCTIONS ====
 function renderAll(){
-document.getElementById("points").textContent=points
-document.getElementById("level").textContent=Math.floor(points/50)+1
-renderTasks()
-renderConvList()
-renderMenu()
-renderCourses()
+document.getElementById("points").textContent=points;
+document.getElementById("level").textContent=Math.floor(points/50)+1;
+renderTasks();
+renderConvList();
+renderMenu();
+renderCourses();
 }
 
-/* ===== MENU SIDEBAR ===== */
-function toggleMenu(){sidebar.classList.toggle("active")}
-function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active")}
+// ==== SIDEBAR ====
+function toggleMenu(){sidebar.classList.toggle("active");}
+function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active");}
 
-/* ===== CONVERSATIONS ===== */
+// ==== CONVERSATIONS ====
 function newConversation(){
   const id = Date.now();
-  conversations.unshift({id, title:`Conversation ${conversations.length+1}`, msgs:[]});
+  conversations.unshift({id,title:`Conversation ${conversations.length+1}`,msgs:[]});
   currentConv = id;
   saveAll();
-  openChat(); // Affiche le chat immédiatement
+  openChat();
 }
-
 function renderConvList(){
-convList.innerHTML=""
+convList.innerHTML="";
 conversations.forEach((c,i)=>{
-c.title=`Conversation ${conversations.length-i}`
-let d=document.createElement("div")
-d.className="item"
-d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`
+c.title=`Conversation ${conversations.length-i}`;
+let d=document.createElement("div");
+d.className="item";
+d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`;
 d.onclick=(e)=>{
 if(e.target.classList.contains("del")){
-conversations=conversations.filter(x=>x.id!==c.id)
-if(currentConv===c.id) goHome()
-saveAll()
-}else{currentConv=c.id;openChat()}
+conversations=conversations.filter(x=>x.id!==c.id);
+if(currentConv===c.id) goHome();
+saveAll();
+}else{
+currentConv=c.id;openChat();
 }
-convList.appendChild(d)
-})
+};
+convList.appendChild(d);
+});
 }
-
 function openChat(){
 if(currentConv===null) return;
-const c = conversations.find(x => x.id === currentConv);
+const c = conversations.find(x=>x.id===currentConv);
 if(!c) return;
 chat.style.display="flex";
 main.style.display="none";
 sidebar.classList.remove("active");
 renderMessages();
-chatInput.focus(); // Active le champ texte
+chatInput.focus();
 }
 
-/* ===== CHAT ===== */
+// ==== CHAT ====
 function renderMessages(){
-messages.innerHTML=""
-const c=conversations.find(x=>x.id===currentConv)
-if(!c)return
-chatTitle.textContent=c.title
+messages.innerHTML="";
+const c=conversations.find(x=>x.id===currentConv);
+if(!c) return;
+chatTitle.textContent=c.title;
 c.msgs.forEach(m=>{
-messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`
-})
-messages.scrollTop=messages.scrollHeight
+messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`;
+});
+messages.scrollTop=messages.scrollHeight;
 }
-
 function sendMsg(){
-const t=chatInput.value.trim()
-if(!t||currentConv===null)return
-const c=conversations.find(x=>x.id===currentConv)
-c.msgs.push({w:"user",t})
-chatInput.value=""
+const t=chatInput.value.trim();
+if(!t||currentConv===null) return;
+const c=conversations.find(x=>x.id===currentConv);
+c.msgs.push({w:"user",t});
+chatInput.value="";
 setTimeout(()=>{
-c.msgs.push({w:"ai",t:smartAI(t)})
-saveAll()
-renderMessages()
-},300)
-saveAll()
+c.msgs.push({w:"ai",t:smartAI(t)});
+saveAll();
+renderMessages();
+},300);
+saveAll();
 }
 
-/* ===== IA FAUSSE INTELLIGENTE ===== */
+// ==== IA FAUSSE INTELLIGENTE ====
 function smartAI(text){
-text=text.toLowerCase()
+text=text.toLowerCase();
 if(text.includes("recette")||text.includes("menu")){
-return meals[Math.floor(Math.random()*meals.length)]
+return meals[Math.floor(Math.random()*meals.length)];
 }
 if(text.includes("aide")){
 switch(lang){
-case "en": return "I can help organize your day."
-case "es": return "Puedo ayudarte a organizar tu día."
-case "de": return "Ich kann dir helfen, deinen Tag zu organisieren."
-default: return "Je peux t’aider à organiser ta journée."
+case "en": return "I can help organize your day.";
+case "es": return "Puedo ayudarte a organizar tu día.";
+case "de": return "Ich kann dir helfen, deinen Tag zu organisieren.";
+default: return "Je peux t’aider à organiser ta journée.";
 }
 }
-if(text.includes("bonjour")||text.includes("salut")) {
+if(text.includes("bonjour")||text.includes("salut")){
 switch(lang){
-case "en": return "Hello!"
-case "es": return "¡Hola!"
-case "de": return "Hallo!"
-default: return "Salut !"
+case "en": return "Hello!";
+case "es": return "¡Hola!";
+case "de": return "Hallo!";
+default: return "Salut !";
 }
 }
 switch(lang){
-case "en": return "I am here to assist you."
-case "es": return "Estoy aquí para ayudarte."
-case "de": return "Ich bin hier, um dir zu helfen."
-default: return "Je suis là pour t’aider."
+case "en": return "I am here to assist you.";
+case "es": return "Estoy aquí para ayudarte.";
+case "de": return "Ich bin hier, um dir zu helfen.";
+default: return "Je suis là pour t’aider.";
 }
 }
 
-/* ===== TASKS ===== */
+// ==== TASKS ====
 function addTask(){
-if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";points+=5;saveAll()}
+if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";points+=5;saveAll();}
 }
 function renderTasks(){
-tasksEl.innerHTML=""
+tasksEl.innerHTML="";
 tasks.forEach((t)=>{
-let li=document.createElement("li")
-li.textContent=t.t
-if(t.d)li.classList.add("done")
-li.onclick=()=>{t.d=!t.d;points+=5;saveAll()}
-tasksEl.appendChild(li)
-})
+let li=document.createElement("li");
+li.textContent=t.t;
+if(t.d) li.classList.add("done");
+li.onclick=()=>{t.d=!t.d;points+=5;saveAll();}
+tasksEl.appendChild(li);
+});
 }
 
-/* ===== MENU & COURSES ===== */
-function generateMenu(){menu=[];for(let i=0;i<7;i++)menu.push(meals[Math.floor(Math.random()*meals.length)]);saveAll()}
-function renderMenu(){menuEl.innerHTML="";menu.forEach(m=>menuEl.innerHTML+=`<li>${m}</li>`)}
-function generateCourses(){courses=[...new Set(menu)];saveAll()}
-function renderCourses(){coursesEl.innerHTML="";courses.forEach((c,i)=>{let li=document.createElement("li");li.textContent=c;let timer;li.addEventListener("touchstart",()=>timer=setTimeout(()=>{courses.splice(i,1);saveAll()},600));li.addEventListener("touchend",()=>clearTimeout(timer));coursesEl.appendChild(li)})}
+// ==== MENU & COURSES ====
+function generateMenu(){menu=[];for(let i=0;i<7;i++)menu.push(meals[Math.floor(Math.random()*meals.length)]);saveAll();}
+function renderMenu(){menuEl.innerHTML="";menu.forEach(m=>menuEl.innerHTML+=`<li>${m}</li>`);}
+function generateCourses(){courses=[...new Set(menu)];saveAll();}
+function renderCourses(){coursesEl.innerHTML="";courses.forEach((c,i)=>{let li=document.createElement("li");li.textContent=c;let timer;li.addEventListener("touchstart",()=>timer=setTimeout(()=>{courses.splice(i,1);saveAll()},600));li.addEventListener("touchend",()=>clearTimeout(timer));coursesEl.appendChild(li);});});
 
-/* ===== THEME & LANG ===== */
-function changeTheme(t){document.body.className=t}
-function changeLang(l){lang=l;saveAll()}
+// ==== THEME & LANG ====
+function changeTheme(t){theme=t;document.body.className=theme;saveAll();}
+function changeLang(l){lang=l;saveAll();}
+document.getElementById("langSelect").onchange=function(){changeLang(this.value);}
+document.getElementById("themeSelect").onchange=function(){changeTheme(this.value);}
 
-/* ===== ALARM ===== */
+// ==== ALARM ====
 function setAlarm(){
-Notification.requestPermission()
-const time=alarm.value
+Notification.requestPermission();
+const time=alarm.value;
 setInterval(()=>{
-const now=new Date().toTimeString().slice(0,5)
-if(now===time) new Notification("⏰ Rappel !")
-},30000)
+const now=new Date().toTimeString().slice(0,5);
+if(now===time) new Notification("⏰ Rappel !");
+},30000);
 }
 
-/* ===== RENDER INIT ===== */
-renderAll()
+// ==== INITIAL RENDER ====
+renderAll();
 </script>
 </body>
-  </html>
+</html>
