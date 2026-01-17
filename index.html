@@ -47,8 +47,8 @@ li.done{text-decoration:line-through;opacity:.6}
 /* CHAT INPUT */
 #chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:12px;align-items:center;}
 #chatInput{flex:1;padding:10px;border-radius:12px;border:none;color:#000;background:#fff;}
-#chatSend{padding:10px;border-radius:50%;background:#38bdf8;color:#fff;font-weight:bold;cursor:pointer;display:flex;justify-content:center;align-items:center;font-size:18px;}
-#chatSend::after{content:'➤';}
+#chatSend{width:40px;height:40px;border-radius:50%;background:#38bdf8;color:#000;font-weight:bold;cursor:pointer;display:flex;justify-content:center;align-items:center;font-size:18px;}
+#chatSend::after{content:'➤';font-weight:bold;}
 
 /* SCORE */
 #scoreCard{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.12);padding:12px 16px;border-radius:16px;backdrop-filter:blur(14px);text-align:center;width:180px}
@@ -70,8 +70,8 @@ li.done{text-decoration:line-through;opacity:.6}
 <!-- CHAT -->
 <div id="chat">
 <header>
-<h1 id="chatTitle">Conversation</h1>
-<span class="menu-btn" onclick="toggleMenu()" style="position:relative;left:0;">☰</span>
+<h1 id="chatTitle" style="margin-left:40px;">Conversation</h1>
+<span class="menu-btn" onclick="toggleMenu()" style="position:relative;top:4px;left:4px;">☰</span>
 </header>
 <div id="messages"></div>
 <div id="chatInputContainer">
@@ -110,22 +110,10 @@ li.done{text-decoration:line-through;opacity:.6}
 </div>
 
 <div class="card">
-<h3>📊 Stats</h3>
-<p>Points : <span id="points">0</span></p>
-<p>Niveau : <span id="level">1</span></p>
-</div>
-
-<div class="card">
 <h3>✅ Tâches</h3>
 <input id="taskInput" placeholder="Nouvelle tâche">
 <button onclick="addTask()">Ajouter</button>
 <ul id="tasks"></ul>
-</div>
-
-<div class="card">
-<h3>🧑‍🍳 Menu semaine</h3>
-<button onclick="generateMenu()">Générer</button>
-<ul id="menu"></ul>
 </div>
 
 <div class="card">
@@ -148,9 +136,8 @@ let conversations=JSON.parse(localStorage.conversations||"[]")
 let currentConv=null
 let tasks=JSON.parse(localStorage.tasks||"[]")
 let points=Number(localStorage.points||0)
-let menu=JSON.parse(localStorage.menu||"[]")
-const meals=[]
-for(let i=1;i<=1000;i++)meals.push("Recette "+i)
+let menu=[]
+for(let i=1;i<=1000;i++)menu.push("Recette "+i)
 
 /* ===== SAVE ===== */
 function saveAll(){
@@ -158,19 +145,15 @@ localStorage.conversations=JSON.stringify(conversations)
 localStorage.tasks=JSON.stringify(tasks)
 localStorage.points=points
 localStorage.lang=lang
-localStorage.menu=JSON.stringify(menu)
 renderAll()
 }
 
 /* ===== RENDER ===== */
 function renderAll(){
-document.getElementById("points").textContent=points
-document.getElementById("level").textContent=Math.floor(points/50)+1
 document.getElementById("pointsBottom").textContent=points
 document.getElementById("levelBottom").textContent=Math.floor(points/50)+1
 renderTasks()
 renderConvList()
-renderMenu()
 }
 
 /* ===== MENU SIDEBAR ===== */
@@ -180,7 +163,6 @@ const main=document.getElementById("main")
 const convList=document.getElementById("convList")
 const messages=document.getElementById("messages")
 const tasksEl=document.getElementById("tasks")
-const menuEl=document.getElementById("menu")
 const chatInput=document.getElementById("chatInput")
 
 function toggleMenu(){sidebar.classList.toggle("active")}
@@ -253,7 +235,7 @@ saveAll()
 /* ===== IA LOCALE ===== */
 function smartAI(text){
 text=text.toLowerCase()
-if(text.includes("recette")||text.includes("menu")) return meals[Math.floor(Math.random()*meals.length)]
+if(text.includes("recette")||text.includes("menu")) return menu[Math.floor(Math.random()*menu.length)]
 if(text.includes("aide")){
 switch(lang){
 case "en": return "I can help organize your day."
@@ -294,9 +276,6 @@ tasksEl.appendChild(li)
 })
 }
 
-/* ===== MENU ===== */
-function generateMenu(){menu=[];for(let i=0;i<7;i++)menu.push(meals[Math.floor(Math.random()*meals.length)]);saveAll()}
-function renderMenu(){menuEl.innerHTML="";menu.forEach(m=>menuEl.innerHTML+=`<li>${m}</li>`)}
 /* ===== THEME & LANG ===== */
 function changeTheme(t){document.body.className=t;saveAll()}
 function changeLang(l){lang=l;saveAll()}
