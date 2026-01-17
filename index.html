@@ -7,10 +7,10 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-html,body{width:100%;min-height:100%;background:#020617}
-body{color:#fff;padding:10px}
+html,body{width:100%;min-height:100%}
+body{color:#fff;background:#020617}
 
-/* ===== THEMES ===== */
+/* THEMES */
 body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
 body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
 body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
@@ -18,80 +18,102 @@ body.rose{background:linear-gradient(180deg,#9d174d,#4a044e)}
 body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
 body.orange{background:linear-gradient(180deg,#ea580c,#7c2d12)}
 
-.container{max-width:420px;margin:auto}
+.app{min-height:100vh;display:flex;flex-direction:column}
 
-/* ===== HEADER ===== */
+/* HEADER */
 header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:14px;
+  padding:14px;
 }
-.menu-btn{font-size:24px;cursor:pointer}
+.menu-btn{font-size:26px;cursor:pointer}
 
-/* ===== CARD (LE BON CARRÉ, CELUI DU DÉBUT) ===== */
+/* NAV */
+nav{
+  display:flex;
+  gap:8px;
+  padding:0 14px 14px;
+}
+nav button{
+  flex:1;
+  padding:10px;
+  border:none;
+  border-radius:14px;
+  background:rgba(255,255,255,0.25);
+  color:#fff;
+  font-weight:bold;
+}
+
+/* CONTENT */
+.content{
+  flex:1;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+/* LE BON CARRÉ */
 .card{
   background:rgba(255,255,255,0.12);
   backdrop-filter:blur(14px);
-  border-radius:18px;
-  padding:14px;
-  margin-bottom:12px;
+  border-radius:20px;
+  padding:16px;
 }
 
 input,select,button{
   width:100%;
-  padding:10px;
+  padding:12px;
   border:none;
-  border-radius:12px;
-  margin-top:6px;
+  border-radius:14px;
+  margin-top:8px;
 }
 input,select{background:rgba(255,255,255,0.9)}
-button{background:rgba(255,255,255,0.25);color:#fff;font-weight:bold}
+button{background:rgba(255,255,255,0.3);color:#fff;font-weight:bold}
 
-/* ===== NAV ===== */
-nav{
-  display:flex;
-  gap:6px;
-  margin-bottom:10px;
-}
-nav button{flex:1}
-
-/* ===== PAGES ===== */
+/* PAGES */
 .page{display:none}
-.page.active{display:block}
+.page.active{display:flex;flex-direction:column;gap:16px}
+
+/* CLOCK */
+.clock{text-align:center;font-size:20px;font-weight:bold}
+.stat{display:flex;justify-content:space-between;margin-top:6px}
+.link{margin-top:6px;opacity:0.9}
 </style>
 </head>
 
 <body class="green">
-
-<div class="container">
+<div class="app">
 
 <header>
-  <h1 id="title">Daily Life Ultra IA</h1>
+  <h1>Daily Life Ultra IA</h1>
   <span class="menu-btn">☰</span>
 </header>
 
 <nav>
-  <button onclick="showPage('home')" id="navHome">Accueil</button>
-  <button onclick="showPage('promo')" id="navPromo">Code Promo</button>
+  <button onclick="showPage('home')">Accueil</button>
+  <button onclick="showPage('promo')">Code Promo</button>
+  <button onclick="showPage('history')">Historique</button>
 </nav>
 
-<!-- ===== ACCUEIL ===== -->
-<div id="home" class="page active">
+<div class="content">
 
+<!-- ACCUEIL -->
+<div id="home" class="page active">
   <div class="card">
-    <h3 id="langTitle">🌍 Langue</h3>
-    <select id="langSelect" onchange="changeLang(this.value)">
-      <option value="fr">Français</option>
-      <option value="en">English</option>
-      <option value="es">Español</option>
-      <option value="de">Deutsch</option>
+    <h3>🌍 Langue</h3>
+    <select>
+      <option>Français</option>
+      <option>English</option>
+      <option>Español</option>
+      <option>Deutsch</option>
     </select>
   </div>
 
   <div class="card">
-    <h3 id="themeTitle">🎨 Thème</h3>
-    <select id="themeSelect" onchange="changeTheme(this.value)">
+    <h3>🎨 Thème</h3>
+    <select onchange="changeTheme(this.value)">
       <option value="green">Vert</option>
       <option value="red">Rouge</option>
       <option value="blue">Bleu</option>
@@ -102,16 +124,14 @@ nav button{flex:1}
   </div>
 
   <div class="card">
-    <h3 id="taskTitle">✅ Tâches</h3>
-    <input id="taskInput" placeholder="Nouvelle tâche">
-    <button onclick="addTask()" id="addTaskBtn">Ajouter</button>
-    <ul id="tasks"></ul>
+    <h3>📅 Aujourd’hui</h3>
+    <p>Organisation – tâches – productivité</p>
   </div>
-
 </div>
 
-<!-- ===== CODE PROMO ===== -->
+<!-- CODE PROMO -->
 <div id="promo" class="page">
+  <div class="card clock" id="clock">--:--:--</div>
 
   <div class="card">
     <h3>💳 Code Promo</h3>
@@ -119,87 +139,52 @@ nav button{flex:1}
     <button>Valider</button>
   </div>
 
+  <div class="card">
+    <h3>ℹ️ Infos</h3>
+    <p>Codes actifs et bonus.</p>
+  </div>
 </div>
 
+<!-- HISTORIQUE -->
+<div id="history" class="page">
+  <div class="card">
+    <h3>📊 Statistiques</h3>
+
+    <div class="stat"><span>⭐ Points</span><span id="points">120</span></div>
+    <div class="stat"><span>🆙 Niveau</span><span id="level">3</span></div>
+    <div class="stat"><span>💬 Conversations</span><span>5</span></div>
+    <div class="stat"><span>⏱ Temps utilisé</span><span>1h 42m</span></div>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Liens</h3>
+    <div class="link">• Paramètres</div>
+    <div class="link">• Support</div>
+    <div class="link">• À propos</div>
+  </div>
+</div>
+
+</div>
 </div>
 
 <script>
-/* ===== DATA ===== */
-const texts={
-  fr:{
-    home:"Accueil",promo:"Code Promo",
-    lang:"Langue",theme:"Thème",tasks:"Tâches",add:"Ajouter"
-  },
-  en:{
-    home:"Home",promo:"Promo Code",
-    lang:"Language",theme:"Theme",tasks:"Tasks",add:"Add"
-  },
-  es:{
-    home:"Inicio",promo:"Código Promo",
-    lang:"Idioma",theme:"Tema",tasks:"Tareas",add:"Agregar"
-  },
-  de:{
-    home:"Start",promo:"Promocode",
-    lang:"Sprache",theme:"Thema",tasks:"Aufgaben",add:"Hinzufügen"
-  }
-};
-
-let lang=localStorage.lang||"fr";
-let theme=localStorage.theme||"green";
-let tasks=JSON.parse(localStorage.tasks||"[]");
-
-/* ===== INIT ===== */
-document.body.className=theme;
-langSelect.value=lang;
-themeSelect.value=theme;
-applyLang();
-renderTasks();
-
-/* ===== LANG ===== */
-function changeLang(l){
-  lang=l;
-  localStorage.lang=l;
-  applyLang();
-}
-function applyLang(){
-  const t=texts[lang];
-  navHome.textContent=t.home;
-  navPromo.textContent=t.promo;
-  langTitle.textContent="🌍 "+t.lang;
-  themeTitle.textContent="🎨 "+t.theme;
-  taskTitle.textContent="✅ "+t.tasks;
-  addTaskBtn.textContent=t.add;
-}
-
-/* ===== THEME ===== */
-function changeTheme(t){
-  theme=t;
-  document.body.className=t;
-  localStorage.theme=t;
-}
-
-/* ===== PAGES ===== */
 function showPage(p){
   document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
   document.getElementById(p).classList.add("active");
 }
 
-/* ===== TASKS ===== */
-function addTask(){
-  if(!taskInput.value)return;
-  tasks.push(taskInput.value);
-  taskInput.value="";
-  localStorage.tasks=JSON.stringify(tasks);
-  renderTasks();
+function changeTheme(t){
+  document.body.className=t;
+  localStorage.theme=t;
 }
-function renderTasks(){
-  tasksEl.innerHTML="";
-  tasks.forEach(t=>{
-    let li=document.createElement("li");
-    li.textContent=t;
-    tasksEl.appendChild(li);
-  });
+if(localStorage.theme) document.body.className=localStorage.theme;
+
+/* CLOCK */
+function updateClock(){
+  clock.textContent=new Date().toLocaleTimeString();
 }
+setInterval(updateClock,1000);
+updateClock();
 </script>
 
 </body>
