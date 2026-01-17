@@ -21,8 +21,7 @@ header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:12px;
-padding:4px 6px
+margin-bottom:12px
 }
 
 .menu-btn{
@@ -49,17 +48,6 @@ font-size:15px
 }
 input,select{background:#fff;color:#000}
 button{background:rgba(255,255,255,.25);color:#fff;font-weight:bold}
-
-ul{list-style:none;margin-top:6px}
-li{
-background:rgba(255,255,255,.18);
-padding:10px;
-border-radius:12px;
-margin-top:6px;
-display:flex;
-justify-content:space-between;
-align-items:center
-}
 
 /* SIDEBAR */
 #sidebar{
@@ -91,7 +79,10 @@ flex-direction:column
 }
 
 #chat header{
-padding:8px 12px
+padding:8px 12px;
+display:flex;
+justify-content:space-between;
+align-items:center
 }
 
 #messages{
@@ -122,13 +113,13 @@ border-radius:50%;
 font-size:20px
 }
 
-/* CLOCK */
 #clock{text-align:center;opacity:.7;margin-top:10px}
 </style>
 </head>
 
 <body>
 
+<!-- MENU -->
 <div id="sidebar">
 <h3>📂 Menu</h3>
 <div class="sidebar-item" onclick="goHome()">🏠 Accueil</div>
@@ -136,11 +127,11 @@ font-size:20px
 <div id="chatList"></div>
 </div>
 
+<!-- CHAT -->
 <div id="chat">
 <header>
-<span class="menu-btn" onclick="toggleMenu()">☰</span>
 <h3 id="chatTitle">Chat 1</h3>
-<span class="menu-btn" style="opacity:.6">☰</span>
+<span class="menu-btn" onclick="toggleMenu()">☰</span>
 </header>
 
 <div id="messages"></div>
@@ -152,6 +143,7 @@ onkeydown="if(event.key==='Enter')sendMsg()">
 </div>
 </div>
 
+<!-- ACCUEIL -->
 <div class="container" id="main">
 
 <header>
@@ -172,7 +164,6 @@ onkeydown="if(event.key==='Enter')sendMsg()">
 </div>
 
 <div id="clock"></div>
-
 </div>
 
 <script>
@@ -236,7 +227,8 @@ renderChatList()
 function renderChatList(){
 chatList.innerHTML=""
 chats.forEach((c,i)=>{
-chatList.innerHTML+=`<div class="sidebar-item" onclick="openChat(${i})">💬 Chat ${i+1}</div>`
+chatList.innerHTML+=
+`<div class="sidebar-item" onclick="openChat(${i})">💬 Chat ${i+1}</div>`
 })
 }
 
@@ -252,4 +244,4 @@ renderChatList()
 </script>
 
 </body>
-</html>
+  </html>
