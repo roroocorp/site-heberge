@@ -5,149 +5,162 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Productivity</title>
 <style>
-body { margin:0; font-family:sans-serif; overflow-x:hidden; color:#fff; transition:background 0.5s;}
-header { display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(0,0,0,0.2); position:sticky; top:0; z-index:100;}
-header .menu { font-size:1.5em; cursor:pointer; }
-header .title { font-weight:bold; }
-section { padding:10px; }
-select,input,button { margin:5px 0; padding:5px; border-radius:5px; border:none; }
-.todo-item { display:flex; justify-content:space-between; padding:5px; margin:2px 0; background:rgba(255,255,255,0.1); border-radius:5px; cursor:pointer; }
-.todo-item.done { text-decoration:line-through; opacity:0.5; }
-.chat { margin-top:10px; border-top:1px solid rgba(255,255,255,0.3); padding-top:10px; max-height:300px; overflow-y:auto; }
-.chat-messages { max-height:200px; overflow-y:auto; margin-bottom:5px; }
-.chat-input { display:flex; }
-.chat-input input { flex:1; }
-.hidden { display:none; }
+  body { margin:0; font-family: Arial, sans-serif; background: linear-gradient(to bottom, #fdd, #faa); transition: background 0.3s; }
+  header { display:flex; justify-content: space-between; align-items: center; padding: 10px; background:#f88; color:white; }
+  header h1 { margin:0; font-size:1.2em; }
+  .menu-bars { font-size:1.5em; cursor:pointer; }
+  main { padding:10px; }
+  select, input, button { margin:5px 0; padding:5px; font-size:1em; }
+  .section { margin-bottom:20px; padding:10px; background: rgba(255,255,255,0.3); border-radius:8px; }
+  #chat-box { height:200px; overflow-y:auto; background:#fff; padding:5px; border-radius:5px; margin-bottom:5px; }
+  .chat-message { margin:5px 0; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="menu" id="menuBtn">☰</div>
-  <div class="title" id="pageTitle">Daily Productivity</div>
+  <span id="header-text">Daily Productivity</span>
+  <span class="menu-bars" id="menu-bars">&#9776;</span>
 </header>
 
-<section id="settings">
-  <h2>🎨 Thème</h2>
-  <select id="themeSelect">
+<main>
+
+<div class="section">
+  🎨 <strong>Thème</strong><br>
+  <select id="theme-select">
+    <option value="pink">Rose</option>
+    <option value="red">Rouge</option>
     <option value="green">Vert</option>
     <option value="blue">Bleu</option>
-    <option value="red">Rouge</option>
   </select>
+</div>
 
-  <h2>🌍 Langue</h2>
-  <select id="langSelect">
+<div class="section">
+  🌍 <strong>Langue</strong><br>
+  <select id="lang-select">
     <option value="fr">Français</option>
-    <option value="en">English</option>
-    <option value="de">Deutsch</option>
+    <option value="en">Anglais</option>
+    <option value="de">Allemand</option>
   </select>
-</section>
+</div>
 
-<section id="stats">
-  <h2>📊 Stats</h2>
-  <p>🏆 Points : <span id="points">0</span></p>
-  <p>🎮 Niveau : <span id="level">1</span></p>
-  <p>🥇 Badge : <span id="badge">Motivé</span></p>
-</section>
+<div class="section">
+  ✅ <strong>To-Do</strong><br>
+  <input type="text" id="task-input" placeholder="Nouvelle tâche">
+  <button id="add-task">Ajouter</button>
+  <ul id="task-list"></ul>
+</div>
 
-<section id="todo">
-  <h2>✅ To-Do</h2>
-  <input type="text" id="newTask" placeholder="Nouvelle tâche">
-  <button id="addTask">Ajouter</button>
-  <div id="tasks"></div>
-</section>
+<div class="section">
+  👨‍🍳 <strong>Idées de repas</strong><br>
+  <button id="generate-meal">Générer un repas</button>
+  <div id="meal-suggestion"></div>
+</div>
 
-<section id="meals">
-  <h2>🧑‍🍳 Idées de repas</h2>
-  <button id="generateMeal">Générer un repas</button>
-  <div id="mealList"></div>
-</section>
+<div class="section">
+  🤖 <strong>Chat IA</strong><br>
+  <div id="chat-box"></div>
+  <input type="text" id="chat-input" placeholder="Écris un message...">
+  <button id="send-chat">Envoyer</button>
+</div>
 
-<section id="shopping">
-  <h2>🛒 Liste de courses</h2>
-  <button id="generateShopping">Générer la liste</button>
-  <div id="shoppingList"></div>
-</section>
-
-<section class="chat hidden" id="chatSection">
-  <h2>🤖 Chat IA</h2>
-  <div class="chat-messages" id="chatMessages"></div>
-  <div class="chat-input">
-    <input type="text" id="chatInput" placeholder="Écris quelque chose">
-    <button id="sendChat">Envoyer</button>
-  </div>
-</section>
+</main>
 
 <script>
-/* ===== Menu et Chat ===== */
-const menuBtn = document.getElementById('menuBtn');
-const chatSection = document.getElementById('chatSection');
-menuBtn.onclick = () => chatSection.classList.toggle('hidden');
+  // --- Thème ---
+  const themeSelect = document.getElementById('theme-select');
+  themeSelect.value = localStorage.getItem('theme') || 'pink';
+  function applyTheme(value) {
+    localStorage.setItem('theme', value);
+    switch(value){
+      case 'pink': document.body.style.background = 'linear-gradient(to bottom, #fdd, #faa)'; break;
+      case 'red': document.body.style.background = 'linear-gradient(to bottom, #faa, #f66)'; break;
+      case 'green': document.body.style.background = 'linear-gradient(to bottom, #dfd, #6f6)'; break;
+      case 'blue': document.body.style.background = 'linear-gradient(to bottom, #ddf, #66f)'; break;
+    }
+  }
+  applyTheme(themeSelect.value);
+  themeSelect.addEventListener('change', e => applyTheme(e.target.value));
 
-/* ===== Thèmes ===== */
-const themeSelect = document.getElementById('themeSelect');
-themeSelect.onchange = () => {
-  const color = themeSelect.value;
-  if(color==='green') document.body.style.background='linear-gradient(to bottom, #d0f0c0, #006400)';
-  if(color==='blue') document.body.style.background='linear-gradient(to bottom, #add8e6, #00008b)';
-  if(color==='red') document.body.style.background='linear-gradient(to bottom, #ffc0cb, #8b0000)';
-  localStorage.setItem('theme', color);
-};
-if(localStorage.getItem('theme')) { themeSelect.value = localStorage.getItem('theme'); themeSelect.onchange(); }
-
-/* ===== Langues ===== */
-const langSelect = document.getElementById('langSelect');
-langSelect.onchange = () => localStorage.setItem('lang', langSelect.value);
-if(localStorage.getItem('lang')) langSelect.value = localStorage.getItem('lang');
-
-/* ===== Stats ===== */
-let points=0, level=1, badge='Motivé';
-const pointsEl=document.getElementById('points'), levelEl=document.getElementById('level'), badgeEl=document.getElementById('badge');
-function addPoints(n){ points+=n; pointsEl.textContent=points; if(points>=100){ level++; levelEl.textContent=level; points=0; pointsEl.textContent=points; } }
-
-/* ===== To-Do ===== */
-const addTaskBtn = document.getElementById('addTask');
-const tasksDiv = document.getElementById('tasks');
-let tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
-function renderTasks(){
-  tasksDiv.innerHTML='';
-  tasks.forEach((t,i)=>{
-    let div=document.createElement('div');
-    div.className='todo-item'+(t.done?' done':'');
-    div.textContent=t.text;
-    div.onclick=()=>{ t.done=!t.done; localStorage.setItem('tasks',JSON.stringify(tasks)); renderTasks(); addPoints(5); };
-    div.oncontextmenu=(e)=>{ e.preventDefault(); tasks.splice(i,1); localStorage.setItem('tasks',JSON.stringify(tasks)); renderTasks(); };
-    tasksDiv.appendChild(div);
+  // --- Langue ---
+  const langSelect = document.getElementById('lang-select');
+  langSelect.value = localStorage.getItem('lang') || 'fr';
+  langSelect.addEventListener('change', e => {
+    localStorage.setItem('lang', e.target.value);
+    alert('Langue changée à: ' + e.target.value);
   });
-}
-addTaskBtn.onclick=()=>{
-  const val=document.getElementById('newTask').value.trim();
-  if(val){ tasks.push({text:val,done:false}); localStorage.setItem('tasks',JSON.stringify(tasks)); renderTasks(); document.getElementById('newTask').value=''; addPoints(10); }
-};
-renderTasks();
 
-/* ===== Repas et Courses ===== */
-const meals = ['Pizza','Pâtes','Salade','Omelette','Burger','Sushi','Steak','Soupe','Tacos','Curry'];
-const shopping = ['Tomates','Fromage','Oeufs','Lait','Pain','Poulet','Riz','Poivrons','Légumes','Fruits'];
-document.getElementById('generateMeal').onclick = () => {
-  document.getElementById('mealList').textContent = meals[Math.floor(Math.random()*meals.length)];
-};
-document.getElementById('generateShopping').onclick = () => {
-  document.getElementById('shoppingList').textContent = shopping.join(', ');
-};
+  // --- To-Do ---
+  const taskInput = document.getElementById('task-input');
+  const taskList = document.getElementById('task-list');
+  const addTask = document.getElementById('add-task');
+  let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+  function renderTasks(){
+    taskList.innerHTML = '';
+    tasks.forEach((t,i)=>{
+      const li = document.createElement('li');
+      li.textContent = t;
+      const del = document.createElement('button');
+      del.textContent = 'X';
+      del.onclick = ()=>{ tasks.splice(i,1); saveTasks(); renderTasks(); };
+      li.appendChild(del);
+      taskList.appendChild(li);
+    });
+  }
+  function saveTasks(){ localStorage.setItem('tasks', JSON.stringify(tasks)); }
+  addTask.onclick = ()=>{ if(taskInput.value.trim()){ tasks.push(taskInput.value.trim()); saveTasks(); renderTasks(); taskInput.value=''; } }
+  renderTasks();
 
-/* ===== Chat IA simulée ===== */
-document.getElementById('sendChat').onclick = ()=>{
-  const input=document.getElementById('chatInput').value;
-  if(!input) return;
-  const messagesDiv=document.getElementById('chatMessages');
-  const userMsg=document.createElement('div'); userMsg.textContent='🧑 '+input; messagesDiv.appendChild(userMsg);
-  document.getElementById('chatInput').value='';
-  const replies = ['Bonjour !','Oui, je comprends.','Super idée !','Je peux t’aider !','Intéressant !','D’accord !','Essayons ça !'];
-  const aiMsg=document.createElement('div'); aiMsg.textContent='🤖 '+replies[Math.floor(Math.random()*replies.length)];
-  messagesDiv.appendChild(aiMsg);
-};
+  // --- Idées de repas ---
+  const meals = ['Pizza', 'Pâtes', 'Salade', 'Sushi', 'Burger', 'Riz sauté', 'Curry'];
+  document.getElementById('generate-meal').onclick = ()=> {
+    const meal = meals[Math.floor(Math.random()*meals.length)];
+    document.getElementById('meal-suggestion').textContent = meal;
+  };
+
+  // --- Chat IA ---
+  const chatBox = document.getElementById('chat-box');
+  const chatInput = document.getElementById('chat-input');
+  const sendChat = document.getElementById('send-chat');
+
+  async function sendMessage() {
+    const text = chatInput.value.trim();
+    if(!text) return;
+    appendMessage('Vous: ' + text);
+    chatInput.value = '';
+    
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions',{
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer VOTRE_CLE_API' },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: text }]
+        })
+      });
+      const data = await response.json();
+      const botMessage = data.choices[0].message.content;
+      appendMessage('IA: ' + botMessage);
+    } catch(e) {
+      appendMessage('Erreur IA: ' + e.message);
+    }
+  }
+
+  function appendMessage(msg){
+    const div = document.createElement('div');
+    div.className = 'chat-message';
+    div.textContent = msg;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  sendChat.onclick = sendMessage;
+  chatInput.addEventListener('keypress', e => { if(e.key==='Enter') sendMessage(); });
+
+  // --- Menu Bars ---
+  const menuBars = document.getElementById('menu-bars');
+  menuBars.addEventListener('click', ()=> alert('Menu à droite cliqué!'));
+
 </script>
-
 </body>
-  </html>
+</html>
