@@ -6,9 +6,9 @@
 <title>Daily Life IA Ultra</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-html,body{width:100%;overflow-x:hidden;height:100%;}
-body{transition:0.3s;color:#fff;padding:10px}
-.container{max-width:420px;margin:auto;}
+html,body{width:100%;overflow-x:hidden}
+body{min-height:100vh;color:#fff;padding:10px;transition:0.3s}
+.container{max-width:420px;margin:auto}
 
 /* THEMES */
 body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
@@ -16,18 +16,18 @@ body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
 body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
 body.rose{background:linear-gradient(180deg,#9d174d,#4a044e)}
 body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
-body.orange{background:linear-gradient(180deg,#f97316,#c2410c)}
+body.orange{background:linear-gradient(180deg,#f97316,#b45309)}
 
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-top:6px;position:relative}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-top:6px}
 header h1{font-size:20px}
-.menu-btn{font-size:24px;cursor:pointer;user-select:none}
+.menu-btn{font-size:24px;cursor:pointer}
 
 /* CARD */
 .card{background:rgba(255,255,255,.12);backdrop-filter:blur(14px);border-radius:18px;padding:14px;margin-bottom:12px}
 input,select,button{width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px}
 input,select{background:rgba(255,255,255,.9)}
 button{background:rgba(255,255,255,.2);color:#fff;font-weight:bold;cursor:pointer}
-ul{list-style:none;margin-top:6px;max-height:200px;overflow-y:auto}
+ul{list-style:none;margin-top:6px}
 li{background:rgba(255,255,255,.15);padding:8px;border-radius:10px;margin-top:6px;user-select:none}
 li.done{text-decoration:line-through;opacity:.6}
 
@@ -36,24 +36,21 @@ li.done{text-decoration:line-through;opacity:.6}
 #sidebar.active{left:0}
 #sidebar h3{margin-bottom:10px}
 .item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #334;cursor:pointer}
+.item.crea{color:yellow;font-weight:bold}
+.item.user{color:orange;font-weight:bold}
 .del{opacity:.6;font-size:14px}
 
 /* CHAT */
 #chat{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;z-index:9;flex-direction:column}
-#messages{flex:1;overflow-y:auto;padding:10px;min-height:100px;max-height:calc(100% - 70px)}
+#messages{flex:1;overflow-y:auto;padding:10px}
 .msg{margin-bottom:6px}
 .user{color:#38bdf8}
 .ai{color:#a7f3d0}
 
 /* CHAT INPUT */
-#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:50px;align-items:center}
-#chatInput{flex:1;padding:10px;border-radius:50px;border:none;background:#fff;}
-#chatSend{padding:10px;border-radius:50%;background:#000;color:#fff;font-weight:bold;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;}
-#scoreBox{position:fixed;bottom:10px;left:10px;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:12px;font-weight:bold;}
-
-/* TIME */
-#clock{position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:12px;font-weight:bold;}
-
+#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:12px;align-items:center}
+#chatInput{flex:1;padding:10px;border-radius:12px;border:none;}
+#chatSend{padding:10px;border-radius:50%;background:#38bdf8;color:#fff;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;}
 </style>
 </head>
 <body class="green">
@@ -64,6 +61,9 @@ li.done{text-decoration:line-through;opacity:.6}
 <div class="item" onclick="newConversation()">➕ Nouvelle conversation</div>
 <div id="convList"></div>
 <div class="item" onclick="goHome()">🏠 Accueil</div>
+<hr>
+<div class="item crea" onclick="showCreatorCode()">Créateur</div>
+<div class="item user" onclick="showUserCodes()">Codes utilisateurs</div>
 </div>
 
 <!-- CHAT -->
@@ -75,7 +75,7 @@ li.done{text-decoration:line-through;opacity:.6}
 <div id="messages"></div>
 <div id="chatInputContainer">
 <input id="chatInput" placeholder="Écris un message..." onkeydown="if(event.key==='Enter'){sendMsg();event.preventDefault()}">
-<button id="chatSend">➤</button>
+<button id="chatSend" onclick="sendMsg()">➤</button>
 </div>
 </div>
 
@@ -93,6 +93,11 @@ li.done{text-decoration:line-through;opacity:.6}
 <option value="en">English</option>
 <option value="es">Español</option>
 <option value="de">Deutsch</option>
+<option value="it">Italiano</option>
+<option value="pt">Português</option>
+<option value="ru">Русский</option>
+<option value="ja">日本語</option>
+<option value="zh">中文</option>
 </select>
 </div>
 
@@ -109,6 +114,12 @@ li.done{text-decoration:line-through;opacity:.6}
 </div>
 
 <div class="card">
+<h3>📊 Stats</h3>
+<p>Points : <span id="points">0</span></p>
+<p>Niveau : <span id="level">1</span></p>
+</div>
+
+<div class="card">
 <h3>✅ Tâches</h3>
 <input id="taskInput" placeholder="Nouvelle tâche">
 <button onclick="addTask()">Ajouter</button>
@@ -122,40 +133,41 @@ li.done{text-decoration:line-through;opacity:.6}
 </div>
 </div>
 
-<div id="scoreBox">Points: <span id="points">0</span> | Niveau: <span id="level">1</span></div>
-<div id="clock"></div>
-
 <script>
 /* ===== GLOBAL ===== */
-let lang=localStorage.lang||"fr"
-let conversations=JSON.parse(localStorage.conversations||"[]")
-let currentConv=null
-let tasks=JSON.parse(localStorage.tasks||"[]")
-let points=Number(localStorage.points||0)
+let lang=localStorage.lang||"fr";
+let conversations=JSON.parse(localStorage.conversations||"[]");
+let currentConv=null;
+let tasks=JSON.parse(localStorage.tasks||"[]");
+let points=Number(localStorage.points||0);
+
+/* Codes promo */
+const creatorCode = "A4J9K2L8Q1";
+const userCodes = ["U1H2J3K4L5","X2C3V4B5N6","P7Q8R9S0T1","A1B2C3D4E5","F6G7H8I9J0","K1L2M3N4O5","Q6R7S8T9U0","V1W2X3Y4Z5","M1N2B3V4C5"];
 
 /* ===== SAVE ===== */
 function saveAll(){
-localStorage.conversations=JSON.stringify(conversations)
-localStorage.tasks=JSON.stringify(tasks)
-localStorage.points=points
-localStorage.lang=lang
-renderAll()
+localStorage.conversations=JSON.stringify(conversations);
+localStorage.tasks=JSON.stringify(tasks);
+localStorage.points=points;
+localStorage.lang=lang;
+renderAll();
 }
-
-/* ===== CLOCK ===== */
-function updateClock(){let d=new Date();let h=d.getHours(),m=d.getMinutes();if(m<10)m='0'+m;clock.textContent=`${h}:${m}`}
-setInterval(updateClock,1000)
-updateClock()
 
 /* ===== RENDER ===== */
 function renderAll(){
-document.getElementById("points").textContent=points
-document.getElementById("level").textContent=Math.floor(points/50)+1
-renderTasks()
-renderConvList()
+document.getElementById("points").textContent=points;
+document.getElementById("level").textContent=Math.floor(points/50)+1;
+renderTasks();
+renderConvList();
 }
 
 /* ===== MENU SIDEBAR ===== */
+const sidebar = document.getElementById("sidebar");
+const main = document.getElementById("main");
+const chat = document.getElementById("chat");
+const convList = document.getElementById("convList");
+
 function toggleMenu(){sidebar.classList.toggle("active")}
 function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active")}
 
@@ -165,24 +177,24 @@ function newConversation(){
   conversations.unshift({id, title:`Conversation ${conversations.length+1}`, msgs:[]});
   currentConv = id;
   saveAll();
-  openChat(); // Affiche le chat immédiatement
+  openChat();
 }
 
 function renderConvList(){
-convList.innerHTML=""
+convList.innerHTML="";
 conversations.forEach((c,i)=>{
-c.title=`Conversation ${conversations.length-i}`
-let d=document.createElement("div")
-d.className="item"
-d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`
+c.title=`Conversation ${conversations.length-i}`;
+let d=document.createElement("div");
+d.className="item";
+d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`;
 d.onclick=(e)=>{
 if(e.target.classList.contains("del")){
-conversations=conversations.filter(x=>x.id!==c.id)
-if(currentConv===c.id) goHome()
-saveAll()
-}else{currentConv=c.id;openChat()}
+conversations=conversations.filter(x=>x.id!==c.id);
+if(currentConv===c.id) goHome();
+saveAll();
+}else{currentConv=c.id;openChat();}
 }
-convList.appendChild(d)
+convList.appendChild(d);
 })
 }
 
@@ -194,102 +206,120 @@ chat.style.display="flex";
 main.style.display="none";
 sidebar.classList.remove("active");
 renderMessages();
-chatInput.focus(); 
+chatInput.focus();
 }
+
+const messages = document.getElementById("messages");
+const chatInput = document.getElementById("chatInput");
+const chatSend = document.getElementById("chatSend");
 
 /* ===== CHAT ===== */
 function renderMessages(){
-messages.innerHTML=""
-const c=conversations.find(x=>x.id===currentConv)
-if(!c)return
-chatTitle.textContent=c.title
+messages.innerHTML="";
+const c=conversations.find(x=>x.id===currentConv);
+if(!c)return;
+chatTitle.textContent=c.title;
 c.msgs.forEach(m=>{
-messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`
+messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`;
 })
-messages.scrollTop=messages.scrollHeight
+messages.scrollTop=messages.scrollHeight;
 }
 
 function sendMsg(){
-const t=chatInput.value.trim()
-if(!t||currentConv===null)return
-const c=conversations.find(x=>x.id===currentConv)
-c.msgs.push({w:"user",t})
-chatInput.value=""
+const t=chatInput.value.trim();
+if(!t||currentConv===null) return;
+const c=conversations.find(x=>x.id===currentConv);
+c.msgs.push({w:"user",t});
+chatInput.value="";
 setTimeout(()=>{
-c.msgs.push({w:"ai",t:smartAI(t)})
-saveAll()
-renderMessages()
-},300)
-saveAll()
+c.msgs.push({w:"ai",t:smartAI(t)});
+saveAll();
+renderMessages();
+},300);
+saveAll();
 }
 
-/* ===== IA LOCALE HYPER INTELLIGENTE ===== */
+/* ===== IA LOCALE ===== */
 const recipes=[
-"Spaghetti Carbonara: Ingrédients: pâtes, œufs, pancetta, parmesan, poivre. Instructions: Faites cuire les pâtes, faites revenir la pancetta, mélangez avec les œufs et le parmesan, poivrez.",
-"Poulet Curry: Ingrédients: poulet, curry, lait de coco, oignon, ail. Instructions: Faites revenir le poulet et les oignons, ajoutez le curry et le lait de coco, laissez mijoter.",
-"Salade César: Ingrédients: laitue, poulet, croûtons, parmesan, sauce César. Instructions: Mélangez tous les ingrédients et servez frais.",
-"Pizza Margherita: Ingrédients: pâte à pizza, tomate, mozzarella, basilic. Instructions: Étalez la pâte, ajoutez tomate et mozzarella, cuisez au four, garnissez de basilic."
-// Tu peux rajouter des centaines de recettes ici
+"Spaghetti Carbonara","Pâtes à la Bolognaise","Poulet Curry","Salade César","Pizza Margherita","Tacos","Riz sauté","Soupe légumes","Burger","Poisson grillé",
+"Paella","Quiche","Ratatouille","Pad Thaï","Sushi","Chili con Carne","Falafel","Couscous","Pâtes au pesto","Lasagne","Boeuf Stroganoff","Moussaka","Gyoza"
 ];
 
 function smartAI(text){
-text=text.toLowerCase()
-if(text.includes("recette")||text.includes("menu")||text.includes("carbo")){
-return recipes[Math.floor(Math.random()*recipes.length)]
+text=text.toLowerCase();
+if(text.includes("recette")||text.includes("menu")){
+let r=[];
+for(let i=0;i<5;i++) r.push(recipes[Math.floor(Math.random()*recipes.length)]);
+return "Voici quelques suggestions : "+r.join(", ");
 }
-if(text.includes("liste de courses")){
-return "Pour tes repas, prends: pâtes, poulet, tomates, laitue, fromage, œufs, riz, épices."
-}
-if(text.includes("salut")){
+if(text.includes("salut")||text.includes("bonjour")){
 switch(lang){
-case "en": return "Hello! How are you?"
-case "es": return "¡Hola! ¿Cómo estás?"
-case "de": return "Hallo! Wie geht's?"
-default: return "Salut ! Ça va ?"
+case "en": return "Hello! How are you today?";
+case "es": return "¡Hola! ¿Cómo estás?";
+case "de": return "Hallo! Wie geht's?";
+default: return "Salut ! Comment ça va ?";
 }
 }
-if(text.includes("ça va")||text.includes("ca va")){
 switch(lang){
-case "en": return "I'm good, thanks! How about you?"
-case "es": return "¡Estoy bien, gracias! ¿Y tú?"
-case "de": return "Mir geht's gut, danke! Und dir?"
-default: return "Ça va très bien, merci ! Et toi ?"
+case "en": return "I am here to assist you with your tasks, meals, and daily planning.";
+case "es": return "Estoy aquí para ayudarte con tus tareas, comidas y planificación diaria.";
+case "de": return "Ich bin hier, um dir bei Aufgaben, Mahlzeiten und der Tagesplanung zu helfen.";
+default: return "Je suis là pour t’aider avec tes tâches, repas et organisation quotidienne.";
 }
-}
-return "Je suis là pour t’aider ! Pose-moi une question ou demande une recette."
 }
 
 /* ===== TASKS ===== */
+const tasksEl=document.getElementById("tasks");
 function addTask(){
-if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";points+=5;saveAll()}
+if(taskInput.value){
+tasks.push({t:taskInput.value,d:false});
+taskInput.value="";
+points+=5;
+saveAll();
 }
+}
+
 function renderTasks(){
-tasksEl.innerHTML=""
-tasks.forEach((t)=>{
-let li=document.createElement("li")
-li.textContent=t.t
-if(t.d)li.classList.add("done")
-li.onclick=()=>{t.d=!t.d;points+=5;saveAll()}
-tasksEl.appendChild(li)
+tasksEl.innerHTML="";
+tasks.forEach((t,i)=>{
+let li=document.createElement("li");
+li.textContent=t.t;
+if(t.d) li.classList.add("done");
+li.onclick=()=>{t.d=!t.d;points+=5;saveAll()};
+li.ondblclick=()=>{tasks.splice(i,1);saveAll();};
+tasksEl.appendChild(li);
 })
 }
 
 /* ===== THEME & LANG ===== */
-function changeTheme(t){document.body.className=t;saveAll()}
-function changeLang(l){lang=l;saveAll()}
-
-/* ===== ALARM ===== */
-function setAlarm(){
-Notification.requestPermission()
-const time=alarm.value
-setInterval(()=>{
-const now=new Date().toTimeString().slice(0,5)
-if(now===time) new Notification("⏰ Rappel !")
-},30000)
+function changeTheme(t){
+document.body.className=t;
+localStorage.theme=t;
 }
 
-/* ===== RENDER INIT ===== */
-renderAll()
+function changeLang(l){
+lang=l;
+localStorage.lang=l;
+saveAll();
+}
+
+/* ===== ALARM ===== */
+const alarm=document.getElementById("alarm");
+function setAlarm(){
+Notification.requestPermission();
+const time=alarm.value;
+setInterval(()=>{
+const now=new Date().toTimeString().slice(0,5);
+if(now===time) new Notification("⏰ Rappel !");
+},30000);
+}
+
+/* ===== CODES PROMO ===== */
+function showCreatorCode(){alert("Code Créateur : "+creatorCode);}
+function showUserCodes(){alert("Codes Utilisateurs :\n"+userCodes.join("\n"));}
+
+/* ===== INIT ===== */
+renderAll();
 </script>
 </body>
   </html>
