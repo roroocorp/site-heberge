@@ -2,13 +2,13 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life IA Ultra</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-html,body{width:100%;overflow-x:hidden}
-body{min-height:100vh;color:#fff;padding:10px;transition:0.3s}
-.container{max-width:420px;margin:auto}
+html,body{width:100%;overflow-x:hidden;height:100%;}
+body{transition:0.3s;color:#fff;padding:10px}
+.container{max-width:420px;margin:auto;}
 
 /* THEMES */
 body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
@@ -16,17 +16,18 @@ body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
 body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
 body.rose{background:linear-gradient(180deg,#9d174d,#4a044e)}
 body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
-body.orange{background:linear-gradient(180deg,#f97316,#b45309)}
+body.orange{background:linear-gradient(180deg,#f97316,#c2410c)}
 
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-top:6px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-top:6px;position:relative}
 header h1{font-size:20px}
 .menu-btn{font-size:24px;cursor:pointer;user-select:none}
 
+/* CARD */
 .card{background:rgba(255,255,255,.12);backdrop-filter:blur(14px);border-radius:18px;padding:14px;margin-bottom:12px}
 input,select,button{width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px}
 input,select{background:rgba(255,255,255,.9)}
 button{background:rgba(255,255,255,.2);color:#fff;font-weight:bold;cursor:pointer}
-ul{list-style:none;margin-top:6px}
+ul{list-style:none;margin-top:6px;max-height:200px;overflow-y:auto}
 li{background:rgba(255,255,255,.15);padding:8px;border-radius:10px;margin-top:6px;user-select:none}
 li.done{text-decoration:line-through;opacity:.6}
 
@@ -39,22 +40,20 @@ li.done{text-decoration:line-through;opacity:.6}
 
 /* CHAT */
 #chat{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;z-index:9;flex-direction:column}
-#messages{flex:1;overflow-y:auto;padding:10px}
+#messages{flex:1;overflow-y:auto;padding:10px;min-height:100px;max-height:calc(100% - 70px)}
 .msg{margin-bottom:6px}
 .user{color:#38bdf8}
 .ai{color:#a7f3d0}
 
 /* CHAT INPUT */
-#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:12px;align-items:center;}
-#chatInput{flex:1;padding:10px;border-radius:12px;border:none;color:#000;background:#fff;}
-#chatSend{padding:10px;border-radius:50%;background:#38bdf8;color:#fff;font-weight:bold;cursor:pointer;display:flex;justify-content:center;align-items:center;font-size:18px;}
-#chatSend::after{content:'➤';}
+#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:50px;align-items:center}
+#chatInput{flex:1;padding:10px;border-radius:50px;border:none;background:#fff;}
+#chatSend{padding:10px;border-radius:50%;background:#000;color:#fff;font-weight:bold;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;}
+#scoreBox{position:fixed;bottom:10px;left:10px;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:12px;font-weight:bold;}
 
-/* SCORE */
-#scoreCard{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.12);padding:12px 16px;border-radius:16px;backdrop-filter:blur(14px);text-align:center;width:180px}
+/* TIME */
+#clock{position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:12px;font-weight:bold;}
 
-/* HORLOGE */
-#clock{position:fixed;bottom:10px;left:10px;font-weight:bold;}
 </style>
 </head>
 <body class="green">
@@ -71,12 +70,12 @@ li.done{text-decoration:line-through;opacity:.6}
 <div id="chat">
 <header>
 <h1 id="chatTitle">Conversation</h1>
-<span class="menu-btn" onclick="toggleMenu()" style="position:relative;left:0;">☰</span>
+<span class="menu-btn" onclick="toggleMenu()">☰</span>
 </header>
 <div id="messages"></div>
 <div id="chatInputContainer">
 <input id="chatInput" placeholder="Écris un message..." onkeydown="if(event.key==='Enter'){sendMsg();event.preventDefault()}">
-<button id="chatSend" onclick="sendMsg()"></button>
+<button id="chatSend">➤</button>
 </div>
 </div>
 
@@ -110,12 +109,6 @@ li.done{text-decoration:line-through;opacity:.6}
 </div>
 
 <div class="card">
-<h3>📊 Stats</h3>
-<p>Points : <span id="points">0</span></p>
-<p>Niveau : <span id="level">1</span></p>
-</div>
-
-<div class="card">
 <h3>✅ Tâches</h3>
 <input id="taskInput" placeholder="Nouvelle tâche">
 <button onclick="addTask()">Ajouter</button>
@@ -123,23 +116,14 @@ li.done{text-decoration:line-through;opacity:.6}
 </div>
 
 <div class="card">
-<h3>🧑‍🍳 Menu semaine</h3>
-<button onclick="generateMenu()">Générer</button>
-<ul id="menu"></ul>
-</div>
-
-<div class="card">
 <h3>⏰ Rappel</h3>
 <input type="time" id="alarm">
 <button onclick="setAlarm()">Activer</button>
 </div>
-
-<div id="scoreCard">
-<p>Points : <span id="pointsBottom">0</span> | Niveau : <span id="levelBottom">1</span></p>
 </div>
 
+<div id="scoreBox">Points: <span id="points">0</span> | Niveau: <span id="level">1</span></div>
 <div id="clock"></div>
-</div>
 
 <script>
 /* ===== GLOBAL ===== */
@@ -148,9 +132,6 @@ let conversations=JSON.parse(localStorage.conversations||"[]")
 let currentConv=null
 let tasks=JSON.parse(localStorage.tasks||"[]")
 let points=Number(localStorage.points||0)
-let menu=JSON.parse(localStorage.menu||"[]")
-const meals=[]
-for(let i=1;i<=1000;i++)meals.push("Recette "+i)
 
 /* ===== SAVE ===== */
 function saveAll(){
@@ -158,31 +139,23 @@ localStorage.conversations=JSON.stringify(conversations)
 localStorage.tasks=JSON.stringify(tasks)
 localStorage.points=points
 localStorage.lang=lang
-localStorage.menu=JSON.stringify(menu)
 renderAll()
 }
+
+/* ===== CLOCK ===== */
+function updateClock(){let d=new Date();let h=d.getHours(),m=d.getMinutes();if(m<10)m='0'+m;clock.textContent=`${h}:${m}`}
+setInterval(updateClock,1000)
+updateClock()
 
 /* ===== RENDER ===== */
 function renderAll(){
 document.getElementById("points").textContent=points
 document.getElementById("level").textContent=Math.floor(points/50)+1
-document.getElementById("pointsBottom").textContent=points
-document.getElementById("levelBottom").textContent=Math.floor(points/50)+1
 renderTasks()
 renderConvList()
-renderMenu()
 }
 
 /* ===== MENU SIDEBAR ===== */
-const sidebar=document.getElementById("sidebar")
-const chat=document.getElementById("chat")
-const main=document.getElementById("main")
-const convList=document.getElementById("convList")
-const messages=document.getElementById("messages")
-const tasksEl=document.getElementById("tasks")
-const menuEl=document.getElementById("menu")
-const chatInput=document.getElementById("chatInput")
-
 function toggleMenu(){sidebar.classList.toggle("active")}
 function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active")}
 
@@ -192,7 +165,7 @@ function newConversation(){
   conversations.unshift({id, title:`Conversation ${conversations.length+1}`, msgs:[]});
   currentConv = id;
   saveAll();
-  openChat(); 
+  openChat(); // Affiche le chat immédiatement
 }
 
 function renderConvList(){
@@ -227,7 +200,7 @@ chatInput.focus();
 /* ===== CHAT ===== */
 function renderMessages(){
 messages.innerHTML=""
-const c=conversations.find(x => x.id === currentConv)
+const c=conversations.find(x=>x.id===currentConv)
 if(!c)return
 chatTitle.textContent=c.title
 c.msgs.forEach(m=>{
@@ -239,7 +212,7 @@ messages.scrollTop=messages.scrollHeight
 function sendMsg(){
 const t=chatInput.value.trim()
 if(!t||currentConv===null)return
-const c=conversations.find(x => x.id === currentConv)
+const c=conversations.find(x=>x.id===currentConv)
 c.msgs.push({w:"user",t})
 chatInput.value=""
 setTimeout(()=>{
@@ -250,32 +223,40 @@ renderMessages()
 saveAll()
 }
 
-/* ===== IA LOCALE ===== */
+/* ===== IA LOCALE HYPER INTELLIGENTE ===== */
+const recipes=[
+"Spaghetti Carbonara: Ingrédients: pâtes, œufs, pancetta, parmesan, poivre. Instructions: Faites cuire les pâtes, faites revenir la pancetta, mélangez avec les œufs et le parmesan, poivrez.",
+"Poulet Curry: Ingrédients: poulet, curry, lait de coco, oignon, ail. Instructions: Faites revenir le poulet et les oignons, ajoutez le curry et le lait de coco, laissez mijoter.",
+"Salade César: Ingrédients: laitue, poulet, croûtons, parmesan, sauce César. Instructions: Mélangez tous les ingrédients et servez frais.",
+"Pizza Margherita: Ingrédients: pâte à pizza, tomate, mozzarella, basilic. Instructions: Étalez la pâte, ajoutez tomate et mozzarella, cuisez au four, garnissez de basilic."
+// Tu peux rajouter des centaines de recettes ici
+];
+
 function smartAI(text){
 text=text.toLowerCase()
-if(text.includes("recette")||text.includes("menu")) return meals[Math.floor(Math.random()*meals.length)]
-if(text.includes("aide")){
+if(text.includes("recette")||text.includes("menu")||text.includes("carbo")){
+return recipes[Math.floor(Math.random()*recipes.length)]
+}
+if(text.includes("liste de courses")){
+return "Pour tes repas, prends: pâtes, poulet, tomates, laitue, fromage, œufs, riz, épices."
+}
+if(text.includes("salut")){
 switch(lang){
-case "en": return "I can help organize your day."
-case "es": return "Puedo ayudarte a organizar tu día."
-case "de": return "Ich kann dir helfen, deinen Tag zu organisieren."
-default: return "Je peux t’aider à organiser ta journée."
+case "en": return "Hello! How are you?"
+case "es": return "¡Hola! ¿Cómo estás?"
+case "de": return "Hallo! Wie geht's?"
+default: return "Salut ! Ça va ?"
 }
 }
-if(text.includes("bonjour")||text.includes("salut")) {
+if(text.includes("ça va")||text.includes("ca va")){
 switch(lang){
-case "en": return "Hello!"
-case "es": return "¡Hola!"
-case "de": return "Hallo!"
-default: return "Salut !"
+case "en": return "I'm good, thanks! How about you?"
+case "es": return "¡Estoy bien, gracias! ¿Y tú?"
+case "de": return "Mir geht's gut, danke! Und dir?"
+default: return "Ça va très bien, merci ! Et toi ?"
 }
 }
-switch(lang){
-case "en": return "I am here to assist you."
-case "es": return "Estoy aquí para ayudarte."
-case "de": return "Ich bin hier, um dir zu helfen."
-default: return "Je suis là pour t’aider."
-}
+return "Je suis là pour t’aider ! Pose-moi une question ou demande une recette."
 }
 
 /* ===== TASKS ===== */
@@ -284,19 +265,15 @@ if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";p
 }
 function renderTasks(){
 tasksEl.innerHTML=""
-tasks.forEach((t,i)=>{
+tasks.forEach((t)=>{
 let li=document.createElement("li")
 li.textContent=t.t
 if(t.d)li.classList.add("done")
 li.onclick=()=>{t.d=!t.d;points+=5;saveAll()}
-li.ondblclick=()=>{tasks.splice(i,1);saveAll()}
 tasksEl.appendChild(li)
 })
 }
 
-/* ===== MENU ===== */
-function generateMenu(){menu=[];for(let i=0;i<7;i++)menu.push(meals[Math.floor(Math.random()*meals.length)]);saveAll()}
-function renderMenu(){menuEl.innerHTML="";menu.forEach(m=>menuEl.innerHTML+=`<li>${m}</li>`)}
 /* ===== THEME & LANG ===== */
 function changeTheme(t){document.body.className=t;saveAll()}
 function changeLang(l){lang=l;saveAll()}
@@ -311,12 +288,7 @@ if(now===time) new Notification("⏰ Rappel !")
 },30000)
 }
 
-/* ===== HORLOGE ===== */
-function updateClock(){const d=new Date();clock.textContent=d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
-setInterval(updateClock,1000)
-updateClock()
-
-/* ===== INIT ===== */
+/* ===== RENDER INIT ===== */
 renderAll()
 </script>
 </body>
