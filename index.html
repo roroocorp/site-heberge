@@ -2,208 +2,264 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Productivity</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Daily Life IA Ultra</title>
 <style>
-  body { margin:0; font-family: Arial, sans-serif; transition: background 0.3s; }
-  header { display:flex; justify-content: space-between; align-items: center; padding:10px; background:#f88; color:white; }
-  header h1 { margin:0; font-size:1.2em; }
-  .menu-bars { font-size:1.5em; cursor:pointer; }
-  main { padding:10px; display:flex; flex-direction:column; gap:15px; }
-  .section { padding:15px; background: rgba(255,255,255,0.3); border-radius:10px; }
-  select, input, button { margin:5px 0; padding:5px; font-size:1em; }
-  #chat-box { height:200px; overflow-y:auto; background:#fff; padding:5px; border-radius:5px; margin-bottom:5px; }
-  .chat-message { margin:5px 0; }
-  #side-menu { display:none; position:fixed; top:0; left:0; width:250px; height:100%; background:#eee; padding:10px; overflow-y:auto; box-shadow:2px 0 5px rgba(0,0,0,0.3); z-index:100; }
-  #side-menu h2 { margin-top:0; }
-  #side-menu button { display:block; margin:5px 0; width:100%; }
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+html,body{width:100%;overflow-x:hidden}
+body{min-height:100vh;color:#fff;padding:10px;transition:0.3s}
+.container{max-width:420px;margin:auto}
+
+/* THEMES */
+body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
+body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
+body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
+body.rose{background:linear-gradient(180deg,#9d174d,#4a044e)}
+body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
+
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-top:6px}
+header h1{font-size:20px}
+.menu-btn{font-size:24px;cursor:pointer}
+
+.card{background:rgba(255,255,255,.12);backdrop-filter:blur(14px);border-radius:18px;padding:14px;margin-bottom:12px}
+input,select,button{width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px}
+input,select{background:rgba(255,255,255,.9)}
+button{background:rgba(255,255,255,.2);color:#fff;font-weight:bold;cursor:pointer}
+ul{list-style:none;margin-top:6px}
+li{background:rgba(255,255,255,.15);padding:8px;border-radius:10px;margin-top:6px;user-select:none}
+li.done{text-decoration:line-through;opacity:.6}
+
+/* SIDEBAR */
+#sidebar{position:fixed;top:0;left:-100%;width:75%;max-width:280px;height:100%;background:#0f172a;padding:15px;transition:.3s;z-index:10}
+#sidebar.active{left:0}
+#sidebar h3{margin-bottom:10px}
+.item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #334;cursor:pointer}
+.del{opacity:.6;font-size:14px}
+
+/* CHAT */
+#chat{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;z-index:9;flex-direction:column}
+#messages{flex:1;overflow-y:auto;padding:10px}
+.msg{margin-bottom:6px}
+.user{color:#38bdf8}
+.ai{color:#a7f3d0}
+
+/* CHAT INPUT */
+#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:12px;}
+#chatInput{flex:1;padding:10px;border-radius:12px;border:none;}
+#chatSend{padding:10px;border-radius:12px;background:#38bdf8;color:#fff;font-weight:bold;cursor:pointer;}
 </style>
 </head>
-<body>
+<body class="green">
 
+<!-- SIDEBAR -->
+<div id="sidebar">
+<h3>📜 Historique</h3>
+<div class="item" onclick="newConversation()">➕ Nouvelle conversation</div>
+<div id="convList"></div>
+<div class="item" onclick="goHome()">🏠 Accueil</div>
+</div>
+
+<!-- CHAT -->
+<div id="chat">
 <header>
-  <span id="header-text">Daily Productivity</span>
-  <span class="menu-bars" id="menu-bars">&#9776;</span>
+<h1 id="chatTitle">Conversation</h1>
+<span class="menu-btn" onclick="toggleMenu()">☰</span>
+</header>
+<div id="messages"></div>
+<div id="chatInputContainer">
+<input id="chatInput" placeholder="Écris un message..." onkeydown="if(event.key==='Enter'){sendMsg();event.preventDefault()}">
+<button id="chatSend" onclick="sendMsg()">Envoyer</button>
+</div>
+</div>
+
+<!-- MAIN -->
+<div class="container" id="main">
+<header>
+<h1>Daily Life Ultra IA</h1>
+<span class="menu-btn" onclick="toggleMenu()">☰</span>
 </header>
 
-<div id="side-menu">
-  <h2>Menu</h2>
-  <button id="home-btn">Accueil</button>
-  <button id="new-convo-btn">Nouvelle conversation</button>
-  <div id="conversations-list"></div>
+<div class="card">
+<h3>🌍 Langue</h3>
+<select onchange="changeLang(this.value)">
+<option value="fr">Français</option>
+<option value="en">English</option>
+<option value="es">Español</option>
+<option value="de">Deutsch</option>
+</select>
 </div>
 
-<main id="main-content">
-
-<div class="section">
-  🎨 <strong>Thème</strong><br>
-  <select id="theme-select">
-    <option value="pink">Rose</option>
-    <option value="red">Rouge</option>
-    <option value="green">Vert</option>
-    <option value="blue">Bleu</option>
-  </select>
+<div class="card">
+<h3>🎨 Thème</h3>
+<select onchange="changeTheme(this.value)">
+<option value="green">Vert</option>
+<option value="red">Rouge</option>
+<option value="blue">Bleu</option>
+<option value="rose">Rose</option>
+<option value="violet">Violet</option>
+</select>
 </div>
 
-<div class="section">
-  🌍 <strong>Langue</strong><br>
-  <select id="lang-select">
-    <option value="fr">Français</option>
-    <option value="en">Anglais</option>
-    <option value="de">Allemand</option>
-  </select>
+<div class="card">
+<h3>📊 Stats</h3>
+<p>Points : <span id="points">0</span></p>
+<p>Niveau : <span id="level">1</span></p>
 </div>
 
-<div class="section">
-  ✅ <strong>To-Do</strong><br>
-  <input type="text" id="task-input" placeholder="Nouvelle tâche">
-  <button id="add-task">Ajouter</button>
-  <ul id="task-list"></ul>
+<div class="card">
+<h3>✅ Tâches</h3>
+<input id="taskInput" placeholder="Nouvelle tâche">
+<button onclick="addTask()">Ajouter</button>
+<ul id="tasks"></ul>
 </div>
 
-<div class="section">
-  👨‍🍳 <strong>Idées de repas</strong><br>
-  <button id="generate-meal">Générer un repas</button>
-  <div id="meal-suggestion"></div>
+<div class="card">
+<h3>🧑‍🍳 Menu semaine</h3>
+<button onclick="generateMenu()">Générer</button>
+<ul id="menu"></ul>
 </div>
 
-<div class="section" id="chat-section">
-  🤖 <strong>Chat IA</strong><br>
-  <div id="chat-box"></div>
-  <input type="text" id="chat-input" placeholder="Écris un message...">
-  <button id="send-chat">Envoyer</button>
+<div class="card">
+<h3>🛒 Liste de courses</h3>
+<button onclick="generateCourses()">Depuis menu</button>
+<ul id="courses"></ul>
 </div>
 
-</main>
+<div class="card">
+<h3>⏰ Rappel</h3>
+<input type="time" id="alarm">
+<button onclick="setAlarm()">Activer</button>
+</div>
+</div>
 
 <script>
-  // --- Side Menu ---
-  const menuBars = document.getElementById('menu-bars');
-  const sideMenu = document.getElementById('side-menu');
-  menuBars.addEventListener('click', ()=>{ sideMenu.style.display = sideMenu.style.display==='block' ? 'none' : 'block'; });
+/* ===== GLOBAL ===== */
+let lang=localStorage.lang||"fr"
+let conversations=JSON.parse(localStorage.conversations||"[]")
+let currentConv=null
+let tasks=JSON.parse(localStorage.tasks||"[]")
+let points=Number(localStorage.points||0)
+let menu=JSON.parse(localStorage.menu||"[]")
+let courses=JSON.parse(localStorage.courses||"[]")
+const meals=[
+"Spaghetti Bolognese","Poulet Curry","Salade César","Pizza Margherita","Tacos","Riz sauté","Soupe légumes","Burger","Poisson grillé","Paella","Quiche","Ratatouille",
+"Pad Thaï","Sushi","Chili con Carne","Falafel","Couscous","Pâtes au pesto","Lasagne","Boeuf Stroganoff","Moussaka","Gyoza"
+]
 
-  // --- Conversations ---
-  const conversationsList = document.getElementById('conversations-list');
-  let conversations = JSON.parse(localStorage.getItem('conversations') || '[]');
-  function renderConversations(){
-    conversationsList.innerHTML = '';
-    conversations.forEach((c,i)=>{
-      const btn = document.createElement('button');
-      btn.textContent = c.name;
-      btn.onclick = ()=>openConversation(i);
-      conversationsList.appendChild(btn);
-    });
-  }
-  function openConversation(index){
-    currentConvo = index;
-    chatBox.innerHTML = '';
-    conversations[index].messages.forEach(msg=>{
-      appendMessage(msg.role+': '+msg.content);
-    });
-    sideMenu.style.display='none';
-  }
-  let currentConvo = -1;
-  function addNewConversation(){
-    const name = 'Conversation ' + (conversations.length +1);
-    const convo = { name, messages:[] };
-    conversations.push(convo);
-    localStorage.setItem('conversations', JSON.stringify(conversations));
-    renderConversations();
-    openConversation(conversations.length-1);
-  }
-  document.getElementById('new-convo-btn').addEventListener('click', addNewConversation);
-  document.getElementById('home-btn').addEventListener('click', ()=>{ sideMenu.style.display='none'; });
-  renderConversations();
+/* ===== SAVE ===== */
+function saveAll(){
+localStorage.conversations=JSON.stringify(conversations)
+localStorage.tasks=JSON.stringify(tasks)
+localStorage.points=points
+localStorage.lang=lang
+localStorage.menu=JSON.stringify(menu)
+localStorage.courses=JSON.stringify(courses)
+renderAll()
+}
 
-  // --- Thème ---
-  const themeSelect = document.getElementById('theme-select');
-  themeSelect.value = localStorage.getItem('theme') || 'pink';
-  function applyTheme(value) {
-    localStorage.setItem('theme', value);
-    switch(value){
-      case 'pink': document.body.style.background = 'linear-gradient(to bottom, #fdd, #faa)'; break;
-      case 'red': document.body.style.background = 'linear-gradient(to bottom, #faa, #f66)'; break;
-      case 'green': document.body.style.background = 'linear-gradient(to bottom, #dfd, #6f6)'; break;
-      case 'blue': document.body.style.background = 'linear-gradient(to bottom, #ddf, #66f)'; break;
-    }
-  }
-  applyTheme(themeSelect.value);
-  themeSelect.addEventListener('change', e => applyTheme(e.target.value));
+/* ===== RENDER ===== */
+function renderAll(){
+document.getElementById("points").textContent=points
+document.getElementById("level").textContent=Math.floor(points/50)+1
+renderTasks()
+renderConvList()
+renderMenu()
+renderCourses()
+}
 
-  // --- Langue ---
-  const langSelect = document.getElementById('lang-select');
-  langSelect.value = localStorage.getItem('lang') || 'fr';
-  langSelect.addEventListener('change', e => { localStorage.setItem('lang', e.target.value); });
+/* ===== MENU SIDEBAR ===== */
+function toggleMenu(){sidebar.classList.toggle("active")}
+function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active")}
 
-  // --- To-Do ---
-  const taskInput = document.getElementById('task-input');
-  const taskList = document.getElementById('task-list');
-  const addTask = document.getElementById('add-task');
-  let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-  function renderTasks(){
-    taskList.innerHTML = '';
-    tasks.forEach((t,i)=>{
-      const li = document.createElement('li');
-      li.textContent = t;
-      const del = document.createElement('button');
-      del.textContent = 'X';
-      del.onclick = ()=>{ tasks.splice(i,1); saveTasks(); renderTasks(); };
-      li.appendChild(del);
-      taskList.appendChild(li);
-    });
-  }
-  function saveTasks(){ localStorage.setItem('tasks', JSON.stringify(tasks)); }
-  addTask.onclick = ()=>{ if(taskInput.value.trim()){ tasks.push(taskInput.value.trim()); saveTasks(); renderTasks(); taskInput.value=''; } }
-  renderTasks();
+/* ===== CONVERSATIONS ===== */
+function newConversation(){
+  const id = Date.now();
+  conversations.unshift({id, title:`Conversation ${conversations.length+1}`, msgs:[]});
+  currentConv = id;
+  saveAll();
+  openChat(); // Affiche le chat
+}
 
-  // --- Idées de repas ---
-  const meals = ['Pizza','Pâtes','Salade','Sushi','Burger','Riz sauté','Curry'];
-  document.getElementById('generate-meal').onclick = ()=> {
-    const meal = meals[Math.floor(Math.random()*meals.length)];
-    document.getElementById('meal-suggestion').textContent = meal;
-  };
+function renderConvList(){
+convList.innerHTML=""
+conversations.forEach((c,i)=>{
+c.title=`Conversation ${conversations.length-i}`
+let d=document.createElement("div")
+d.className="item"
+d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`
+d.onclick=(e)=>{
+if(e.target.classList.contains("del")){
+conversations=conversations.filter(x=>x.id!==c.id)
+if(currentConv===c.id) goHome()
+saveAll()
+}else{currentConv=c.id;openChat()}
+}
+convList.appendChild(d)
+})
+}
 
-  // --- Chat IA ---
-  const chatBox = document.getElementById('chat-box');
-  const chatInput = document.getElementById('chat-input');
-  const sendChat = document.getElementById('send-chat');
+function openChat(){
+if(currentConv===null) return;
+const c = conversations.find(x => x.id === currentConv);
+if(!c) return;
+chat.style.display="flex";
+main.style.display="none";
+sidebar.classList.remove("active");
+messages.innerHTML=""; // Clear messages
+chatInput.focus(); // Active le champ texte
+}
 
-  async function sendMessage() {
-    const text = chatInput.value.trim();
-    if(!text) return;
-    appendMessage('Vous: ' + text);
-    if(currentConvo>=0) conversations[currentConvo].messages.push({role:'Vous',content:text});
-    chatInput.value = '';
+/* ===== CHAT (sans IA) ===== */
+function sendMsg(){
+const t=chatInput.value.trim()
+if(!t||currentConv===null)return
+const c=conversations.find(x=>x.id===currentConv)
+c.msgs.push({w:"user",t})
+chatInput.value=""
+messages.innerHTML+=`<div class="msg user">👤 ${t}</div>`
+saveAll()
+}
 
-    try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions',{
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer VOTRE_CLE_API' },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: [{ role: "user", content: text }]
-        })
-      });
-      const data = await response.json();
-      const botMessage = data.choices[0].message.content;
-      appendMessage('IA: ' + botMessage);
-      if(currentConvo>=0) { conversations[currentConvo].messages.push({role:'IA',content:botMessage}); localStorage.setItem('conversations', JSON.stringify(conversations)); }
-    } catch(e) {
-      appendMessage('Erreur IA: ' + e.message);
-    }
-  }
+/* ===== TASKS ===== */
+const tasksEl=document.getElementById("tasks")
+function addTask(){
+if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";points+=5;saveAll()}
+}
+function renderTasks(){
+tasksEl.innerHTML=""
+tasks.forEach((t)=>{
+let li=document.createElement("li")
+li.textContent=t.t
+if(t.d)li.classList.add("done")
+li.onclick=()=>{t.d=!t.d;points+=5;saveAll()}
+tasksEl.appendChild(li)
+})
+}
 
-  function appendMessage(msg){
-    const div = document.createElement('div');
-    div.className = 'chat-message';
-    div.textContent = msg;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
+/* ===== MENU & COURSES ===== */
+const menuEl=document.getElementById("menu")
+const coursesEl=document.getElementById("courses")
+function generateMenu(){menu=[];for(let i=0;i<7;i++)menu.push(meals[Math.floor(Math.random()*meals.length)]);saveAll()}
+function renderMenu(){menuEl.innerHTML="";menu.forEach(m=>menuEl.innerHTML+=`<li>${m}</li>`)}
+function generateCourses(){courses=[...new Set(menu)];saveAll()}
+function renderCourses(){coursesEl.innerHTML="";courses.forEach((c,i)=>{let li=document.createElement("li");li.textContent=c;let timer;li.addEventListener("touchstart",()=>timer=setTimeout(()=>{courses.splice(i,1);saveAll()},600));li.addEventListener("touchend",()=>clearTimeout(timer));coursesEl.appendChild(li)})})
 
-  sendChat.onclick = sendMessage;
-  chatInput.addEventListener('keypress', e => { if(e.key==='Enter') sendMessage(); });
+/* ===== THEME & LANG ===== */
+function changeTheme(t){document.body.className=t;localStorage.setItem("theme",t)}
+function changeLang(l){lang=l;saveAll()}
 
+/* ===== ALARM ===== */
+function setAlarm(){
+Notification.requestPermission()
+const time=alarm.value
+setInterval(()=>{
+const now=new Date().toTimeString().slice(0,5)
+if(now===time) new Notification("⏰ Rappel !")
+},30000)
+}
+
+/* ===== INIT ===== */
+renderAll()
 </script>
 </body>
-    </html>
+  </html>
