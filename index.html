@@ -5,15 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Productivity</title>
 <style>
-  body { margin:0; font-family: Arial, sans-serif; background: linear-gradient(to bottom, #fdd, #faa); transition: background 0.3s; }
-  header { display:flex; justify-content: space-between; align-items: center; padding: 10px; background:#f88; color:white; }
+  body { margin:0; font-family: Arial, sans-serif; transition: background 0.3s; }
+  header { display:flex; justify-content: space-between; align-items: center; padding:10px; background:#f88; color:white; }
   header h1 { margin:0; font-size:1.2em; }
   .menu-bars { font-size:1.5em; cursor:pointer; }
-  main { padding:10px; }
+  main { padding:10px; display:flex; flex-direction:column; gap:15px; }
+  .section { padding:15px; background: rgba(255,255,255,0.3); border-radius:10px; }
   select, input, button { margin:5px 0; padding:5px; font-size:1em; }
-  .section { margin-bottom:20px; padding:10px; background: rgba(255,255,255,0.3); border-radius:8px; }
   #chat-box { height:200px; overflow-y:auto; background:#fff; padding:5px; border-radius:5px; margin-bottom:5px; }
   .chat-message { margin:5px 0; }
+  #side-menu { display:none; position:fixed; top:0; left:0; width:250px; height:100%; background:#eee; padding:10px; overflow-y:auto; box-shadow:2px 0 5px rgba(0,0,0,0.3); z-index:100; }
+  #side-menu h2 { margin-top:0; }
+  #side-menu button { display:block; margin:5px 0; width:100%; }
 </style>
 </head>
 <body>
@@ -23,7 +26,14 @@
   <span class="menu-bars" id="menu-bars">&#9776;</span>
 </header>
 
-<main>
+<div id="side-menu">
+  <h2>Menu</h2>
+  <button id="home-btn">Accueil</button>
+  <button id="new-convo-btn">Nouvelle conversation</button>
+  <div id="conversations-list"></div>
+</div>
+
+<main id="main-content">
 
 <div class="section">
   🎨 <strong>Thème</strong><br>
@@ -57,7 +67,7 @@
   <div id="meal-suggestion"></div>
 </div>
 
-<div class="section">
+<div class="section" id="chat-section">
   🤖 <strong>Chat IA</strong><br>
   <div id="chat-box"></div>
   <input type="text" id="chat-input" placeholder="Écris un message...">
@@ -67,6 +77,44 @@
 </main>
 
 <script>
+  // --- Side Menu ---
+  const menuBars = document.getElementById('menu-bars');
+  const sideMenu = document.getElementById('side-menu');
+  menuBars.addEventListener('click', ()=>{ sideMenu.style.display = sideMenu.style.display==='block' ? 'none' : 'block'; });
+
+  // --- Conversations ---
+  const conversationsList = document.getElementById('conversations-list');
+  let conversations = JSON.parse(localStorage.getItem('conversations') || '[]');
+  function renderConversations(){
+    conversationsList.innerHTML = '';
+    conversations.forEach((c,i)=>{
+      const btn = document.createElement('button');
+      btn.textContent = c.name;
+      btn.onclick = ()=>openConversation(i);
+      conversationsList.appendChild(btn);
+    });
+  }
+  function openConversation(index){
+    currentConvo = index;
+    chatBox.innerHTML = '';
+    conversations[index].messages.forEach(msg=>{
+      appendMessage(msg.role+': '+msg.content);
+    });
+    sideMenu.style.display='none';
+  }
+  let currentConvo = -1;
+  function addNewConversation(){
+    const name = 'Conversation ' + (conversations.length +1);
+    const convo = { name, messages:[] };
+    conversations.push(convo);
+    localStorage.setItem('conversations', JSON.stringify(conversations));
+    renderConversations();
+    openConversation(conversations.length-1);
+  }
+  document.getElementById('new-convo-btn').addEventListener('click', addNewConversation);
+  document.getElementById('home-btn').addEventListener('click', ()=>{ sideMenu.style.display='none'; });
+  renderConversations();
+
   // --- Thème ---
   const themeSelect = document.getElementById('theme-select');
   themeSelect.value = localStorage.getItem('theme') || 'pink';
@@ -85,10 +133,7 @@
   // --- Langue ---
   const langSelect = document.getElementById('lang-select');
   langSelect.value = localStorage.getItem('lang') || 'fr';
-  langSelect.addEventListener('change', e => {
-    localStorage.setItem('lang', e.target.value);
-    alert('Langue changée à: ' + e.target.value);
-  });
+  langSelect.addEventListener('change', e => { localStorage.setItem('lang', e.target.value); });
 
   // --- To-Do ---
   const taskInput = document.getElementById('task-input');
@@ -127,8 +172,9 @@
     const text = chatInput.value.trim();
     if(!text) return;
     appendMessage('Vous: ' + text);
+    if(currentConvo>=0) conversations[currentConvo].messages.push({role:'Vous',content:text});
     chatInput.value = '';
-    
+
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions',{
         method:'POST',
@@ -141,6 +187,7 @@
       const data = await response.json();
       const botMessage = data.choices[0].message.content;
       appendMessage('IA: ' + botMessage);
+      if(currentConvo>=0) { conversations[currentConvo].messages.push({role:'IA',content:botMessage}); localStorage.setItem('conversations', JSON.stringify(conversations)); }
     } catch(e) {
       appendMessage('Erreur IA: ' + e.message);
     }
@@ -157,10 +204,6 @@
   sendChat.onclick = sendMessage;
   chatInput.addEventListener('keypress', e => { if(e.key==='Enter') sendMessage(); });
 
-  // --- Menu Bars ---
-  const menuBars = document.getElementById('menu-bars');
-  menuBars.addEventListener('click', ()=> alert('Menu à droite cliqué!'));
-
 </script>
 </body>
-</html>
+      </html>
