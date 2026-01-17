@@ -7,12 +7,7 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-html,body{width:100%;overflow-x:hidden}
-body{min-height:100vh;color:#fff;padding:10px;transition:.3s}
-
-.container{max-width:420px;margin:auto}
-
-/* THEMES */
+body{min-height:100vh;color:#fff;padding:12px;transition:.3s}
 body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
 body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
 body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
@@ -20,16 +15,20 @@ body.rose{background:linear-gradient(180deg,#9d174d,#4a044e)}
 body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
 body.orange{background:linear-gradient(180deg,#f97316,#9a3412)}
 
+.container{max-width:420px;margin:auto}
+
 header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:12px
+margin-bottom:12px;
+padding:4px 6px
 }
 
 .menu-btn{
 font-size:22px;
-cursor:pointer
+cursor:pointer;
+padding:6px
 }
 
 .card{
@@ -42,10 +41,11 @@ margin-bottom:12px
 
 input,select,button{
 width:100%;
-padding:10px;
+padding:12px;
 border:none;
-border-radius:12px;
-margin-top:6px
+border-radius:14px;
+margin-top:6px;
+font-size:15px
 }
 input,select{background:#fff;color:#000}
 button{background:rgba(255,255,255,.25);color:#fff;font-weight:bold}
@@ -53,14 +53,13 @@ button{background:rgba(255,255,255,.25);color:#fff;font-weight:bold}
 ul{list-style:none;margin-top:6px}
 li{
 background:rgba(255,255,255,.18);
-padding:8px;
-border-radius:10px;
+padding:10px;
+border-radius:12px;
 margin-top:6px;
 display:flex;
 justify-content:space-between;
 align-items:center
 }
-li.done{text-decoration:line-through;opacity:.6}
 
 /* SIDEBAR */
 #sidebar{
@@ -71,10 +70,9 @@ height:100%;
 background:#0f172a;
 padding:15px;
 transition:.3s;
-z-index:20
+z-index:30
 }
 #sidebar.active{left:0}
-#sidebar h3{margin-bottom:12px}
 .sidebar-item{
 padding:10px;
 border-bottom:1px solid #334;
@@ -88,61 +86,72 @@ position:fixed;
 top:0;left:0;
 width:100%;height:100%;
 background:#020617;
-z-index:15;
+z-index:20;
 flex-direction:column
 }
+
+#chat header{
+padding:8px 12px
+}
+
 #messages{
 flex:1;
 overflow-y:auto;
-padding:10px
+padding:12px
 }
-.msg{margin-bottom:8px}
+.msg{margin-bottom:10px;line-height:1.4}
 .user{color:#38bdf8}
 .ai{color:#a7f3d0}
 
 #chatInputBox{
 display:flex;
-gap:6px;
-padding:10px
+gap:8px;
+padding:12px;
+align-items:center
 }
-#chatInput{flex:1}
+#chatInput{
+flex:1;
+padding:14px;
+border-radius:999px;
+font-size:15px
+}
+#sendBtn{
+width:46px;
+height:46px;
+border-radius:50%;
+font-size:20px
+}
 
 /* CLOCK */
-#clock{
-text-align:center;
-opacity:.7;
-margin-top:10px
-}
+#clock{text-align:center;opacity:.7;margin-top:10px}
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
 <div id="sidebar">
 <h3>📂 Menu</h3>
 <div class="sidebar-item" onclick="goHome()">🏠 Accueil</div>
-<div class="sidebar-item" onclick="openChat()">💬 Chat</div>
-<div class="sidebar-item" onclick="clearChat()">🗑️ Historique</div>
+<div class="sidebar-item" onclick="newChat()">➕ Nouveau chat</div>
+<div id="chatList"></div>
 </div>
 
-<!-- CHAT -->
 <div id="chat">
 <header>
-<h3>Assistant IA</h3>
 <span class="menu-btn" onclick="toggleMenu()">☰</span>
+<h3 id="chatTitle">Chat 1</h3>
+<span class="menu-btn" style="opacity:.6">☰</span>
 </header>
 
 <div id="messages"></div>
 
 <div id="chatInputBox">
-<input id="chatInput" placeholder="Écris un message..."
+<input id="chatInput" placeholder="Écris un message…"
 onkeydown="if(event.key==='Enter')sendMsg()">
-<button onclick="sendMsg()">⬆️</button>
+<button id="sendBtn" onclick="sendMsg()">⬆️</button>
 </div>
 </div>
 
-<!-- MAIN -->
 <div class="container" id="main">
 
 <header>
@@ -151,17 +160,8 @@ onkeydown="if(event.key==='Enter')sendMsg()">
 </header>
 
 <div class="card">
-<h3>🌍 Langue</h3>
-<select id="langSelect" onchange="changeLang(this.value)">
-<option value="fr">Français</option>
-<option value="en">English</option>
-<option value="de">Deutsch</option>
-</select>
-</div>
-
-<div class="card">
 <h3>🎨 Thème</h3>
-<select id="themeSelect" onchange="changeTheme(this.value)">
+<select onchange="setTheme(this.value)">
 <option value="green">Vert</option>
 <option value="red">Rouge</option>
 <option value="blue">Bleu</option>
@@ -171,180 +171,85 @@ onkeydown="if(event.key==='Enter')sendMsg()">
 </select>
 </div>
 
-<div class="card">
-<h3>📊 Stats</h3>
-<p>Points : <span id="points">0</span></p>
-<p>Niveau : <span id="level">1</span></p>
-</div>
-
-<div class="card">
-<h3>✅ Tâches</h3>
-<input id="taskInput" placeholder="Nouvelle tâche">
-<button onclick="addTask()">Ajouter</button>
-<ul id="tasks"></ul>
-</div>
-
-<div class="card">
-<h3>🍽 Menu semaine</h3>
-<button onclick="generateMenu()">Générer</button>
-<ul id="menu"></ul>
-</div>
-
-<div class="card">
-<h3>🛒 Liste de courses</h3>
-<button onclick="generateCourses()">Depuis menu</button>
-<ul id="courses"></ul>
-</div>
-
-<div id="clock">--:--</div>
+<div id="clock"></div>
 
 </div>
 
 <script>
-/* ===== STATE ===== */
-let lang=localStorage.lang||"fr"
 let theme=localStorage.theme||"green"
-let tasks=JSON.parse(localStorage.tasks||"[]")
-let menu=JSON.parse(localStorage.menu||"[]")
-let courses=JSON.parse(localStorage.courses||"[]")
-let chatData=JSON.parse(localStorage.chat||"[]")
-let points=Number(localStorage.points||0)
+let chats=JSON.parse(localStorage.chats||"[]")
+let currentChat=0
 
-/* APPLY SAVED */
 document.body.className=theme
-langSelect.value=lang
-themeSelect.value=theme
 
-/* RECIPES */
-const recipes=["Poulet curry","Pâtes pesto","Riz légumes","Poisson citron","Burger maison","Pizza","Salade","Tacos"]
-
-/* MENU */
 function toggleMenu(){
 sidebar.classList.toggle("active")
 }
+
 function goHome(){
 chat.style.display="none"
 main.style.display="block"
 sidebar.classList.remove("active")
 }
-function openChat(){
+
+function setTheme(t){
+theme=t
+document.body.className=t
+localStorage.theme=t
+}
+
+function newChat(){
+chats.unshift([])
+currentChat=0
+save()
+openChat(0)
+}
+
+function openChat(i){
+currentChat=i
 main.style.display="none"
 chat.style.display="flex"
 sidebar.classList.remove("active")
 renderChat()
 }
 
-/* CHAT */
-function smartAI(t){
-if(t.includes("recette")) return recipes[Math.floor(Math.random()*recipes.length)]
-return "Je suis là pour t’aider 🙂"
-}
 function sendMsg(){
-let i=chatInput.value.trim()
-if(!i) return
-chatData.push({w:"user",t:i})
-chatData.push({w:"ai",t:smartAI(i)})
+let t=chatInput.value.trim()
+if(!t) return
+chats[currentChat].push({w:"user",t})
+chats[currentChat].push({w:"ai",t:"Je suis là pour t’aider 🙂"})
 chatInput.value=""
-saveAll()
+save()
 renderChat()
 }
+
 function renderChat(){
+chatTitle.textContent="Chat "+(currentChat+1)
 messages.innerHTML=""
-chatData.forEach(m=>{
+chats[currentChat].forEach(m=>{
 messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`
 })
 messages.scrollTop=messages.scrollHeight
-}
-function clearChat(){
-chatData=[]
-saveAll()
+renderChatList()
 }
 
-/* TASKS */
-function addTask(){
-if(taskInput.value){
-tasks.push({t:taskInput.value,d:false})
-taskInput.value=""
-points+=5
-saveAll()
-}}
-function renderTasks(){
-tasksEl.innerHTML=""
-tasks.forEach((t,i)=>{
-let li=document.createElement("li")
-li.innerHTML=`<span>${t.t}</span><button onclick="delTask(${i})">🗑️</button>`
-tasksEl.appendChild(li)
+function renderChatList(){
+chatList.innerHTML=""
+chats.forEach((c,i)=>{
+chatList.innerHTML+=`<div class="sidebar-item" onclick="openChat(${i})">💬 Chat ${i+1}</div>`
 })
 }
-function delTask(i){
-tasks.splice(i,1)
-saveAll()
+
+function save(){
+localStorage.chats=JSON.stringify(chats)
 }
 
-/* MENU / COURSES */
-function generateMenu(){
-menu=[]
-for(let i=0;i<7;i++)menu.push(recipes[Math.floor(Math.random()*recipes.length)])
-saveAll()
-}
-function renderMenu(){
-menuEl.innerHTML=""
-menu.forEach(m=>menuEl.innerHTML+=`<li>${m}</li>`)
-}
-function generateCourses(){
-courses=[...new Set(menu)]
-saveAll()
-}
-function renderCourses(){
-coursesEl.innerHTML=""
-courses.forEach((c,i)=>{
-let li=document.createElement("li")
-li.innerHTML=`<span>${c}</span><button onclick="delCourse(${i})">🗑️</button>`
-coursesEl.appendChild(li)
-})
-}
-function delCourse(i){
-courses.splice(i,1)
-saveAll()
-}
-
-/* SETTINGS */
-function changeLang(l){lang=l;saveAll()}
-function changeTheme(t){theme=t;document.body.className=t;saveAll()}
-
-/* CLOCK */
 setInterval(()=>{
-let d=new Date()
-clock.textContent=d.toLocaleTimeString().slice(0,5)
+clock.textContent=new Date().toLocaleTimeString().slice(0,5)
 },1000)
 
-/* SAVE */
-function saveAll(){
-localStorage.lang=lang
-localStorage.theme=theme
-localStorage.tasks=JSON.stringify(tasks)
-localStorage.menu=JSON.stringify(menu)
-localStorage.courses=JSON.stringify(courses)
-localStorage.chat=JSON.stringify(chatData)
-localStorage.points=points
-renderAll()
-}
-function renderAll(){
-pointsEl.textContent=points
-level.textContent=Math.floor(points/50)+1
-renderTasks()
-renderMenu()
-renderCourses()
-}
-
-/* INIT */
-const tasksEl=document.getElementById("tasks")
-const menuEl=document.getElementById("menu")
-const coursesEl=document.getElementById("courses")
-const pointsEl=document.getElementById("points")
-
-renderAll()
+renderChatList()
 </script>
 
 </body>
-  </html>
+</html>
