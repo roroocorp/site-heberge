@@ -85,6 +85,7 @@ li.done{text-decoration:line-through;opacity:.6}
 <option value="fr">Français</option>
 <option value="en">English</option>
 <option value="es">Español</option>
+<option value="de">Deutsch</option>
 </select>
 </div>
 
@@ -172,12 +173,13 @@ function goHome(){chat.style.display="none";main.style.display="block";sidebar.c
 
 /* ===== CONVERSATIONS ===== */
 function newConversation(){
-const id=Date.now()
-conversations.unshift({id,title:`Conversation ${conversations.length+1}`,msgs:[]})
-currentConv=id
-saveAll()
-openChat()
+  const id = Date.now();
+  conversations.unshift({id, title:`Conversation ${conversations.length+1}`, msgs:[]});
+  currentConv = id;
+  saveAll();
+  openChat(); // Affiche le chat immédiatement
 }
+
 function renderConvList(){
 convList.innerHTML=""
 conversations.forEach((c,i)=>{
@@ -195,11 +197,16 @@ saveAll()
 convList.appendChild(d)
 })
 }
+
 function openChat(){
-chat.style.display="flex"
-main.style.display="none"
-sidebar.classList.remove("active")
-renderMessages()
+if(currentConv===null) return;
+const c = conversations.find(x => x.id === currentConv);
+if(!c) return;
+chat.style.display="flex";
+main.style.display="none";
+sidebar.classList.remove("active");
+renderMessages();
+chatInput.focus(); // Active le champ texte
 }
 
 /* ===== CHAT ===== */
@@ -235,10 +242,27 @@ if(text.includes("recette")||text.includes("menu")){
 return meals[Math.floor(Math.random()*meals.length)]
 }
 if(text.includes("aide")){
-return lang==="en"?"I can help organize your day.":"Je peux t’aider à organiser ta journée."
+switch(lang){
+case "en": return "I can help organize your day."
+case "es": return "Puedo ayudarte a organizar tu día."
+case "de": return "Ich kann dir helfen, deinen Tag zu organisieren."
+default: return "Je peux t’aider à organiser ta journée."
 }
-if(text.includes("bonjour")||text.includes("salut")) return lang==="en"?"Hello!":"Salut !"
-return lang==="en"?"I am here to assist you.":"Je suis là pour t’aider."
+}
+if(text.includes("bonjour")||text.includes("salut")) {
+switch(lang){
+case "en": return "Hello!"
+case "es": return "¡Hola!"
+case "de": return "Hallo!"
+default: return "Salut !"
+}
+}
+switch(lang){
+case "en": return "I am here to assist you."
+case "es": return "Estoy aquí para ayudarte."
+case "de": return "Ich bin hier, um dir zu helfen."
+default: return "Je suis là pour t’aider."
+}
 }
 
 /* ===== TASKS ===== */
