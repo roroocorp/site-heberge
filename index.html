@@ -7,136 +7,66 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-
-/* FIX TABLETTE BLANC */
-html,body{
-  width:100%;
-  min-height:100vh;
-  background:#020617;
-}
-
-/* THEMES */
+html,body{width:100%;min-height:100%;background:#020617;color:#fff}
 body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
-body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
-body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
-body.rose{background:linear-gradient(180deg,#f43f5e,#be185d)}
-body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
-body.orange{background:linear-gradient(180deg,#f97316,#b45309)}
 
-body{
-  color:#fff;
-  padding:10px;
-  transition:.3s;
-}
-
-.container{max-width:420px;margin:auto}
+.container{max-width:420px;margin:auto;padding:10px}
 
 /* HEADER */
-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:14px;
-}
-
-.header-left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-header h1{
-  font-size:20px;
-  margin-left:6px;
-}
-
-.menu-btn{
-  font-size:24px;
-  cursor:pointer;
-}
-
-/* TOP INFO */
-#topInfo{
-  display:flex;
-  gap:10px;
-  font-size:13px;
-  opacity:.9;
-}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+header h1{font-size:18px}
+.menu-btn{font-size:24px;cursor:pointer}
 
 /* CARD */
-.card{
-  background:rgba(255,255,255,.12);
-  backdrop-filter:blur(14px);
-  border-radius:18px;
-  padding:14px;
-  margin-bottom:12px
-}
-
-input,select,button{
-  width:100%;
-  padding:10px;
-  border:none;
-  border-radius:12px;
-  margin-top:6px
-}
-
-input,select{background:#fff}
-button{
-  background:rgba(255,255,255,.25);
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer
-}
-
-ul{list-style:none;margin-top:6px}
-li{
-  background:rgba(255,255,255,.15);
-  padding:8px;
-  border-radius:10px;
-  margin-top:6px;
-}
+.card{background:rgba(255,255,255,.12);backdrop-filter:blur(14px);border-radius:18px;padding:14px;margin-bottom:12px}
+input,select,button{width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px}
+button{background:rgba(255,255,255,.2);color:#fff;font-weight:bold}
 
 /* SIDEBAR */
 #sidebar{
-  position:fixed;
-  top:0;
-  left:-100%;
-  width:75%;
-  max-width:280px;
-  height:100%;
-  background:#0f172a;
-  padding:15px;
-  transition:.3s;
-  z-index:999
+position:fixed;top:0;left:-100%;
+width:75%;max-width:280px;height:100%;
+background:#0f172a;padding:15px;
+transition:.3s;z-index:10
 }
 #sidebar.active{left:0}
 .item{padding:10px;border-bottom:1px solid #334;cursor:pointer}
 
 /* CHAT */
-#chat{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:#020617;
-  z-index:900;
-  flex-direction:column
+#chat{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;z-index:9;flex-direction:column}
+#messages{flex:1;overflow-y:auto;padding:10px}
+.msg{margin-bottom:6px}
+.user{color:#38bdf8}
+.ai{color:#a7f3d0}
+
+/* CODE PROMO PAGE */
+#promoPage{
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:linear-gradient(180deg,#fde047,#facc15);
+color:#000;
+z-index:9;
+padding:10px;
+}
+#promoContent{
+margin-top:30px;
+background:#fff;
+border-radius:18px;
+padding:20px;
 }
 
-#messages{flex:1;overflow:auto;padding:10px}
-
-#chatInputContainer{
-  display:flex;
-  gap:6px;
-  padding:6px
+/* FOOT */
+#scoreBox,#hourBox{
+position:fixed;
+background:rgba(0,0,0,.4);
+padding:6px 10px;
+border-radius:10px;
+font-size:14px
 }
-#chatInput{flex:1}
-#chatSend{width:50px}
-
-/* SCORE */
-#pointsBox{
-  font-size:13px;
-  opacity:.9;
-}
+#scoreBox{bottom:10px;left:10px}
+#hourBox{bottom:10px;right:10px}
 </style>
 </head>
 
@@ -144,112 +74,120 @@ li{
 
 <!-- SIDEBAR -->
 <div id="sidebar">
-  <div class="item" onclick="newConversation()">➕ Nouvelle conversation</div>
-  <div class="item" onclick="openChat()">💬 Chat IA</div>
-  <div class="item" onclick="closeSidebar()">🏠 Accueil</div>
+<div class="item" onclick="goHome()">🏠 Accueil</div>
+<div class="item" onclick="newConversation()">💬 Nouvelle conversation</div>
+<div class="item" onclick="openChat()">🤖 Chat IA</div>
+<div class="item" onclick="openPromoPage()">💳 Code Promo</div>
 </div>
 
 <!-- MAIN -->
-<div class="container" id="main">
-
+<div id="main" class="container">
 <header>
-  <div class="header-left">
-    <div id="topInfo">
-      ⏰ <span id="hour"></span> |
-      ⭐ <span id="points">0</span> |
-      🎯 <span id="level">1</span>
-    </div>
-    <h1>Daily Life Ultra IA</h1>
-  </div>
-  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+<h1>Daily Life Ultra IA</h1>
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
 </header>
 
 <div class="card">
-  <h3>🌍 Langue</h3>
-  <select onchange="changeLang(this.value)">
-    <option value="fr">Français</option>
-    <option value="en">English</option>
-  </select>
+<h3>✅ Tâches</h3>
+<input id="taskInput" placeholder="Nouvelle tâche">
+<button onclick="addTask()">Ajouter</button>
+<ul id="tasks"></ul>
+</div>
 </div>
 
-<div class="card">
-  <h3>🎨 Thème</h3>
-  <select onchange="changeTheme(this.value)">
-    <option value="green">Vert</option>
-    <option value="red">Rouge</option>
-    <option value="blue">Bleu</option>
-  </select>
+<!-- CHAT -->
+<div id="chat">
+<header>
+<h1>Chat</h1>
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
+</header>
+<div id="messages"></div>
+<input id="chatInput" placeholder="Message..." onkeydown="if(event.key==='Enter')sendMsg()">
 </div>
 
-<div class="card">
-  <h3>✅ Tâches</h3>
-  <input id="taskInput" placeholder="Nouvelle tâche">
-  <button onclick="addTask()">Ajouter</button>
-  <ul id="tasks"></ul>
+<!-- PAGE CODE PROMO -->
+<div id="promoPage">
+<header>
+<h1>Code Promo</h1>
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
+</header>
+
+<div id="promoContent">
+<input id="promoInput" placeholder="Entrer un code promo">
+<button onclick="applyPromo()">Envoyer</button>
+<div id="promoMsg" style="margin-top:10px;"></div>
+</div>
 </div>
 
-</div>
+<!-- SCORE / HOUR -->
+<div id="scoreBox">Points: <span id="points">0</span></div>
+<div id="hourBox"></div>
 
 <script>
-let tasks=JSON.parse(localStorage.tasks||"[]");
-let points=Number(localStorage.points||0);
+let tasks=[];
+let points=0;
+let conversations=[];
+let currentConv=null;
 
-/* TASKS */
+function toggleMenu(){sidebar.classList.toggle("active")}
+function goHome(){
+main.style.display="block";
+chat.style.display="none";
+promoPage.style.display="none";
+sidebar.classList.remove("active");
+}
+
+function openPromoPage(){
+promoPage.style.display="block";
+main.style.display="none";
+chat.style.display="none";
+sidebar.classList.remove("active");
+}
+
+function openChat(){
+chat.style.display="flex";
+main.style.display="none";
+promoPage.style.display="none";
+sidebar.classList.remove("active");
+}
+
+function newConversation(){
+openChat();
+messages.innerHTML="";
+}
+
 function addTask(){
-  const input=document.getElementById("taskInput");
-  if(!input.value.trim())return;
-  tasks.push(input.value);
-  input.value="";
-  points+=5;
-  save();
+if(taskInput.value){
+tasks.push(taskInput.value);
+renderTasks();
+taskInput.value="";
+}
 }
 function renderTasks(){
-  const ul=document.getElementById("tasks");
-  ul.innerHTML="";
-  tasks.forEach(t=>{
-    const li=document.createElement("li");
-    li.textContent=t;
-    ul.appendChild(li);
-  });
+tasksEl.innerHTML="";
+tasks.forEach(t=>{
+let li=document.createElement("li");
+li.textContent=t;
+tasksEl.appendChild(li);
+});
 }
 
-/* THEME */
-function changeTheme(t){
-  document.body.className=t;
-  localStorage.theme=t;
+function sendMsg(){
+messages.innerHTML+=`<div class="msg user">👤 ${chatInput.value}</div>`;
+messages.innerHTML+=`<div class="msg ai">🤖 Je suis là.</div>`;
+chatInput.value="";
 }
 
-/* MENU */
-function toggleMenu(){
-  document.getElementById("sidebar").classList.toggle("active");
-}
-function closeSidebar(){
-  document.getElementById("sidebar").classList.remove("active");
+function applyPromo(){
+promoMsg.textContent="Code reçu.";
 }
 
-/* TIME */
-function updateTime(){
-  document.getElementById("hour").textContent=new Date().toLocaleTimeString();
+function updateHour(){
+hourBox.textContent=new Date().toLocaleTimeString();
 }
-setInterval(updateTime,1000);
-
-/* SAVE */
-function save(){
-  localStorage.tasks=JSON.stringify(tasks);
-  localStorage.points=points;
-  render();
-}
-function render(){
-  document.getElementById("points").textContent=points;
-  document.getElementById("level").textContent=Math.floor(points/50)+1;
-  renderTasks();
-}
-
-/* INIT */
-if(localStorage.theme)document.body.className=localStorage.theme;
-render();
-updateTime();
+setInterval(updateHour,1000);
+updateHour();
 </script>
 
 </body>
-                               </html>
+</html>
