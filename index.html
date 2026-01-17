@@ -2,250 +2,253 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Assistant Quotidien Ultra IA</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Daily Life Dashboard</title>
+
 <style>
-:root{
-  --blue:#3b82f6; --red:#ef4444; --green:#22c55e;
-  --purple:#a855f7; --orange:#f97316; --pink:#ec4899;
+/* ================= BASE ================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
-*{box-sizing:border-box;}
-body{
-  margin:0;font-family:Arial,sans-serif;
-  background:rgba(236,72,153,0.8);
-  color:white;transition:background 0.5s;
-  overflow-x:hidden;
-}
-header{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:10px 15px;position:sticky;top:0;z-index:10;
-  background:rgba(0,0,0,0.05);
-}
-main{
-  max-width:900px;margin:auto;padding:10px;
-  display:flex;flex-direction:column;gap:10px;
-}
-.card{
-  padding:15px;border-radius:12px;
-  background:rgba(255,255,255,0.4);
-  color:black;box-shadow:0 4px 6px rgba(0,0,0,0.1);
-  opacity:0;transform:translateY(20px);animation:fadeIn 0.5s forwards;
-  transition:all 0.3s;
-}
-@keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
-.fadeOut{opacity:0 !important;transform:translateY(-20px);transition:all 0.3s;}
-input,textarea,select,button{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:none;}
-button{background:rgba(0,0,0,0.1);color:black;font-weight:bold;cursor:pointer;transition:0.3s;}
-button:hover{opacity:0.85;}
-ul{padding:0;list-style:none;max-height:250px;overflow-y:auto;scroll-behavior:smooth;}
-li{padding:6px;margin-bottom:4px;border-radius:8px;background:#ffffff50;cursor:pointer;transition:all 0.3s;}
-li.done{text-decoration:line-through;opacity:.6;}
-li:hover{transform:scale(1.02);}
-#clock{font-weight:bold;margin-left:10px;}
-#hamburger{cursor:pointer;width:25px;height:20px;display:flex;flex-direction:column;justify-content:space-between;margin-left:10px;}
-.bar{height:4px;background:black;border-radius:2px;}
 
-/* Sidebar */
-#aiSidebar{
-  position:fixed;top:0;left:-400px;width:400px;height:100%;
-  background:white;color:black;
-  box-shadow:2px 0 15px rgba(0,0,0,0.3);
-  transition:left 0.5s ease;
-  z-index:100;padding:10px;overflow-y:auto;
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #064e3b, #042f2e);
+  color: white;
+  padding: 15px;
+  transition: background 0.4s ease;
 }
-#aiSidebar.show{left:0;}
-#aiSidebar h2{margin-top:0;}
-#aiSidebar ul{list-style:none;padding:0;}
-#aiSidebar li{padding:6px;margin-bottom:4px;border-radius:6px;background:#f1f5f9;cursor:pointer;transition:all 0.3s;}
-#aiSidebar li:hover{background:#e2e8f0;}
 
-/* Chat Box */
-#chatBox{
-  display:none;position:fixed;bottom:10px;left:420px;right:10px;
-  max-width:600px;background:white;border-radius:12px;padding:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,0.2);
-  transition:all 0.5s ease-in-out;
+/* ================= THEMES ================= */
+body.theme-green {
+  background: linear-gradient(180deg, #064e3b, #042f2e);
 }
-#chatBox.show{display:block;}
-.chat{max-height:300px;overflow-y:auto;scroll-behavior:smooth;margin-bottom:10px;padding:5px;border:1px solid #ccc;border-radius:10px;background:#f0f0f0;transition:all 0.3s;}
-.msg{margin-bottom:6px;opacity:0;transform:translateY(20px);transition:all 0.3s;position:relative;padding-right:30px;}
-.msg.show{opacity:1;transform:translateY(0);}
-.user{color:#2563eb;}
-.ai{color:#16a34a;}
-.deleteBtn{position:absolute;right:5px;top:2px;cursor:pointer;color:red;font-weight:bold;}
-.category{font-size:13px;opacity:.8;}
-.badge{display:inline-block;background:gold;color:black;padding:5px 10px;border-radius:8px;margin:4px;}
-#searchInput{padding:8px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;}
+body.theme-red {
+  background: linear-gradient(180deg, #7f1d1d, #450a0a);
+}
+body.theme-blue {
+  background: linear-gradient(180deg, #1e3a8a, #020617);
+}
+body.theme-rose {
+  background: linear-gradient(180deg, #9d174d, #4a044e);
+}
+body.theme-violet {
+  background: linear-gradient(180deg, #5b21b6, #2e1065);
+}
+
+/* ================= HEADER ================= */
+header {
+  text-align: center;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 26px;
+}
+
+/* ================= CARD (EFFET VERRE COMME AVANT) ================= */
+.card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-radius: 18px;
+  padding: 15px;
+  margin-bottom: 15px;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.15),
+    0 8px 25px rgba(0,0,0,0.25);
+}
+
+/* ================= TITRES ================= */
+.card h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+/* ================= INPUTS ================= */
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 12px;
+  border: none;
+  font-size: 15px;
+}
+
+input, select {
+  background: rgba(255,255,255,0.85);
+  color: #000;
+}
+
+/* ================= BUTTON ================= */
+button {
+  background: rgba(255,255,255,0.18);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: rgba(255,255,255,0.28);
+}
+
+/* ================= STATS ================= */
+.stat {
+  margin: 5px 0;
+}
+
+/* ================= TODO ================= */
+ul {
+  list-style: none;
+  margin-top: 10px;
+}
+
+li {
+  padding: 8px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  background: rgba(255,255,255,0.15);
+  cursor: pointer;
+  user-select: none;
+}
+
+li.done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+/* ================= SMALL ================= */
+small {
+  opacity: 0.7;
+  font-size: 12px;
+}
 </style>
 </head>
-<body>
+
+<body class="theme-green">
 
 <header>
-<div>
-<h1 id="title">🤖 Assistant Quotidien Ultra</h1>
-<p id="subtitle">Tâches • Menu • IA • Recettes</p>
-</div>
-<div style="display:flex;align-items:center;">
-<input id="searchInput" placeholder="🔍 Rechercher tâches, repas ou ingrédients" style="width:150px;">
-<div id="clock"></div>
-<div id="hamburger">
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-</div>
-</div>
+  <h1>🚀 Daily Life Dashboard</h1>
+  <small>Productivité • Motivation • Simplicité</small>
 </header>
 
-<div id="aiSidebar">
-<h2>Conversations</h2>
-<button onclick="newChat()">Nouvelle conversation</button>
-<h3>Historique</h3>
-<ul id="chatHistory"></ul>
-</div>
-
-<main id="mainContent">
-<div class="card" id="themeLang">
-<select id="theme">
-<option value="blue">Bleu</option>
-<option value="red">Rouge</option>
-<option value="green">Vert</option>
-<option value="purple">Violet</option>
-<option value="orange">Orange</option>
-<option value="pink">Rose</option>
-</select>
-<select id="lang">
-<option value="fr">Français</option>
-<option value="en">English</option>
-<option value="de">Deutsch</option>
-</select>
-</div>
-
+<!-- THEME -->
 <div class="card">
-<p>⭐ Points : <span id="points">0</span></p>
-<p>🎮 Niveau : <span id="level">1</span></p>
-<div id="badges"></div>
+  <h2>🎨 Thème</h2>
+  <select id="themeSelect">
+    <option value="green">Vert</option>
+    <option value="red">Rouge</option>
+    <option value="blue">Bleu</option>
+    <option value="rose">Rose</option>
+    <option value="violet">Violet</option>
+  </select>
+
+  <h2 style="margin-top:10px;">🌍 Langue</h2>
+  <select id="langSelect">
+    <option value="fr">Français</option>
+    <option value="en">English</option>
+    <option value="de">Deutsch</option>
+  </select>
 </div>
 
+<!-- STATS -->
 <div class="card">
-<h2>✅ Tâches</h2>
-<input id="todoInput" placeholder="Écris une tâche">
-<button onclick="addTodo()">Ajouter</button>
-<ul id="list"></ul>
+  <h2>📊 Stats</h2>
+  <div class="stat">🏆 Points : <span id="points">0</span></div>
+  <div class="stat">🎮 Niveau : <span id="level">1</span></div>
+  <div class="stat">🔥 Badge : <span id="badge">Aucun</span></div>
 </div>
 
+<!-- TODO -->
 <div class="card">
-<h2>🍳 Menu de la semaine</h2>
-<button onclick="generateMenu()">Générer menu</button>
-<ul id="menu"></ul>
+  <h2>✅ To-Do</h2>
+  <input id="taskInput" placeholder="Écris une tâche">
+  <button onclick="addTask()">Ajouter</button>
+  <ul id="taskList"></ul>
+  <small>👉 Cliquer = terminé • Appui long = supprimer</small>
 </div>
-
-<div class="card">
-<h2>🛒 Liste de courses</h2>
-<button onclick="generateGroceries()">Générer liste</button>
-<ul id="groceries"></ul>
-</div>
-
-<div class="card" id="chatBox">
-<div class="chat" id="chat"></div>
-<textarea id="aiInput" placeholder="Pose ta question..."></textarea>
-<button onclick="runAI()">Envoyer</button>
-<div class="category" id="aiCategory"></div>
-</div>
-
-<div class="card">
-<h2>⏰ Réveil / Rappel</h2>
-<input type="time" id="alarmTime">
-<button onclick="setAlarm()">Programmer le réveil</button>
-<p id="alarmMsg"></p>
-</div>
-</main>
 
 <script>
-// DATA
-let todos=JSON.parse(localStorage.getItem("todos")||"[]");
-let menu=JSON.parse(localStorage.getItem("menu")||"[]");
-let groceries=JSON.parse(localStorage.getItem("groceries")||"[]");
-let chat=JSON.parse(localStorage.getItem("chat")||"[]");
-let history=JSON.parse(localStorage.getItem("history")||"[]");
-let points=+localStorage.getItem("points")||0;
-let level=+localStorage.getItem("level")||1;
+/* ================= STORAGE ================= */
+let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+let points = parseInt(localStorage.getItem("points") || "0");
 
-// LANGUES
-const texts={fr:{title:"🤖 Assistant Quotidien Ultra",sub:"Tâches • Menu • IA • Recettes",todo:"Écris une tâche"},
-en:{title:"🤖 Daily Assistant",sub:"Tasks • Menu • AI • Recipes",todo:"Write a task"},
-de:{title:"🤖 Täglicher Assistent",sub:"Aufgaben • Menü • KI • Rezepte",todo:"Aufgabe eingeben"}};
-const langSel=document.getElementById("lang"); const savedLang=localStorage.getItem("lang")||"fr"; langSel.value=savedLang;
-function setLang(l){document.getElementById("title").textContent=texts[l].title;document.getElementById("subtitle").textContent=texts[l].sub;todoInput.placeholder=texts[l].todo;}
-setLang(savedLang); langSel.onchange=()=>{setLang(langSel.value);localStorage.setItem("lang",langSel.value)};
+/* ================= LOAD ================= */
+document.getElementById("points").innerText = points;
+renderTasks();
+updateLevel();
 
-// THEME
-const themeSel=document.getElementById("theme"); const savedTheme=localStorage.getItem("theme"); 
-if(savedTheme){document.body.style.background="var(--"+savedTheme+")"; themeSel.value=savedTheme;}
-themeSel.onchange=()=>{
-  const t=themeSel.value;
-  document.body.style.background="var(--"+t+")";
-  localStorage.setItem("theme",t);
-};
+/* ================= THEME ================= */
+document.getElementById("themeSelect").addEventListener("change", e => {
+  document.body.className = "theme-" + e.target.value;
+});
 
-// POINTS / BADGES
-function save(){localStorage.setItem("todos",JSON.stringify(todos));localStorage.setItem("menu",JSON.stringify(menu));localStorage.setItem("groceries",JSON.stringify(groceries));localStorage.setItem("chat",JSON.stringify(chat));localStorage.setItem("history",JSON.stringify(history));localStorage.setItem("points",points);localStorage.setItem("level",level);renderBadges();}
-function renderBadges(){const b=document.getElementById("badges");b.innerHTML="";if(points>=10)b.innerHTML+='<span class="badge">🔥 Débutant</span>';if(points>=30)b.innerHTML+='<span class="badge">💪 Actif</span>';if(points>=60)b.innerHTML+='<span class="badge">🏆 Expert</span>'}
+/* ================= TASKS ================= */
+function addTask() {
+  const input = document.getElementById("taskInput");
+  if (!input.value.trim()) return;
 
-// TODO
-function renderTodos(){const ul=document.getElementById("list");ul.innerHTML="";todos.forEach((t,i)=>{const li=document.createElement("li");li.textContent=t.text;if(t.done)li.classList.add("done");li.onclick=()=>{t.done=!t.done;if(t.done)points+=5;save();renderTodos();};let timer;li.onmousedown=li.ontouchstart=()=>timer=setTimeout(()=>{li.classList.add("fadeOut");setTimeout(()=>{todos.splice(i,1);save();renderTodos();},300)},800);li.onmouseup=li.ontouchend=()=>clearTimeout(timer);ul.appendChild(li);});}
-function addTodo(){const v=todoInput.value.trim();if(!v)return;todos.push({text:v,done:false});todoInput.value="";save();renderTodos();}
-
-// MENU / COURSES
-const days=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
-const recipes=[{n:"Pâtes bolognaise",i:["pâtes","viande","tomate"]},{n:"Pizza",i:["pâte","fromage","tomate"]},{n:"Burger",i:["pain","viande","salade"]},{n:"Salade",i:["salade","tomate","concombre"]},{n:"Omelette",i:["œufs","sel","poivre"]},{n:"Riz au poulet",i:["riz","poulet","épices"]},{n:"Soupe légumes",i:["légumes","eau","sel"]},{n:"Crêpes",i:["farine","œufs","lait"]},{n:"Spaghetti carbonara",i:["spaghetti","lardons","œufs","fromage"]},{n:"Poisson rôti",i:["poisson","citron","herbes"]}];
-function random(arr){return arr[Math.floor(Math.random()*arr.length)];}
-function generateMenu(){menu=days.map(d=>{const old=menu.find(x=>x.startsWith(d)); return old||d+" : "+random(recipes).n;});renderMenu();save();}
-function renderMenu(){const ul=document.getElementById("menu");ul.innerHTML="";menu.forEach((l,i)=>{const li=document.createElement("li");const day=l.split(" : ")[0];const meal=l.split(" : ")[1];const input=document.createElement("input");input.value=meal;input.onchange=()=>{menu[i]=day+" : "+input.value;save();};li.appendChild(document.createTextNode(day+" : "));li.appendChild(input);ul.appendChild(li);});}
-function generateGroceries(){let set=new Set();menu.forEach(m=>{const name=m.split(" : ")[1];const r=recipes.find(x=>x.n===name);if(r)r.i.forEach(i=>set.add(i));});groceries=[...set];renderGroceries();save();}
-function renderGroceries(){const ul=document.getElementById("groceries");ul.innerHTML="";groceries.forEach((it,i)=>{const li=document.createElement("li");li.textContent="🛒 "+it;ul.appendChild(li);});}
-
-// Hamburger toggle
-const hamburger=document.getElementById("hamburger");
-const aiSidebar=document.getElementById("aiSidebar");
-const chatBox=document.getElementById("chatBox");
-let mainVisible=true;
-hamburger.onclick=()=>{
-  if(mainVisible){
-    aiSidebar.classList.toggle("show");
-    chatBox.classList.toggle("show");
-  } else {
-    mainVisible=true;
-    aiSidebar.classList.remove("show");
-    chatBox.classList.remove("show");
-    document.getElementById("mainContent").style.display="flex";
-  }
+  tasks.push({ text: input.value, done: false });
+  input.value = "";
+  points += 5; // petit gain
+  save();
 }
 
-// Chat with delete & categories
-function renderHistory(){const ul=document.getElementById("chatHistory");ul.innerHTML="";history.forEach((conv,i)=>{const li=document.createElement("li");li.textContent="Conversation "+(i+1);li.onclick=()=>{chat=[...history[i]];renderChat();mainVisible=false;document.getElementById("mainContent").style.display="none";aiSidebar.classList.remove("show");chatBox.classList.add("show");};ul.appendChild(li);});}
-function newChat(){chat=[];renderChat();}
-function runAI(){const q=aiInput.value.trim();if(!q)return;points+=Math.max(1,Math.floor(q.length/6));
-chat.push({from:"user",text:"👤 "+aiInput.value,category:"Question"});
-let r="🤖 Réponse simulée: exemple."; // Ici tu peux ajouter IA réelle ou recettes
-chat.push({from:"ai",text:r,category:"Réponse"});
-history.push([...chat]);aiInput.value="";save();renderChat();}
-function renderChat(){const c=document.getElementById("chat");c.innerHTML="";chat.forEach((m,i)=>{const d=document.createElement("div");d.className="msg "+m.from;setTimeout(()=>{d.classList.add("show");},50);d.textContent=m.text;
-const del=document.createElement("span");del.textContent="✖";del.className="deleteBtn";del.onclick=(e)=>{e.stopPropagation();chat.splice(i,1);save();renderChat();};d.appendChild(del);
-const cat=document.createElement("div");cat.textContent=m.category;cat.className="category";d.appendChild(cat);c.appendChild(d);c.scrollTop=c.scrollHeight;});}
+function renderTasks() {
+  const ul = document.getElementById("taskList");
+  ul.innerHTML = "";
+  tasks.forEach((t, i) => {
+    const li = document.createElement("li");
+    li.textContent = t.text;
+    if (t.done) li.classList.add("done");
 
-// Clock
-function updateClock(){document.getElementById("clock").textContent=new Date().toLocaleTimeString();}
-setInterval(updateClock,1000);updateClock();
+    // clic = barrer
+    li.onclick = () => {
+      t.done = !t.done;
+      points += t.done ? 10 : -5;
+      save();
+    };
 
-// Alarm
-let alarmTimeout;
-function setAlarm(){const time=document.getElementById("alarmTime").value;if(!time)return;const now=new Date();const parts=time.split(":");const alarm=new Date();alarm.setHours(parts[0],parts[1],0,0);if(alarm<now)alarm.setDate(alarm.getDate()+1);const diff=alarm-now;clearTimeout(alarmTimeout);alarmTimeout=setTimeout(()=>{alert("⏰ Réveil !");},diff);document.getElementById("alarmMsg").textContent="Réveil programmé à "+time;}
+    // appui long = supprimer (style Discord)
+    let pressTimer;
+    li.addEventListener("touchstart", () => {
+      pressTimer = setTimeout(() => {
+        tasks.splice(i,1);
+        save();
+      }, 600);
+    });
+    li.addEventListener("touchend", () => clearTimeout(pressTimer));
 
-// Search
-document.getElementById("searchInput").oninput=function(){const q=this.value.toLowerCase();document.querySelectorAll("#list li").forEach(li=>li.style.display=li.textContent.toLowerCase().includes(q)?"block":"none");document.querySelectorAll("#menu li input").forEach(input=>input.parentElement.style.display=input.value.toLowerCase().includes(q)?"block":"none");document.querySelectorAll("#groceries li").forEach(li=>li.style.display=li.textContent.toLowerCase().includes(q)?"block":"none");}
+    ul.appendChild(li);
+  });
+}
 
-// INITIAL RENDER
-renderTodos();renderMenu();renderGroceries();renderChat();save();
+/* ================= SAVE ================= */
+function save() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem("points", points);
+  document.getElementById("points").innerText = points;
+  updateLevel();
+  renderTasks();
+}
+
+/* ================= LEVEL ================= */
+function updateLevel() {
+  let lvl = Math.floor(points / 50) + 1;
+  document.getElementById("level").innerText = lvl;
+  document.getElementById("badge").innerText =
+    lvl >= 5 ? "🔥 Motivé" :
+    lvl >= 3 ? "💪 Actif" : "🙂 Débutant";
+}
 </script>
+
 </body>
-  </html>
+</html>
