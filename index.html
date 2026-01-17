@@ -5,38 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Daily Life Dashboard</title>
 
+<!-- Icône (quasi-PWA) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚀%3C/text%3E%3C/svg%3E">
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 html,body{width:100%;overflow-x:hidden}
+body{min-height:100vh;color:#fff;padding:10px}
+
+/* THEMES */
 body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
 body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
 body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
 body.rose{background:linear-gradient(180deg,#9d174d,#4a044e)}
 body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
-body{color:white;min-height:100vh;padding:10px}
 
+/* CONTAINER */
 .container{max-width:420px;margin:auto}
 
 /* HEADER */
-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+header{
+display:flex;justify-content:space-between;align-items:center;
+margin-bottom:14px;padding-top:6px
+}
 header h1{font-size:20px}
+.menu-btn{font-size:24px;cursor:pointer}
 
-/* CARDS */
+/* CARDS (COMME AU DÉBUT) */
 .card{
 background:rgba(255,255,255,.12);
 backdrop-filter:blur(14px);
 border-radius:18px;
 padding:14px;
 margin-bottom:12px;
-box-shadow:inset 0 0 0 1px rgba(255,255,255,.15),0 8px 25px rgba(0,0,0,.25)
+box-shadow:
+inset 0 0 0 1px rgba(255,255,255,.15),
+0 8px 25px rgba(0,0,0,.25)
 }
 
+/* FORM */
 input,select,button{
 width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px
 }
 input,select{background:rgba(255,255,255,.9)}
-button{background:rgba(255,255,255,.2);color:white;font-weight:bold}
+button{background:rgba(255,255,255,.2);color:#fff;font-weight:bold}
 
+/* LISTS */
 ul{list-style:none;margin-top:6px}
 li{
 background:rgba(255,255,255,.15);
@@ -53,13 +67,17 @@ background:#0f172a;padding:15px;
 transition:.3s;z-index:10
 }
 #sidebar.active{left:0}
-#sidebar div{padding:10px;border-bottom:1px solid #333;cursor:pointer}
+#sidebar h3{margin-bottom:8px}
+#sidebar .item{
+display:flex;justify-content:space-between;align-items:center;
+padding:8px;border-bottom:1px solid #333;cursor:pointer
+}
+#sidebar .del{opacity:.6;font-size:14px}
 
 /* CHAT */
 #chat{
 display:none;position:fixed;top:0;left:0;
-width:100%;height:100%;
-background:#020617;z-index:9;
+width:100%;height:100%;background:#020617;z-index:9;
 flex-direction:column
 }
 #messages{flex:1;overflow-y:auto;padding:10px}
@@ -71,15 +89,19 @@ flex-direction:column
 
 <body class="green">
 
+<!-- SIDEBAR -->
 <div id="sidebar">
-<div onclick="openChat()">💬 Nouvelle conversation</div>
-<div onclick="closeChat()">🏠 Accueil</div>
+<h3>💬 Conversations</h3>
+<div class="item" onclick="newConversation()">➕ Nouvelle</div>
+<div id="convList"></div>
+<div class="item" onclick="goHome()">🏠 Accueil</div>
 </div>
 
+<!-- CHAT -->
 <div id="chat">
 <header>
-<span onclick="toggleMenu()">☰</span>
-<h1>Conversation</h1>
+<h1 id="chatTitle">Conversation</h1>
+<span class="menu-btn" onclick="toggleMenu()">☰</span>
 </header>
 <div id="messages"></div>
 <input id="chatInput" placeholder="Écris..." onkeydown="if(event.key==='Enter')sendMsg()">
@@ -88,8 +110,8 @@ flex-direction:column
 <div class="container" id="main">
 
 <header>
-<span onclick="toggleMenu()">☰</span>
 <h1>Daily Life</h1>
+<span class="menu-btn" onclick="toggleMenu()">☰</span>
 </header>
 
 <div class="card">
@@ -137,14 +159,26 @@ flex-direction:column
 </div>
 
 <script>
+/* ===== DATA ===== */
 let tasks=JSON.parse(localStorage.tasks||"[]")
 let menu=JSON.parse(localStorage.menu||"[]")
 let courses=JSON.parse(localStorage.courses||"[]")
 let points=Number(localStorage.points||0)
 
-const meals=["Pâtes","Pizza","Riz","Poulet","Salade","Burger","Poisson","Tacos"]
+let conversations=JSON.parse(localStorage.conversations||"[]")
+let currentConv=null
 
-function save(){localStorage.tasks=JSON.stringify(tasks);localStorage.menu=JSON.stringify(menu);localStorage.courses=JSON.stringify(courses);localStorage.points=points;render()}
+const meals=["Pâtes","Pizza","Riz","Poulet","Salade","Burger","Poisson","Tacos","Curry","Soupe"]
+
+/* ===== SAVE & RENDER ===== */
+function saveAll(){
+localStorage.tasks=JSON.stringify(tasks)
+localStorage.menu=JSON.stringify(menu)
+localStorage.courses=JSON.stringify(courses)
+localStorage.points=points
+localStorage.conversations=JSON.stringify(conversations)
+render()
+}
 
 function render(){
 tasksEl.innerHTML=""
@@ -152,7 +186,7 @@ tasks.forEach((t,i)=>{
 let li=document.createElement("li")
 li.textContent=t.t
 if(t.d)li.classList.add("done")
-li.onclick=()=>{t.d=!t.d;points+=5;save()}
+li.onclick=()=>{t.d=!t.d;points+=5;saveAll()}
 tasksEl.appendChild(li)
 })
 
@@ -164,34 +198,118 @@ courses.forEach((c,i)=>{
 let li=document.createElement("li")
 li.textContent=c
 let timer
-li.addEventListener("touchstart",()=>timer=setTimeout(()=>{courses.splice(i,1);save()},600))
+li.addEventListener("touchstart",()=>timer=setTimeout(()=>{courses.splice(i,1);saveAll()},600))
 li.addEventListener("touchend",()=>clearTimeout(timer))
 coursesEl.appendChild(li)
 })
 
 pointsEl.textContent=points
 levelEl.textContent=Math.floor(points/50)+1
+
+renderConvList()
 }
 
-function addTask(){if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";save()}}
-function generateMenu(){menu=[];for(let i=0;i<7;i++)menu.push(meals[Math.floor(Math.random()*meals.length)]);save()}
-function generateCourses(){courses=[...new Set(menu)];save()}
-function changeTheme(t){document.body.className=t}
-function toggleMenu(){sidebar.classList.toggle("active")}
-function openChat(){chat.style.display="flex";main.style.display="none";sidebar.classList.remove("active")}
-function closeChat(){chat.style.display="none";main.style.display="block"}
-function sendMsg(){
-let t=chatInput.value;if(!t)return
-messages.innerHTML+=`<div class="msg user">👤 ${t}</div>`
-chatInput.value=""
-setTimeout(()=>messages.innerHTML+=`<div class="msg ai">🤖 Je peux t’aider pour recettes, organisation et rappels.</div>`,600)
+/* ===== TASKS / MENU ===== */
+function addTask(){
+if(taskInput.value){
+tasks.push({t:taskInput.value,d:false})
+taskInput.value=""
+saveAll()
+}}
+function generateMenu(){
+menu=[]
+for(let i=0;i<7;i++) menu.push(meals[Math.floor(Math.random()*meals.length)])
+saveAll()
 }
+function generateCourses(){
+courses=[...new Set(menu)]
+saveAll()
+}
+function changeTheme(t){document.body.className=t}
+
+/* ===== SIDEBAR ===== */
+function toggleMenu(){sidebar.classList.toggle("active")}
+function goHome(){
+chat.style.display="none"
+main.style.display="block"
+sidebar.classList.remove("active")
+}
+
+/* ===== CHAT & HISTORY ===== */
+function newConversation(){
+const id=Date.now()
+conversations.unshift({id,title:"Conversation "+(conversations.length+1),msgs:[]})
+currentConv=id
+openChat()
+}
+
+function renderConvList(){
+convList.innerHTML=""
+conversations.forEach(c=>{
+let d=document.createElement("div")
+d.className="item"
+d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`
+d.onclick=(e)=>{
+if(e.target.classList.contains("del")){
+conversations=conversations.filter(x=>x.id!==c.id)
+if(currentConv===c.id) goHome()
+saveAll()
+}else{
+currentConv=c.id
+openChat()
+}
+}
+convList.appendChild(d)
+})
+}
+
+function openChat(){
+chat.style.display="flex"
+main.style.display="none"
+sidebar.classList.remove("active")
+renderMessages()
+}
+
+function renderMessages(){
+messages.innerHTML=""
+const conv=conversations.find(c=>c.id===currentConv)
+if(!conv)return
+chatTitle.textContent=conv.title
+conv.msgs.forEach(m=>{
+messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`
+})
+messages.scrollTop=messages.scrollHeight
+}
+
+function sendMsg(){
+const t=chatInput.value.trim()
+if(!t||!currentConv)return
+const conv=conversations.find(c=>c.id===currentConv)
+conv.msgs.push({w:"user",t})
+chatInput.value=""
+setTimeout(()=>{
+conv.msgs.push({w:"ai",t:fakeAI(t)})
+saveAll()
+renderMessages()
+},500)
+saveAll()
+}
+
+function fakeAI(t){
+t=t.toLowerCase()
+if(t.includes("recette")) return "🍳 Essaie un curry de légumes simple."
+if(t.includes("menu")) return "📅 Je peux te proposer un menu équilibré."
+if(t.includes("rappel")) return "⏰ Dis-moi l’heure et je te rappellerai."
+return "🤖 Je suis là pour t’aider au quotidien."
+}
+
+/* ===== ALARM ===== */
 function setAlarm(){
 Notification.requestPermission()
-let time=alarm.value
+const time=alarm.value
 setInterval(()=>{
-let now=new Date().toTimeString().slice(0,5)
-if(now===time)new Notification("⏰ Rappel !")
+const now=new Date().toTimeString().slice(0,5)
+if(now===time) new Notification("⏰ Rappel !")
 },30000)
 }
 
