@@ -53,10 +53,11 @@ li.done{text-decoration:line-through;opacity:.6}
 
 <!-- SIDEBAR -->
 <div id="sidebar">
-<h3>📜 Historique</h3>
-<div class="item" onclick="newConversation()">➕ Nouvelle conversation</div>
-<div id="convList"></div>
+<h3>📜 Menu</h3>
 <div class="item" onclick="goHome()">🏠 Accueil</div>
+<div class="item" onclick="newConversation()">➕ Nouvelle conversation</div>
+<h3>Historique</h3>
+<div id="convList"></div>
 </div>
 
 <!-- CHAT -->
@@ -134,37 +135,44 @@ li.done{text-decoration:line-through;opacity:.6}
 
 <script>
 /* ===== GLOBAL ===== */
-let lang=localStorage.lang||"fr"
-let conversations=JSON.parse(localStorage.conversations||"[]")
-let currentConv=null
-let tasks=JSON.parse(localStorage.tasks||"[]")
-let points=Number(localStorage.points||0)
-let menu=JSON.parse(localStorage.menu||"[]")
-let courses=JSON.parse(localStorage.courses||"[]")
-const meals=[
-"Spaghetti Bolognese","Poulet Curry","Salade César","Pizza Margherita","Tacos","Riz sauté","Soupe légumes","Burger","Poisson grillé","Paella","Quiche","Ratatouille",
-"Pad Thaï","Sushi","Chili con Carne","Falafel","Couscous","Pâtes au pesto","Lasagne","Boeuf Stroganoff","Moussaka","Gyoza"
-]
+let lang=localStorage.lang||"fr";
+let conversations=JSON.parse(localStorage.conversations||"[]");
+let currentConv=null;
+let tasks=JSON.parse(localStorage.tasks||"[]");
+let points=Number(localStorage.points||0);
+let menu=JSON.parse(localStorage.menu||"[]");
+let courses=JSON.parse(localStorage.courses||"[]");
+const meals=["Spaghetti Bolognese","Poulet Curry","Salade César","Pizza Margherita","Tacos","Riz sauté","Soupe légumes","Burger","Poisson grillé","Paella","Quiche","Ratatouille","Pad Thaï","Sushi","Chili con Carne","Falafel","Couscous","Pâtes au pesto","Lasagne","Boeuf Stroganoff","Moussaka","Gyoza"];
+
+/* ===== ELEMENTS ===== */
+const sidebar=document.getElementById("sidebar");
+const convList=document.getElementById("convList");
+const chat=document.getElementById("chat");
+const main=document.getElementById("main");
+const messages=document.getElementById("messages");
+const tasksEl=document.getElementById("tasks");
+const menuEl=document.getElementById("menu");
+const coursesEl=document.getElementById("courses");
 
 /* ===== SAVE ===== */
 function saveAll(){
-localStorage.conversations=JSON.stringify(conversations)
-localStorage.tasks=JSON.stringify(tasks)
-localStorage.points=points
-localStorage.lang=lang
-localStorage.menu=JSON.stringify(menu)
-localStorage.courses=JSON.stringify(courses)
-renderAll()
+localStorage.conversations=JSON.stringify(conversations);
+localStorage.tasks=JSON.stringify(tasks);
+localStorage.points=points;
+localStorage.lang=lang;
+localStorage.menu=JSON.stringify(menu);
+localStorage.courses=JSON.stringify(courses);
+renderAll();
 }
 
 /* ===== RENDER ===== */
 function renderAll(){
-document.getElementById("points").textContent=points
-document.getElementById("level").textContent=Math.floor(points/50)+1
-renderTasks()
-renderConvList()
-renderMenu()
-renderCourses()
+document.getElementById("points").textContent=points;
+document.getElementById("level").textContent=Math.floor(points/50)+1;
+renderTasks();
+renderConvList();
+renderMenu();
+renderCourses();
 }
 
 /* ===== MENU SIDEBAR ===== */
@@ -174,92 +182,85 @@ function goHome(){chat.style.display="none";main.style.display="block";sidebar.c
 /* ===== CONVERSATIONS ===== */
 function newConversation(){
   const id = Date.now();
-  conversations.unshift({id, title:`Conversation ${conversations.length+1}`, msgs:[]});
-  currentConv = id;
+  conversations.unshift({id,title:`Conversation ${conversations.length+1}`,msgs:[]});
+  currentConv=id;
   saveAll();
-  openChat(); // Affiche le chat
+  openChat();
 }
 
 function renderConvList(){
-convList.innerHTML=""
+convList.innerHTML="";
 conversations.forEach((c,i)=>{
-c.title=`Conversation ${conversations.length-i}`
-let d=document.createElement("div")
-d.className="item"
-d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`
+c.title=`Conversation ${conversations.length-i}`;
+let d=document.createElement("div");
+d.className="item";
+d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`;
 d.onclick=(e)=>{
 if(e.target.classList.contains("del")){
-conversations=conversations.filter(x=>x.id!==c.id)
-if(currentConv===c.id) goHome()
-saveAll()
-}else{currentConv=c.id;openChat()}
+conversations=conversations.filter(x=>x.id!==c.id);
+if(currentConv===c.id) goHome();
+saveAll();
+}else{currentConv=c.id;openChat();}
 }
-convList.appendChild(d)
+convList.appendChild(d);
 })
 }
 
 function openChat(){
 if(currentConv===null) return;
-const c = conversations.find(x => x.id === currentConv);
+const c=conversations.find(x=>x.id===currentConv);
 if(!c) return;
 chat.style.display="flex";
 main.style.display="none";
 sidebar.classList.remove("active");
-messages.innerHTML=""; // Clear messages
-chatInput.focus(); // Active le champ texte
+messages.innerHTML="";
+chatInput.focus();
 }
 
 /* ===== CHAT (sans IA) ===== */
 function sendMsg(){
-const t=chatInput.value.trim()
-if(!t||currentConv===null)return
-const c=conversations.find(x=>x.id===currentConv)
-c.msgs.push({w:"user",t})
-chatInput.value=""
-messages.innerHTML+=`<div class="msg user">👤 ${t}</div>`
-saveAll()
+const t=chatInput.value.trim();
+if(!t||currentConv===null) return;
+const c=conversations.find(x=>x.id===currentConv);
+c.msgs.push({w:"user",t});
+chatInput.value="";
+messages.innerHTML+=`<div class="msg user">👤 ${t}</div>`;
+saveAll();
 }
 
 /* ===== TASKS ===== */
-const tasksEl=document.getElementById("tasks")
-function addTask(){
-if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";points+=5;saveAll()}
-}
+function addTask(){if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";points+=5;saveAll()}}
 function renderTasks(){
-tasksEl.innerHTML=""
+tasksEl.innerHTML="";
 tasks.forEach((t)=>{
-let li=document.createElement("li")
-li.textContent=t.t
-if(t.d)li.classList.add("done")
-li.onclick=()=>{t.d=!t.d;points+=5;saveAll()}
-tasksEl.appendChild(li)
+let li=document.createElement("li");
+li.textContent=t.t;
+if(t.d) li.classList.add("done");
+li.onclick=()=>{t.d=!t.d;points+=5;saveAll();}
+tasksEl.appendChild(li);
 })
 }
 
 /* ===== MENU & COURSES ===== */
-const menuEl=document.getElementById("menu")
-const coursesEl=document.getElementById("courses")
 function generateMenu(){menu=[];for(let i=0;i<7;i++)menu.push(meals[Math.floor(Math.random()*meals.length)]);saveAll()}
 function renderMenu(){menuEl.innerHTML="";menu.forEach(m=>menuEl.innerHTML+=`<li>${m}</li>`)}
 function generateCourses(){courses=[...new Set(menu)];saveAll()}
-function renderCourses(){coursesEl.innerHTML="";courses.forEach((c,i)=>{let li=document.createElement("li");li.textContent=c;let timer;li.addEventListener("touchstart",()=>timer=setTimeout(()=>{courses.splice(i,1);saveAll()},600));li.addEventListener("touchend",()=>clearTimeout(timer));coursesEl.appendChild(li)})})
+function renderCourses(){coursesEl.innerHTML="";courses.forEach((c,i)=>{
+let li=document.createElement("li");li.textContent=c;let timer;
+li.addEventListener("touchstart",()=>timer=setTimeout(()=>{courses.splice(i,1);saveAll()},600));
+li.addEventListener("touchend",()=>clearTimeout(timer));
+coursesEl.appendChild(li)
+})}
 
 /* ===== THEME & LANG ===== */
 function changeTheme(t){document.body.className=t;localStorage.setItem("theme",t)}
 function changeLang(l){lang=l;saveAll()}
 
 /* ===== ALARM ===== */
-function setAlarm(){
-Notification.requestPermission()
-const time=alarm.value
-setInterval(()=>{
-const now=new Date().toTimeString().slice(0,5)
-if(now===time) new Notification("⏰ Rappel !")
-},30000)
-}
+function setAlarm(){Notification.requestPermission();const time=alarm.value;setInterval(()=>{const now=new Date().toTimeString().slice(0,5);if(now===time)new Notification("⏰ Rappel !")},30000)}
 
 /* ===== INIT ===== */
-renderAll()
+renderAll();
 </script>
 </body>
   </html>
