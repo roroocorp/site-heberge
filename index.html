@@ -3,274 +3,203 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Life IA Ultra</title>
+<title>Daily Life Ultra IA</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-html,body{width:100%;min-height:100%;overflow-x:hidden}
-body.green{background:linear-gradient(180deg,#064e3b,#042f2e);color:#fff}
+html,body{width:100%;min-height:100%;background:#020617}
+body{color:#fff;padding:10px}
+
+/* ===== THEMES ===== */
+body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
 body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
 body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
+body.rose{background:linear-gradient(180deg,#9d174d,#4a044e)}
+body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
+body.orange{background:linear-gradient(180deg,#ea580c,#7c2d12)}
 
-.container{max-width:420px;margin:auto;padding:10px}
+.container{max-width:420px;margin:auto}
 
-/* HEADER */
+/* ===== HEADER ===== */
 header{
-display:flex;
-align-items:center;
-justify-content:space-between;
-margin-bottom:12px
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
 }
-header h1{font-size:18px;margin-left:6px}
-.menu-btn{font-size:22px;cursor:pointer;margin-right:6px}
+.menu-btn{font-size:24px;cursor:pointer}
 
-/* TOP INFO */
-#topInfo{
-display:flex;
-gap:8px;
-background:rgba(0,0,0,.35);
-padding:6px 10px;
-border-radius:12px;
-font-size:13px;
-margin-right:6px
-}
-
-/* CARD */
+/* ===== CARD (LE BON CARRÉ, CELUI DU DÉBUT) ===== */
 .card{
-background:rgba(255,255,255,.12);
-backdrop-filter:blur(14px);
-border-radius:18px;
-padding:14px;
-margin-bottom:12px
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(14px);
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:12px;
 }
+
 input,select,button{
-width:100%;
-padding:10px;
-border:none;
-border-radius:12px;
-margin-top:6px
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  margin-top:6px;
 }
-button{
-background:rgba(255,255,255,.2);
-color:#fff;
-font-weight:bold
-}
-ul{list-style:none}
-li{
-background:rgba(255,255,255,.15);
-padding:8px;
-border-radius:10px;
-margin-top:6px
-}
+input,select{background:rgba(255,255,255,0.9)}
+button{background:rgba(255,255,255,0.25);color:#fff;font-weight:bold}
 
-/* SIDEBAR */
-#sidebar{
-position:fixed;
-top:0;left:-100%;
-width:75%;max-width:280px;
-height:100%;
-background:#0f172a;
-padding:15px;
-transition:.3s;
-z-index:10
+/* ===== NAV ===== */
+nav{
+  display:flex;
+  gap:6px;
+  margin-bottom:10px;
 }
-#sidebar.active{left:0}
-.item{
-padding:10px;
-border-bottom:1px solid #334;
-cursor:pointer
-}
+nav button{flex:1}
 
-/* CHAT */
-#chat{
-display:none;
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:#020617;
-z-index:9;
-flex-direction:column
-}
-#messages{
-flex:1;
-overflow-y:auto;
-padding:10px
-}
-.msg{margin-bottom:6px}
-.user{color:#38bdf8}
-.ai{color:#a7f3d0}
-
-/* CHAT INPUT */
-#chatInputBox{
-display:flex;
-gap:6px;
-padding:8px
-}
-#chatInput{
-flex:1;
-padding:10px;
-border-radius:20px;
-border:none
-}
-#sendBtn{
-width:42px;
-border-radius:50%;
-font-size:18px
-}
-
-/* PROMO PAGE (STYLE D’AVANT) */
-#promoPage{
-display:none;
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:rgba(0,0,0,.6);
-z-index:9
-}
-#promoBox{
-background:rgba(255,255,255,.95);
-color:#000;
-border-radius:18px;
-padding:20px;
-max-width:300px;
-margin:80px auto
-}
+/* ===== PAGES ===== */
+.page{display:none}
+.page.active{display:block}
 </style>
 </head>
 
 <body class="green">
 
-<!-- SIDEBAR -->
-<div id="sidebar">
-<div class="item" onclick="goHome()">🏠 Accueil</div>
-<div class="item" onclick="newConversation()">➕ Nouvelle conversation</div>
-<div class="item" onclick="openPromo()">💳 Code Promo</div>
-</div>
+<div class="container">
 
-<!-- MAIN -->
-<div id="main" class="container">
 <header>
-<h1>Daily Life Ultra IA</h1>
-
-<div id="topInfo">
-<span id="hour"></span>
-<span>⭐ <span id="points">0</span></span>
-</div>
-
-<div class="menu-btn" onclick="toggleMenu()">☰</div>
+  <h1 id="title">Daily Life Ultra IA</h1>
+  <span class="menu-btn">☰</span>
 </header>
 
-<div class="card">
-<h3>🌍 Langue</h3>
-<select>
-<option>Français</option>
-<option>English</option>
-</select>
+<nav>
+  <button onclick="showPage('home')" id="navHome">Accueil</button>
+  <button onclick="showPage('promo')" id="navPromo">Code Promo</button>
+</nav>
+
+<!-- ===== ACCUEIL ===== -->
+<div id="home" class="page active">
+
+  <div class="card">
+    <h3 id="langTitle">🌍 Langue</h3>
+    <select id="langSelect" onchange="changeLang(this.value)">
+      <option value="fr">Français</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="de">Deutsch</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <h3 id="themeTitle">🎨 Thème</h3>
+    <select id="themeSelect" onchange="changeTheme(this.value)">
+      <option value="green">Vert</option>
+      <option value="red">Rouge</option>
+      <option value="blue">Bleu</option>
+      <option value="rose">Rose</option>
+      <option value="violet">Violet</option>
+      <option value="orange">Orange</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <h3 id="taskTitle">✅ Tâches</h3>
+    <input id="taskInput" placeholder="Nouvelle tâche">
+    <button onclick="addTask()" id="addTaskBtn">Ajouter</button>
+    <ul id="tasks"></ul>
+  </div>
+
 </div>
 
-<div class="card">
-<h3>🎨 Thème</h3>
-<select onchange="changeTheme(this.value)">
-<option value="green">Vert</option>
-<option value="red">Rouge</option>
-<option value="blue">Bleu</option>
-</select>
+<!-- ===== CODE PROMO ===== -->
+<div id="promo" class="page">
+
+  <div class="card">
+    <h3>💳 Code Promo</h3>
+    <input placeholder="Entre ton code">
+    <button>Valider</button>
+  </div>
+
 </div>
 
-<div class="card">
-<h3>✅ Tâches</h3>
-<input id="taskInput" placeholder="Nouvelle tâche">
-<button onclick="addTask()">Ajouter</button>
-<ul id="tasks"></ul>
-</div>
-</div>
-
-<!-- CHAT -->
-<div id="chat">
-<header>
-<h1 style="margin-left:12px">Chat</h1>
-<div class="menu-btn" onclick="toggleMenu()">☰</div>
-</header>
-
-<div id="messages"></div>
-
-<div id="chatInputBox">
-<input id="chatInput" placeholder="Message...">
-<button id="sendBtn" onclick="sendMsg()">➤</button>
-</div>
-</div>
-
-<!-- PROMO -->
-<div id="promoPage">
-<header class="container">
-<h1>Code Promo</h1>
-<div class="menu-btn" onclick="toggleMenu()">☰</div>
-</header>
-
-<div id="promoBox">
-<input placeholder="Entrer un code promo">
-<button>Envoyer</button>
-</div>
 </div>
 
 <script>
-let tasks=[],points=0;
+/* ===== DATA ===== */
+const texts={
+  fr:{
+    home:"Accueil",promo:"Code Promo",
+    lang:"Langue",theme:"Thème",tasks:"Tâches",add:"Ajouter"
+  },
+  en:{
+    home:"Home",promo:"Promo Code",
+    lang:"Language",theme:"Theme",tasks:"Tasks",add:"Add"
+  },
+  es:{
+    home:"Inicio",promo:"Código Promo",
+    lang:"Idioma",theme:"Tema",tasks:"Tareas",add:"Agregar"
+  },
+  de:{
+    home:"Start",promo:"Promocode",
+    lang:"Sprache",theme:"Thema",tasks:"Aufgaben",add:"Hinzufügen"
+  }
+};
 
-function toggleMenu(){sidebar.classList.toggle("active")}
-function goHome(){
-main.style.display="block";
-chat.style.display="none";
-promoPage.style.display="none";
-sidebar.classList.remove("active");
-}
+let lang=localStorage.lang||"fr";
+let theme=localStorage.theme||"green";
+let tasks=JSON.parse(localStorage.tasks||"[]");
 
-function openPromo(){
-promoPage.style.display="block";
-main.style.display="none";
-chat.style.display="none";
-sidebar.classList.remove("active");
-}
-
-function newConversation(){
-chat.style.display="flex";
-main.style.display="none";
-promoPage.style.display="none";
-messages.innerHTML="";
-sidebar.classList.remove("active");
-}
-
-function addTask(){
-if(taskInput.value){
-tasks.push(taskInput.value);
-points+=5;
+/* ===== INIT ===== */
+document.body.className=theme;
+langSelect.value=lang;
+themeSelect.value=theme;
+applyLang();
 renderTasks();
-taskInput.value="";
+
+/* ===== LANG ===== */
+function changeLang(l){
+  lang=l;
+  localStorage.lang=l;
+  applyLang();
 }
+function applyLang(){
+  const t=texts[lang];
+  navHome.textContent=t.home;
+  navPromo.textContent=t.promo;
+  langTitle.textContent="🌍 "+t.lang;
+  themeTitle.textContent="🎨 "+t.theme;
+  taskTitle.textContent="✅ "+t.tasks;
+  addTaskBtn.textContent=t.add;
 }
 
+/* ===== THEME ===== */
+function changeTheme(t){
+  theme=t;
+  document.body.className=t;
+  localStorage.theme=t;
+}
+
+/* ===== PAGES ===== */
+function showPage(p){
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  document.getElementById(p).classList.add("active");
+}
+
+/* ===== TASKS ===== */
+function addTask(){
+  if(!taskInput.value)return;
+  tasks.push(taskInput.value);
+  taskInput.value="";
+  localStorage.tasks=JSON.stringify(tasks);
+  renderTasks();
+}
 function renderTasks(){
-tasksEl.innerHTML="";
-tasks.forEach(t=>{
-let li=document.createElement("li");
-li.textContent=t;
-tasksEl.appendChild(li);
-});
-pointsEl.textContent=points;
+  tasksEl.innerHTML="";
+  tasks.forEach(t=>{
+    let li=document.createElement("li");
+    li.textContent=t;
+    tasksEl.appendChild(li);
+  });
 }
-
-function sendMsg(){
-messages.innerHTML+=`<div class="msg user">👤 ${chatInput.value}</div>`;
-messages.innerHTML+=`<div class="msg ai">🤖 OK</div>`;
-chatInput.value="";
-}
-
-function changeTheme(t){document.body.className=t}
-
-function updateHour(){
-hour.textContent=new Date().toLocaleTimeString();
-}
-setInterval(updateHour,1000);
-updateHour();
 </script>
 
 </body>
