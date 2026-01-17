@@ -8,7 +8,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 html,body{width:100%;overflow-x:hidden;height:100%;}
 body{transition:0.3s;color:#fff;padding:10px}
-.container{max-width:420px;margin:auto;}
+.container{max-width:420px;margin:auto}
 
 /* THEMES */
 body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
@@ -53,7 +53,6 @@ li.done{text-decoration:line-through;opacity:.6}
 
 /* TIME */
 #clock{position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.3);padding:10px 14px;border-radius:12px;font-weight:bold;}
-
 </style>
 </head>
 <body class="green">
@@ -64,6 +63,7 @@ li.done{text-decoration:line-through;opacity:.6}
 <div class="item" onclick="newConversation()">➕ Nouvelle conversation</div>
 <div id="convList"></div>
 <div class="item" onclick="goHome()">🏠 Accueil</div>
+<div class="item" onclick="showCodePromo()">💎 Code Promo</div>
 </div>
 
 <!-- CHAT -->
@@ -88,11 +88,11 @@ li.done{text-decoration:line-through;opacity:.6}
 
 <div class="card">
 <h3>🌍 Langue</h3>
-<select onchange="changeLang(this.value)">
+<select id="langSelect" onchange="changeLang(this.value)">
 <option value="fr">Français</option>
 <option value="en">English</option>
 <option value="es">Español</option>
-<option value="de">Deutsch</option>
+<option value="de">Allemand</option>
 </select>
 </div>
 
@@ -139,6 +139,7 @@ localStorage.conversations=JSON.stringify(conversations)
 localStorage.tasks=JSON.stringify(tasks)
 localStorage.points=points
 localStorage.lang=lang
+localStorage.theme=document.body.className
 renderAll()
 }
 
@@ -153,19 +154,24 @@ document.getElementById("points").textContent=points
 document.getElementById("level").textContent=Math.floor(points/50)+1
 renderTasks()
 renderConvList()
+langSelect.value=lang
+document.body.className=localStorage.theme||"green"
 }
 
 /* ===== MENU SIDEBAR ===== */
 function toggleMenu(){sidebar.classList.toggle("active")}
 function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active")}
 
+/* ===== CODE PROMO ===== */
+function showCodePromo(){alert("🎉 Code Promo: PREMIUM2026")}
+  
 /* ===== CONVERSATIONS ===== */
 function newConversation(){
   const id = Date.now();
   conversations.unshift({id, title:`Conversation ${conversations.length+1}`, msgs:[]});
   currentConv = id;
   saveAll();
-  openChat(); // Affiche le chat immédiatement
+  openChat(); 
 }
 
 function renderConvList(){
@@ -229,7 +235,6 @@ const recipes=[
 "Poulet Curry: Ingrédients: poulet, curry, lait de coco, oignon, ail. Instructions: Faites revenir le poulet et les oignons, ajoutez le curry et le lait de coco, laissez mijoter.",
 "Salade César: Ingrédients: laitue, poulet, croûtons, parmesan, sauce César. Instructions: Mélangez tous les ingrédients et servez frais.",
 "Pizza Margherita: Ingrédients: pâte à pizza, tomate, mozzarella, basilic. Instructions: Étalez la pâte, ajoutez tomate et mozzarella, cuisez au four, garnissez de basilic."
-// Tu peux rajouter des centaines de recettes ici
 ];
 
 function smartAI(text){
@@ -288,7 +293,7 @@ if(now===time) new Notification("⏰ Rappel !")
 },30000)
 }
 
-/* ===== RENDER INIT ===== */
+/* ===== INIT ===== */
 renderAll()
 </script>
 </body>
