@@ -2,253 +2,201 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Daily Life Dashboard</title>
 
 <style>
-/* ================= BASE ================= */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+html,body{width:100%;overflow-x:hidden}
+body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
+body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
+body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
+body.rose{background:linear-gradient(180deg,#9d174d,#4a044e)}
+body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
+body{color:white;min-height:100vh;padding:10px}
+
+.container{max-width:420px;margin:auto}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+header h1{font-size:20px}
+
+/* CARDS */
+.card{
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(14px);
+border-radius:18px;
+padding:14px;
+margin-bottom:12px;
+box-shadow:inset 0 0 0 1px rgba(255,255,255,.15),0 8px 25px rgba(0,0,0,.25)
 }
 
-body {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #064e3b, #042f2e);
-  color: white;
-  padding: 15px;
-  transition: background 0.4s ease;
+input,select,button{
+width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px
 }
+input,select{background:rgba(255,255,255,.9)}
+button{background:rgba(255,255,255,.2);color:white;font-weight:bold}
 
-/* ================= THEMES ================= */
-body.theme-green {
-  background: linear-gradient(180deg, #064e3b, #042f2e);
+ul{list-style:none;margin-top:6px}
+li{
+background:rgba(255,255,255,.15);
+padding:8px;border-radius:10px;margin-top:6px;
+user-select:none
 }
-body.theme-red {
-  background: linear-gradient(180deg, #7f1d1d, #450a0a);
-}
-body.theme-blue {
-  background: linear-gradient(180deg, #1e3a8a, #020617);
-}
-body.theme-rose {
-  background: linear-gradient(180deg, #9d174d, #4a044e);
-}
-body.theme-violet {
-  background: linear-gradient(180deg, #5b21b6, #2e1065);
-}
+li.done{text-decoration:line-through;opacity:.6}
 
-/* ================= HEADER ================= */
-header {
-  text-align: center;
-  padding: 15px;
-  margin-bottom: 20px;
+/* SIDEBAR */
+#sidebar{
+position:fixed;top:0;left:-100%;
+width:75%;max-width:280px;height:100%;
+background:#0f172a;padding:15px;
+transition:.3s;z-index:10
 }
+#sidebar.active{left:0}
+#sidebar div{padding:10px;border-bottom:1px solid #333;cursor:pointer}
 
-header h1 {
-  font-size: 26px;
+/* CHAT */
+#chat{
+display:none;position:fixed;top:0;left:0;
+width:100%;height:100%;
+background:#020617;z-index:9;
+flex-direction:column
 }
-
-/* ================= CARD (EFFET VERRE COMME AVANT) ================= */
-.card {
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-
-  border-radius: 18px;
-  padding: 15px;
-  margin-bottom: 15px;
-
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.15),
-    0 8px 25px rgba(0,0,0,0.25);
-}
-
-/* ================= TITRES ================= */
-.card h2 {
-  margin-bottom: 10px;
-  font-size: 20px;
-}
-
-/* ================= INPUTS ================= */
-input, select, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  border-radius: 12px;
-  border: none;
-  font-size: 15px;
-}
-
-input, select {
-  background: rgba(255,255,255,0.85);
-  color: #000;
-}
-
-/* ================= BUTTON ================= */
-button {
-  background: rgba(255,255,255,0.18);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button:hover {
-  background: rgba(255,255,255,0.28);
-}
-
-/* ================= STATS ================= */
-.stat {
-  margin: 5px 0;
-}
-
-/* ================= TODO ================= */
-ul {
-  list-style: none;
-  margin-top: 10px;
-}
-
-li {
-  padding: 8px;
-  border-radius: 10px;
-  margin-bottom: 6px;
-  background: rgba(255,255,255,0.15);
-  cursor: pointer;
-  user-select: none;
-}
-
-li.done {
-  text-decoration: line-through;
-  opacity: 0.6;
-}
-
-/* ================= SMALL ================= */
-small {
-  opacity: 0.7;
-  font-size: 12px;
-}
+#messages{flex:1;overflow-y:auto;padding:10px}
+.msg{margin-bottom:6px}
+.user{color:#38bdf8}
+.ai{color:#a7f3d0}
 </style>
 </head>
 
-<body class="theme-green">
+<body class="green">
+
+<div id="sidebar">
+<div onclick="openChat()">💬 Nouvelle conversation</div>
+<div onclick="closeChat()">🏠 Accueil</div>
+</div>
+
+<div id="chat">
+<header>
+<span onclick="toggleMenu()">☰</span>
+<h1>Conversation</h1>
+</header>
+<div id="messages"></div>
+<input id="chatInput" placeholder="Écris..." onkeydown="if(event.key==='Enter')sendMsg()">
+</div>
+
+<div class="container" id="main">
 
 <header>
-  <h1>🚀 Daily Life Dashboard</h1>
-  <small>Productivité • Motivation • Simplicité</small>
+<span onclick="toggleMenu()">☰</span>
+<h1>Daily Life</h1>
 </header>
 
-<!-- THEME -->
 <div class="card">
-  <h2>🎨 Thème</h2>
-  <select id="themeSelect">
-    <option value="green">Vert</option>
-    <option value="red">Rouge</option>
-    <option value="blue">Bleu</option>
-    <option value="rose">Rose</option>
-    <option value="violet">Violet</option>
-  </select>
-
-  <h2 style="margin-top:10px;">🌍 Langue</h2>
-  <select id="langSelect">
-    <option value="fr">Français</option>
-    <option value="en">English</option>
-    <option value="de">Deutsch</option>
-  </select>
+<h3>🎨 Thème</h3>
+<select onchange="changeTheme(this.value)">
+<option value="green">Vert</option>
+<option value="red">Rouge</option>
+<option value="blue">Bleu</option>
+<option value="rose">Rose</option>
+<option value="violet">Violet</option>
+</select>
 </div>
 
-<!-- STATS -->
 <div class="card">
-  <h2>📊 Stats</h2>
-  <div class="stat">🏆 Points : <span id="points">0</span></div>
-  <div class="stat">🎮 Niveau : <span id="level">1</span></div>
-  <div class="stat">🔥 Badge : <span id="badge">Aucun</span></div>
+<h3>📊 Stats</h3>
+<p>Points : <span id="points">0</span></p>
+<p>Niveau : <span id="level">1</span></p>
 </div>
 
-<!-- TODO -->
 <div class="card">
-  <h2>✅ To-Do</h2>
-  <input id="taskInput" placeholder="Écris une tâche">
-  <button onclick="addTask()">Ajouter</button>
-  <ul id="taskList"></ul>
-  <small>👉 Cliquer = terminé • Appui long = supprimer</small>
+<h3>✅ To-Do</h3>
+<input id="taskInput" placeholder="Nouvelle tâche">
+<button onclick="addTask()">Ajouter</button>
+<ul id="tasks"></ul>
+</div>
+
+<div class="card">
+<h3>🧑‍🍳 Menu semaine</h3>
+<button onclick="generateMenu()">Générer</button>
+<ul id="menu"></ul>
+</div>
+
+<div class="card">
+<h3>🛒 Courses</h3>
+<button onclick="generateCourses()">Depuis menu</button>
+<ul id="courses"></ul>
+</div>
+
+<div class="card">
+<h3>⏰ Rappel</h3>
+<input type="time" id="alarm">
+<button onclick="setAlarm()">Activer</button>
+</div>
+
 </div>
 
 <script>
-/* ================= STORAGE ================= */
-let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
-let points = parseInt(localStorage.getItem("points") || "0");
+let tasks=JSON.parse(localStorage.tasks||"[]")
+let menu=JSON.parse(localStorage.menu||"[]")
+let courses=JSON.parse(localStorage.courses||"[]")
+let points=Number(localStorage.points||0)
 
-/* ================= LOAD ================= */
-document.getElementById("points").innerText = points;
-renderTasks();
-updateLevel();
+const meals=["Pâtes","Pizza","Riz","Poulet","Salade","Burger","Poisson","Tacos"]
 
-/* ================= THEME ================= */
-document.getElementById("themeSelect").addEventListener("change", e => {
-  document.body.className = "theme-" + e.target.value;
-});
+function save(){localStorage.tasks=JSON.stringify(tasks);localStorage.menu=JSON.stringify(menu);localStorage.courses=JSON.stringify(courses);localStorage.points=points;render()}
 
-/* ================= TASKS ================= */
-function addTask() {
-  const input = document.getElementById("taskInput");
-  if (!input.value.trim()) return;
+function render(){
+tasksEl.innerHTML=""
+tasks.forEach((t,i)=>{
+let li=document.createElement("li")
+li.textContent=t.t
+if(t.d)li.classList.add("done")
+li.onclick=()=>{t.d=!t.d;points+=5;save()}
+tasksEl.appendChild(li)
+})
 
-  tasks.push({ text: input.value, done: false });
-  input.value = "";
-  points += 5; // petit gain
-  save();
+menuEl.innerHTML=""
+menu.forEach(m=>menuEl.innerHTML+=`<li>${m}</li>`)
+
+coursesEl.innerHTML=""
+courses.forEach((c,i)=>{
+let li=document.createElement("li")
+li.textContent=c
+let timer
+li.addEventListener("touchstart",()=>timer=setTimeout(()=>{courses.splice(i,1);save()},600))
+li.addEventListener("touchend",()=>clearTimeout(timer))
+coursesEl.appendChild(li)
+})
+
+pointsEl.textContent=points
+levelEl.textContent=Math.floor(points/50)+1
 }
 
-function renderTasks() {
-  const ul = document.getElementById("taskList");
-  ul.innerHTML = "";
-  tasks.forEach((t, i) => {
-    const li = document.createElement("li");
-    li.textContent = t.text;
-    if (t.done) li.classList.add("done");
-
-    // clic = barrer
-    li.onclick = () => {
-      t.done = !t.done;
-      points += t.done ? 10 : -5;
-      save();
-    };
-
-    // appui long = supprimer (style Discord)
-    let pressTimer;
-    li.addEventListener("touchstart", () => {
-      pressTimer = setTimeout(() => {
-        tasks.splice(i,1);
-        save();
-      }, 600);
-    });
-    li.addEventListener("touchend", () => clearTimeout(pressTimer));
-
-    ul.appendChild(li);
-  });
+function addTask(){if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";save()}}
+function generateMenu(){menu=[];for(let i=0;i<7;i++)menu.push(meals[Math.floor(Math.random()*meals.length)]);save()}
+function generateCourses(){courses=[...new Set(menu)];save()}
+function changeTheme(t){document.body.className=t}
+function toggleMenu(){sidebar.classList.toggle("active")}
+function openChat(){chat.style.display="flex";main.style.display="none";sidebar.classList.remove("active")}
+function closeChat(){chat.style.display="none";main.style.display="block"}
+function sendMsg(){
+let t=chatInput.value;if(!t)return
+messages.innerHTML+=`<div class="msg user">👤 ${t}</div>`
+chatInput.value=""
+setTimeout(()=>messages.innerHTML+=`<div class="msg ai">🤖 Je peux t’aider pour recettes, organisation et rappels.</div>`,600)
+}
+function setAlarm(){
+Notification.requestPermission()
+let time=alarm.value
+setInterval(()=>{
+let now=new Date().toTimeString().slice(0,5)
+if(now===time)new Notification("⏰ Rappel !")
+},30000)
 }
 
-/* ================= SAVE ================= */
-function save() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  localStorage.setItem("points", points);
-  document.getElementById("points").innerText = points;
-  updateLevel();
-  renderTasks();
-}
-
-/* ================= LEVEL ================= */
-function updateLevel() {
-  let lvl = Math.floor(points / 50) + 1;
-  document.getElementById("level").innerText = lvl;
-  document.getElementById("badge").innerText =
-    lvl >= 5 ? "🔥 Motivé" :
-    lvl >= 3 ? "💪 Actif" : "🙂 Débutant";
-}
+render()
 </script>
 
 </body>
-</html>
+  </html>
