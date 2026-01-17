@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Daily Life IA Ultra</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
@@ -20,9 +20,8 @@ body.orange{background:linear-gradient(180deg,#f97316,#b45309)}
 
 header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-top:6px}
 header h1{font-size:20px}
-.menu-btn{font-size:24px;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:center}
+.menu-btn{font-size:24px;cursor:pointer;user-select:none}
 
-/* CARD STYLES */
 .card{background:rgba(255,255,255,.12);backdrop-filter:blur(14px);border-radius:18px;padding:14px;margin-bottom:12px}
 input,select,button{width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px}
 input,select{background:rgba(255,255,255,.9)}
@@ -46,16 +45,19 @@ li.done{text-decoration:line-through;opacity:.6}
 .ai{color:#a7f3d0}
 
 /* CHAT INPUT */
-#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:12px;}
-#chatInput{flex:1;padding:10px;border-radius:12px;border:none;background:#fff;color:#000;}
-#chatSend{width:50px;height:50px;border-radius:50%;background:#000;color:#fff;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;}
-#score{position:fixed;bottom:10px;left:10px;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:10px;font-weight:bold}
+#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:12px;align-items:center;}
+#chatInput{flex:1;padding:10px;border-radius:12px;border:none;color:#000;background:#fff;}
+#chatSend{padding:10px;border-radius:50%;background:#38bdf8;color:#fff;font-weight:bold;cursor:pointer;display:flex;justify-content:center;align-items:center;font-size:18px;}
+#chatSend::after{content:'➤';}
 
-/* STYLE FLECHE */
-.arrow{display:inline-block;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:15px solid #000;transform:rotate(0deg)}
+/* SCORE */
+#scoreCard{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.12);padding:12px 16px;border-radius:16px;backdrop-filter:blur(14px);text-align:center;width:180px}
+
+/* HORLOGE */
+#clock{position:fixed;bottom:10px;left:10px;font-weight:bold;}
 </style>
 </head>
-<body>
+<body class="green">
 
 <!-- SIDEBAR -->
 <div id="sidebar">
@@ -69,12 +71,12 @@ li.done{text-decoration:line-through;opacity:.6}
 <div id="chat">
 <header>
 <h1 id="chatTitle">Conversation</h1>
-<span class="menu-btn" onclick="toggleMenu()">☰</span>
+<span class="menu-btn" onclick="toggleMenu()" style="position:relative;left:0;">☰</span>
 </header>
 <div id="messages"></div>
 <div id="chatInputContainer">
 <input id="chatInput" placeholder="Écris un message..." onkeydown="if(event.key==='Enter'){sendMsg();event.preventDefault()}">
-<button id="chatSend"><span class="arrow"></span></button>
+<button id="chatSend" onclick="sendMsg()"></button>
 </div>
 </div>
 
@@ -87,7 +89,7 @@ li.done{text-decoration:line-through;opacity:.6}
 
 <div class="card">
 <h3>🌍 Langue</h3>
-<select id="langSelect">
+<select onchange="changeLang(this.value)">
 <option value="fr">Français</option>
 <option value="en">English</option>
 <option value="es">Español</option>
@@ -97,7 +99,7 @@ li.done{text-decoration:line-through;opacity:.6}
 
 <div class="card">
 <h3>🎨 Thème</h3>
-<select id="themeSelect">
+<select onchange="changeTheme(this.value)">
 <option value="green">Vert</option>
 <option value="red">Rouge</option>
 <option value="blue">Bleu</option>
@@ -127,208 +129,195 @@ li.done{text-decoration:line-through;opacity:.6}
 </div>
 
 <div class="card">
-<h3>🛒 Liste de courses</h3>
-<button onclick="generateCourses()">Depuis menu</button>
-<ul id="courses"></ul>
-</div>
-
-<div class="card">
 <h3>⏰ Rappel</h3>
 <input type="time" id="alarm">
 <button onclick="setAlarm()">Activer</button>
 </div>
 
-<div id="score">Points: 0 | Niveau: 1</div>
+<div id="scoreCard">
+<p>Points : <span id="pointsBottom">0</span> | Niveau : <span id="levelBottom">1</span></p>
+</div>
+
+<div id="clock"></div>
+</div>
 
 <script>
 /* ===== GLOBAL ===== */
-let lang = localStorage.lang || "fr";
-let conversations = JSON.parse(localStorage.conversations||"[]");
-let currentConv = null;
-let tasks = JSON.parse(localStorage.tasks||"[]");
-let points = Number(localStorage.points||0);
-let menu = JSON.parse(localStorage.menu||"[]");
-let courses = JSON.parse(localStorage.courses||"[]");
-const meals = Array.from({length:1000},(_,i)=>`Recette ${i+1}`);
+let lang=localStorage.lang||"fr"
+let conversations=JSON.parse(localStorage.conversations||"[]")
+let currentConv=null
+let tasks=JSON.parse(localStorage.tasks||"[]")
+let points=Number(localStorage.points||0)
+let menu=JSON.parse(localStorage.menu||"[]")
+const meals=[]
+for(let i=1;i<=1000;i++)meals.push("Recette "+i)
 
 /* ===== SAVE ===== */
 function saveAll(){
-  localStorage.conversations=JSON.stringify(conversations);
-  localStorage.tasks=JSON.stringify(tasks);
-  localStorage.points=points;
-  localStorage.lang=lang;
-  localStorage.menu=JSON.stringify(menu);
-  localStorage.courses=JSON.stringify(courses);
-  renderAll();
+localStorage.conversations=JSON.stringify(conversations)
+localStorage.tasks=JSON.stringify(tasks)
+localStorage.points=points
+localStorage.lang=lang
+localStorage.menu=JSON.stringify(menu)
+renderAll()
 }
 
 /* ===== RENDER ===== */
 function renderAll(){
-  document.getElementById("points").textContent=points;
-  document.getElementById("level").textContent=Math.floor(points/50)+1;
-  document.getElementById("score").textContent=`Points: ${points} | Niveau: ${Math.floor(points/50)+1}`;
-  renderTasks();
-  renderConvList();
-  renderMenu();
-  renderCourses();
+document.getElementById("points").textContent=points
+document.getElementById("level").textContent=Math.floor(points/50)+1
+document.getElementById("pointsBottom").textContent=points
+document.getElementById("levelBottom").textContent=Math.floor(points/50)+1
+renderTasks()
+renderConvList()
+renderMenu()
 }
 
 /* ===== MENU SIDEBAR ===== */
-const sidebar=document.getElementById("sidebar");
-const main=document.getElementById("main");
-const chat=document.getElementById("chat");
+const sidebar=document.getElementById("sidebar")
+const chat=document.getElementById("chat")
+const main=document.getElementById("main")
+const convList=document.getElementById("convList")
+const messages=document.getElementById("messages")
+const tasksEl=document.getElementById("tasks")
+const menuEl=document.getElementById("menu")
+const chatInput=document.getElementById("chatInput")
+
 function toggleMenu(){sidebar.classList.toggle("active")}
 function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active")}
 
 /* ===== CONVERSATIONS ===== */
-const convList=document.getElementById("convList");
 function newConversation(){
   const id = Date.now();
   conversations.unshift({id, title:`Conversation ${conversations.length+1}`, msgs:[]});
-  currentConv=id;
+  currentConv = id;
   saveAll();
-  openChat();
+  openChat(); 
 }
+
 function renderConvList(){
-  convList.innerHTML="";
-  conversations.forEach((c,i)=>{
-    c.title=`Conversation ${conversations.length-i}`;
-    let d=document.createElement("div");
-    d.className="item";
-    d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`;
-    d.onclick=(e)=>{
-      if(e.target.classList.contains("del")){
-        conversations=conversations.filter(x=>x.id!==c.id);
-        if(currentConv===c.id) goHome();
-        saveAll();
-      }else{
-        currentConv=c.id;
-        openChat();
-      }
-    }
-    convList.appendChild(d);
-  });
+convList.innerHTML=""
+conversations.forEach((c,i)=>{
+c.title=`Conversation ${conversations.length-i}`
+let d=document.createElement("div")
+d.className="item"
+d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`
+d.onclick=(e)=>{
+if(e.target.classList.contains("del")){
+conversations=conversations.filter(x=>x.id!==c.id)
+if(currentConv===c.id) goHome()
+saveAll()
+}else{currentConv=c.id;openChat()}
 }
+convList.appendChild(d)
+})
+}
+
 function openChat(){
-  if(currentConv===null) return;
-  const c=conversations.find(x=>x.id===currentConv);
-  if(!c) return;
-  chat.style.display="flex";
-  main.style.display="none";
-  sidebar.classList.remove("active");
-  renderMessages();
-  chatInput.focus();
+if(currentConv===null) return;
+const c = conversations.find(x => x.id === currentConv);
+if(!c) return;
+chat.style.display="flex";
+main.style.display="none";
+sidebar.classList.remove("active");
+renderMessages();
+chatInput.focus(); 
 }
 
 /* ===== CHAT ===== */
-const messages=document.getElementById("messages");
-const chatInput=document.getElementById("chatInput");
 function renderMessages(){
-  messages.innerHTML="";
-  const c=conversations.find(x=>x.id===currentConv);
-  if(!c) return;
-  chatTitle.textContent=c.title;
-  c.msgs.forEach(m=>{
-    messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`;
-  });
-  messages.scrollTop=messages.scrollHeight;
-}
-function sendMsg(){
-  const t=chatInput.value.trim();
-  if(!t||currentConv===null) return;
-  const c=conversations.find(x=>x.id===currentConv);
-  c.msgs.push({w:"user",t});
-  chatInput.value="";
-  setTimeout(()=>{
-    c.msgs.push({w:"ai",t:smartAI(t)});
-    saveAll();
-    renderMessages();
-  },300);
-  saveAll();
+messages.innerHTML=""
+const c=conversations.find(x => x.id === currentConv)
+if(!c)return
+chatTitle.textContent=c.title
+c.msgs.forEach(m=>{
+messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`
+})
+messages.scrollTop=messages.scrollHeight
 }
 
-/* ===== IA LOCALE INTELLIGENTE ===== */
+function sendMsg(){
+const t=chatInput.value.trim()
+if(!t||currentConv===null)return
+const c=conversations.find(x => x.id === currentConv)
+c.msgs.push({w:"user",t})
+chatInput.value=""
+setTimeout(()=>{
+c.msgs.push({w:"ai",t:smartAI(t)})
+saveAll()
+renderMessages()
+},300)
+saveAll()
+}
+
+/* ===== IA LOCALE ===== */
 function smartAI(text){
-  text=text.toLowerCase();
-  if(text.includes("recette")||text.includes("menu")){
-    return meals[Math.floor(Math.random()*meals.length)];
-  }
-  if(text.includes("aide")){
-    switch(lang){
-      case "en": return "I can help organize your day.";
-      case "es": return "Puedo ayudarte a organizar tu día.";
-      case "de": return "Ich kann dir helfen, deinen Tag zu organisieren.";
-      default: return "Je peux t’aider à organiser ta journée.";
-    }
-  }
-  if(text.includes("bonjour")||text.includes("salut")){
-    switch(lang){
-      case "en": return "Hello!";
-      case "es": return "¡Hola!";
-      case "de": return "Hallo!";
-      default: return "Salut !";
-    }
-  }
-  switch(lang){
-    case "en": return "I am here to assist you.";
-    case "es": return "Estoy aquí para ayudarte.";
-    case "de": return "Ich bin hier, um dir zu helfen.";
-    default: return "Je suis là pour t’aider.";
-  }
+text=text.toLowerCase()
+if(text.includes("recette")||text.includes("menu")) return meals[Math.floor(Math.random()*meals.length)]
+if(text.includes("aide")){
+switch(lang){
+case "en": return "I can help organize your day."
+case "es": return "Puedo ayudarte a organizar tu día."
+case "de": return "Ich kann dir helfen, deinen Tag zu organisieren."
+default: return "Je peux t’aider à organiser ta journée."
+}
+}
+if(text.includes("bonjour")||text.includes("salut")) {
+switch(lang){
+case "en": return "Hello!"
+case "es": return "¡Hola!"
+case "de": return "Hallo!"
+default: return "Salut !"
+}
+}
+switch(lang){
+case "en": return "I am here to assist you."
+case "es": return "Estoy aquí para ayudarte."
+case "de": return "Ich bin hier, um dir zu helfen."
+default: return "Je suis là pour t’aider."
+}
 }
 
 /* ===== TASKS ===== */
-const tasksEl=document.getElementById("tasks");
 function addTask(){
-  if(taskInput.value){
-    tasks.push({t:taskInput.value,d:false});
-    taskInput.value="";
-    points+=5;
-    saveAll();
-  }
+if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";points+=5;saveAll()}
 }
 function renderTasks(){
-  tasksEl.innerHTML="";
-  tasks.forEach((t,i)=>{
-    let li=document.createElement("li");
-    li.textContent=t.t;
-    if(t.d) li.classList.add("done");
-    li.onclick=()=>{t.d=!t.d;points+=5;saveAll()};
-    li.ondblclick=()=>{tasks.splice(i,1);saveAll();};
-    tasksEl.appendChild(li);
-  });
+tasksEl.innerHTML=""
+tasks.forEach((t,i)=>{
+let li=document.createElement("li")
+li.textContent=t.t
+if(t.d)li.classList.add("done")
+li.onclick=()=>{t.d=!t.d;points+=5;saveAll()}
+li.ondblclick=()=>{tasks.splice(i,1);saveAll()}
+tasksEl.appendChild(li)
+})
 }
 
-/* ===== MENU & COURSES ===== */
-const menuEl=document.getElementById("menu");
-const coursesEl=document.getElementById("courses");
+/* ===== MENU ===== */
 function generateMenu(){menu=[];for(let i=0;i<7;i++)menu.push(meals[Math.floor(Math.random()*meals.length)]);saveAll()}
 function renderMenu(){menuEl.innerHTML="";menu.forEach(m=>menuEl.innerHTML+=`<li>${m}</li>`)}
-function generateCourses(){courses=[...new Set(menu)];saveAll()}
-function renderCourses(){coursesEl.innerHTML="";courses.forEach((c,i)=>{let li=document.createElement("li");li.textContent=c;let timer;li.addEventListener("touchstart",()=>timer=setTimeout(()=>{courses.splice(i,1);saveAll()},600));li.addEventListener("touchend",()=>clearTimeout(timer));coursesEl.appendChild(li)})}
-
 /* ===== THEME & LANG ===== */
-const themeSelect=document.getElementById("themeSelect");
-const langSelect=document.getElementById("langSelect");
-themeSelect.value=localStorage.theme||"green";
-langSelect.value=localStorage.lang||"fr";
-document.body.className=themeSelect.value;
-themeSelect.onchange=()=>{document.body.className=themeSelect.value;localStorage.theme=themeSelect.value;}
-langSelect.onchange=()=>{lang=langSelect.value;localStorage.lang=lang;}
+function changeTheme(t){document.body.className=t;saveAll()}
+function changeLang(l){lang=l;saveAll()}
 
 /* ===== ALARM ===== */
-const alarm=document.getElementById("alarm");
 function setAlarm(){
-  Notification.requestPermission();
-  const time=alarm.value;
-  setInterval(()=>{
-    const now=new Date().toTimeString().slice(0,5);
-    if(now===time) new Notification("⏰ Rappel !");
-  },30000);
+Notification.requestPermission()
+const time=alarm.value
+setInterval(()=>{
+const now=new Date().toTimeString().slice(0,5)
+if(now===time) new Notification("⏰ Rappel !")
+},30000)
 }
 
+/* ===== HORLOGE ===== */
+function updateClock(){const d=new Date();clock.textContent=d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});}
+setInterval(updateClock,1000)
+updateClock()
+
 /* ===== INIT ===== */
-renderAll();
+renderAll()
 </script>
 </body>
   </html>
