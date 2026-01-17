@@ -49,6 +49,18 @@ font-size:15px
 input,select{background:#fff;color:#000}
 button{background:rgba(255,255,255,.25);color:#fff;font-weight:bold}
 
+ul{list-style:none}
+li{
+background:rgba(255,255,255,.2);
+margin-top:6px;
+padding:10px;
+border-radius:12px;
+display:flex;
+justify-content:space-between;
+align-items:center
+}
+li.done{text-decoration:line-through;opacity:.6}
+
 /* SIDEBAR */
 #sidebar{
 position:fixed;
@@ -58,7 +70,7 @@ height:100%;
 background:#0f172a;
 padding:15px;
 transition:.3s;
-z-index:30
+z-index:50
 }
 #sidebar.active{left:0}
 .sidebar-item{
@@ -74,15 +86,15 @@ position:fixed;
 top:0;left:0;
 width:100%;height:100%;
 background:#020617;
-z-index:20;
+z-index:40;
 flex-direction:column
 }
 
 #chat header{
-padding:8px 12px;
 display:flex;
 justify-content:space-between;
-align-items:center
+align-items:center;
+padding:10px
 }
 
 #messages{
@@ -90,21 +102,19 @@ flex:1;
 overflow-y:auto;
 padding:12px
 }
-.msg{margin-bottom:10px;line-height:1.4}
+.msg{margin-bottom:10px}
 .user{color:#38bdf8}
 .ai{color:#a7f3d0}
 
 #chatInputBox{
 display:flex;
 gap:8px;
-padding:12px;
-align-items:center
+padding:12px
 }
 #chatInput{
 flex:1;
 padding:14px;
-border-radius:999px;
-font-size:15px
+border-radius:999px
 }
 #sendBtn{
 width:46px;
@@ -113,7 +123,7 @@ border-radius:50%;
 font-size:20px
 }
 
-#clock{text-align:center;opacity:.7;margin-top:10px}
+#clock{text-align:center;opacity:.7;margin:12px 0}
 </style>
 </head>
 
@@ -123,22 +133,20 @@ font-size:20px
 <div id="sidebar">
 <h3>📂 Menu</h3>
 <div class="sidebar-item" onclick="goHome()">🏠 Accueil</div>
-<div class="sidebar-item" onclick="newChat()">➕ Nouveau chat</div>
-<div id="chatList"></div>
+<div class="sidebar-item" onclick="openChat()">💬 Chat</div>
 </div>
 
 <!-- CHAT -->
 <div id="chat">
 <header>
-<h3 id="chatTitle">Chat 1</h3>
+<h3>Chat IA</h3>
 <span class="menu-btn" onclick="toggleMenu()">☰</span>
 </header>
 
 <div id="messages"></div>
 
 <div id="chatInputBox">
-<input id="chatInput" placeholder="Écris un message…"
-onkeydown="if(event.key==='Enter')sendMsg()">
+<input id="chatInput" placeholder="Écris un message…" onkeydown="if(event.key==='Enter')sendMsg()">
 <button id="sendBtn" onclick="sendMsg()">⬆️</button>
 </div>
 </div>
@@ -163,85 +171,83 @@ onkeydown="if(event.key==='Enter')sendMsg()">
 </select>
 </div>
 
+<div class="card">
+<h3>📊 Stats</h3>
+<p>Points : <span id="points">0</span></p>
+</div>
+
+<div class="card">
+<h3>✅ Tâches</h3>
+<input id="taskInput" placeholder="Nouvelle tâche">
+<button onclick="addTask()">Ajouter</button>
+<ul id="tasks"></ul>
+</div>
+
 <div id="clock"></div>
 </div>
 
 <script>
 let theme=localStorage.theme||"green"
-let chats=JSON.parse(localStorage.chats||"[]")
-let currentChat=0
+let points=Number(localStorage.points||0)
+let tasks=JSON.parse(localStorage.tasks||"[]")
+let messagesData=JSON.parse(localStorage.messages||"[]")
 
 document.body.className=theme
 
-function toggleMenu(){
-sidebar.classList.toggle("active")
-}
+function toggleMenu(){sidebar.classList.toggle("active")}
+function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active")}
+function openChat(){main.style.display="none";chat.style.display="flex";sidebar.classList.remove("active");renderMessages()}
 
-function goHome(){
-chat.style.display="none"
-main.style.display="block"
-sidebar.classList.remove("active")
-}
+function setTheme(t){theme=t;document.body.className=t;localStorage.theme=t}
 
-function setTheme(t){
-theme=t
-document.body.className=t
-localStorage.theme=t
-}
-
-function newChat(){
-chats.unshift([])
-currentChat=0
+function addTask(){
+if(!taskInput.value)return
+tasks.push({t:taskInput.value,d:false})
+taskInput.value=""
+points+=5
 save()
-openChat(0)
+renderTasks()
 }
 
-function openChat(i){
-currentChat=i
-main.style.display="none"
-chat.style.display="flex"
-sidebar.classList.remove("active")
-renderChat()
+function renderTasks(){
+tasksEl.innerHTML=""
+tasks.forEach((task,i)=>{
+let li=document.createElement("li")
+li.innerHTML=`<span>${task.t}</span><button onclick="delTask(${i})">🗑️</button>`
+tasksEl.appendChild(li)
+})
+pointsEl.textContent=points
 }
+
+function delTask(i){tasks.splice(i,1);save();renderTasks()}
 
 function sendMsg(){
-let t=chatInput.value.trim()
-if(!t) return
-chats[currentChat].push({w:"user",t})
-chats[currentChat].push({w:"ai",t:"Je suis là pour t’aider 🙂"})
+if(!chatInput.value)return
+messagesData.push({w:"user",t:chatInput.value})
+messagesData.push({w:"ai",t:"Je suis là pour t’aider 🙂"})
 chatInput.value=""
 save()
-renderChat()
+renderMessages()
 }
 
-function renderChat(){
-chatTitle.textContent="Chat "+(currentChat+1)
+function renderMessages(){
 messages.innerHTML=""
-chats[currentChat].forEach(m=>{
+messagesData.forEach(m=>{
 messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`
 })
 messages.scrollTop=messages.scrollHeight
-renderChatList()
-}
-
-function renderChatList(){
-chatList.innerHTML=""
-chats.forEach((c,i)=>{
-chatList.innerHTML+=
-`<div class="sidebar-item" onclick="openChat(${i})">💬 Chat ${i+1}</div>`
-})
 }
 
 function save(){
-localStorage.chats=JSON.stringify(chats)
+localStorage.tasks=JSON.stringify(tasks)
+localStorage.points=points
+localStorage.messages=JSON.stringify(messagesData)
 }
 
-setInterval(()=>{
-clock.textContent=new Date().toLocaleTimeString().slice(0,5)
-},1000)
+setInterval(()=>clock.textContent=new Date().toLocaleTimeString().slice(0,5),1000)
 
-renderChatList()
+renderTasks()
 </script>
 
 </body>
-  </html>
+</html>
