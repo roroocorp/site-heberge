@@ -19,9 +19,17 @@ body.orange{background:linear-gradient(180deg,#f97316,#9a3412)}
 
 header{
 display:flex;
-justify-content:space-between;
 align-items:center;
+justify-content:space-between;
 margin-bottom:12px
+}
+
+.header-left{
+display:flex;
+align-items:center;
+gap:10px;
+font-size:14px;
+opacity:.8
 }
 
 .menu-btn{
@@ -59,7 +67,6 @@ display:flex;
 justify-content:space-between;
 align-items:center
 }
-li.done{text-decoration:line-through;opacity:.6}
 
 /* SIDEBAR */
 #sidebar{
@@ -116,14 +123,23 @@ flex:1;
 padding:14px;
 border-radius:999px
 }
-#sendBtn{
-width:46px;
-height:46px;
-border-radius:50%;
-font-size:20px
-}
 
-#clock{text-align:center;opacity:.7;margin:12px 0}
+#sendBtn{
+width:48px;
+height:48px;
+border-radius:50%;
+background:#fff;
+color:#000;
+font-size:20px;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer
+}
+#sendBtn::before{
+content:"↑";
+font-weight:bold;
+}
 </style>
 </head>
 
@@ -147,7 +163,7 @@ font-size:20px
 
 <div id="chatInputBox">
 <input id="chatInput" placeholder="Écris un message…" onkeydown="if(event.key==='Enter')sendMsg()">
-<button id="sendBtn" onclick="sendMsg()">⬆️</button>
+<button id="sendBtn" onclick="sendMsg()"></button>
 </div>
 </div>
 
@@ -155,9 +171,22 @@ font-size:20px
 <div class="container" id="main">
 
 <header>
+<div class="header-left">
+<span id="clock">--:--</span>
+</div>
 <h2>Daily Life IA Ultra</h2>
 <span class="menu-btn" onclick="toggleMenu()">☰</span>
 </header>
+
+<div class="card">
+<h3>🌍 Langue</h3>
+<select onchange="setLang(this.value)">
+<option value="fr">Français</option>
+<option value="en">English</option>
+<option value="es">Español</option>
+<option value="de">Deutsch</option>
+</select>
+</div>
 
 <div class="card">
 <h3>🎨 Thème</h3>
@@ -172,37 +201,39 @@ font-size:20px
 </div>
 
 <div class="card">
-<h3>📊 Stats</h3>
-<p>Points : <span id="points">0</span></p>
-</div>
-
-<div class="card">
 <h3>✅ Tâches</h3>
 <input id="taskInput" placeholder="Nouvelle tâche">
 <button onclick="addTask()">Ajouter</button>
 <ul id="tasks"></ul>
 </div>
 
-<div id="clock"></div>
+<div class="card">
+<h3>📊 Stats</h3>
+<p>Points : <span id="points">0</span></p>
+</div>
+
 </div>
 
 <script>
 let theme=localStorage.theme||"green"
+let lang=localStorage.lang||"fr"
 let points=Number(localStorage.points||0)
 let tasks=JSON.parse(localStorage.tasks||"[]")
 let messagesData=JSON.parse(localStorage.messages||"[]")
 
 document.body.className=theme
+document.querySelector("select[onchange^='setLang']").value=lang
 
 function toggleMenu(){sidebar.classList.toggle("active")}
 function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active")}
 function openChat(){main.style.display="none";chat.style.display="flex";sidebar.classList.remove("active");renderMessages()}
 
 function setTheme(t){theme=t;document.body.className=t;localStorage.theme=t}
+function setLang(l){lang=l;localStorage.lang=l}
 
 function addTask(){
 if(!taskInput.value)return
-tasks.push({t:taskInput.value,d:false})
+tasks.push(taskInput.value)
 taskInput.value=""
 points+=5
 save()
@@ -211,9 +242,9 @@ renderTasks()
 
 function renderTasks(){
 tasksEl.innerHTML=""
-tasks.forEach((task,i)=>{
+tasks.forEach((t,i)=>{
 let li=document.createElement("li")
-li.innerHTML=`<span>${task.t}</span><button onclick="delTask(${i})">🗑️</button>`
+li.innerHTML=`<span>${t}</span><button onclick="delTask(${i})">🗑️</button>`
 tasksEl.appendChild(li)
 })
 pointsEl.textContent=points
@@ -245,9 +276,8 @@ localStorage.messages=JSON.stringify(messagesData)
 }
 
 setInterval(()=>clock.textContent=new Date().toLocaleTimeString().slice(0,5),1000)
-
 renderTasks()
 </script>
 
 </body>
-</html>
+  </html>
