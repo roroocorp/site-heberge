@@ -2,291 +2,245 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Daily Life IA Ultra</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Site IA + Codes Promo</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-html,body{width:100%;overflow-x:hidden}
-body{min-height:100vh;color:#fff;padding:10px;transition:0.3s}
-.container{max-width:420px;margin:auto}
+  /* ---- Reset & global ---- */
+  * { margin:0; padding:0; box-sizing:border-box; font-family:sans-serif; }
+  html, body { height:100%; background:#f0f0f0; color:#000; }
+  body { display:flex; flex-direction:column; justify-content:flex-start; }
 
-/* THEMES */
-body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
-body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
-body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
-body.rose{background:linear-gradient(180deg,#f43f5e,#be185d)}
-body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
-body.orange{background:linear-gradient(180deg,#f97316,#b45309)}
+  /* ---- Header ---- */
+  header { display:flex; justify-content:space-between; align-items:center; padding:10px; background:#222; color:#fff; position:sticky; top:0; z-index:10; }
+  .menu-bar { cursor:pointer; font-size:24px; }
+  .lang-theme { display:flex; gap:10px; }
 
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-top:6px}
-header h1{font-size:20px}
-.menu-btn{font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  /* ---- Side menu ---- */
+  .side-menu { position:fixed; top:0; left:0; width:250px; height:100%; background:#111; color:#fff; transform:translateX(-260px); transition:0.3s; padding-top:60px; z-index:9; }
+  .side-menu.active { transform:translateX(0); }
+  .side-menu ul { list-style:none; }
+  .side-menu ul li { padding:15px 20px; cursor:pointer; border-bottom:1px solid #333; }
+  .side-menu ul li:hover { background:#333; }
 
-/* CARD */
-.card{background:rgba(255,255,255,.12);backdrop-filter:blur(14px);border-radius:18px;padding:14px;margin-bottom:12px}
-input,select,button{width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px}
-input,select{background:rgba(255,255,255,.9)}
-button{background:rgba(255,255,255,.2);color:#fff;font-weight:bold;cursor:pointer}
-ul{list-style:none;margin-top:6px}
-li{background:rgba(255,255,255,.15);padding:8px;border-radius:10px;margin-top:6px;user-select:none}
-li.done{text-decoration:line-through;opacity:.6}
+  /* ---- Main content ---- */
+  main { flex:1; padding:20px; overflow-y:auto; }
+  .chat-container { display:flex; flex-direction:column; gap:10px; }
+  .chat-message { padding:10px; border-radius:8px; max-width:70%; }
+  .user { background:#cce5ff; align-self:flex-end; }
+  .bot { background:#e2e2e2; align-self:flex-start; }
 
-/* SIDEBAR */
-#sidebar{position:fixed;top:0;left:-100%;width:75%;max-width:280px;height:100%;background:#0f172a;padding:15px;transition:.3s;z-index:10}
-#sidebar.active{left:0}
-#sidebar h3{margin-bottom:10px}
-.item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #334;cursor:pointer}
-.del{opacity:.6;font-size:14px}
+  /* ---- Input area ---- */
+  .input-area { display:flex; position:sticky; bottom:0; background:#fff; padding:10px; gap:10px; }
+  .input-area input { flex:1; padding:10px; border-radius:20px; border:1px solid #ccc; }
+  .input-area button { padding:0 15px; border:none; border-radius:50%; background:#222; color:#fff; cursor:pointer; font-size:18px; }
 
-/* CHAT */
-#chat{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;z-index:9;flex-direction:column}
-#messages{flex:1;overflow-y:auto;padding:10px}
-.msg{margin-bottom:6px}
-.user{color:#38bdf8}
-.ai{color:#a7f3d0}
+  /* ---- Codes promo ---- */
+  .promo-container { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+  .promo { padding:10px 15px; border-radius:8px; background:#444; color:#fff; cursor:pointer; }
+  .promo.createur { background:#ffcc00; color:#000; }
 
-/* CHAT INPUT */
-#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:50px;align-items:center;}
-#chatInput{flex:1;padding:12px 14px;border-radius:50px;border:none;background:#fff;color:#000;font-size:16px;}
-#chatSend{padding:10px;border-radius:50%;background:#38bdf8;color:#fff;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;}
+  /* ---- Tasks ---- */
+  .tasks { margin-top:20px; }
+  .task { display:flex; justify-content:space-between; align-items:center; padding:8px; background:#ddd; border-radius:6px; margin-bottom:5px; }
+  .task button { border:none; background:red; color:#fff; border-radius:50%; cursor:pointer; width:24px; height:24px; }
 
-/* SCORE & HOUR */
-#scoreBox{position:fixed;bottom:10px;left:10px;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:12px;}
-#hourBox{position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:12px;}
+  /* ---- Score & horloge ---- */
+  .bottom-info { position:fixed; bottom:10px; left:10px; background:#222; color:#fff; padding:5px 10px; border-radius:8px; }
+
+  /* ---- Responsive fix tablette ---- */
+  @media (max-width:1024px) {
+    body { background:#f5f5f5; }
+    main { padding:10px; }
+    .side-menu { width:200px; }
+  }
 </style>
 </head>
-<body class="green">
+<body>
 
-<!-- SIDEBAR -->
-<div id="sidebar">
-<h3>📜 Historique</h3>
-<div class="item" onclick="newConversation()">➕ Nouvelle conversation</div>
-<div id="convList"></div>
-<div class="item" onclick="goHome()">🏠 Accueil</div>
-<div class="item" onclick="openPromo()">💳 Code Promo</div>
-</div>
-
-<!-- CHAT -->
-<div id="chat">
 <header>
-<h1 id="chatTitle">Conversation</h1>
-<span class="menu-btn" onclick="toggleMenu()">☰</span>
-</header>
-<div id="messages"></div>
-<div id="chatInputContainer">
-<input id="chatInput" placeholder="Écris un message..." onkeydown="if(event.key==='Enter'){sendMsg();event.preventDefault()}">
-<button id="chatSend" onclick="sendMsg()">➤</button>
-</div>
-</div>
-
-<!-- PROMO -->
-<div id="promo" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,0,0.8);padding:20px;border-radius:18px;z-index:20;">
-<h3>💳 Code Promo</h3>
-<input id="promoInput" placeholder="Entrez code" style="padding:10px;border-radius:12px;margin-bottom:6px;width:100%;">
-<button onclick="applyPromo()">Envoyer</button>
-<div id="promoMsg" style="margin-top:10px;"></div>
-</div>
-
-<!-- MAIN -->
-<div class="container" id="main">
-<header>
-<h1>Daily Life Ultra IA</h1>
-<span class="menu-btn" onclick="toggleMenu()">☰</span>
+  <div class="menu-bar" onclick="toggleMenu()">☰</div>
+  <div class="lang-theme">
+    <select id="lang-select" onchange="changeLanguage()">
+      <option value="fr">Français</option>
+      <option value="en">Anglais</option>
+      <option value="de">Allemand</option>
+      <option value="zh">Chinois</option>
+    </select>
+    <select id="theme-select" onchange="changeTheme()">
+      <option value="#f0f0f0">Clair</option>
+      <option value="#222">Sombre</option>
+      <option value="orange">Orange</option>
+      <option value="pink">Rose</option>
+    </select>
+  </div>
 </header>
 
-<div class="card">
-<h3>🌍 Langue</h3>
-<select id="langSelect" onchange="changeLang(this.value)">
-<option value="fr">Français</option>
-<option value="en">English</option>
-<option value="es">Español</option>
-<option value="de">Deutsch</option>
-<option value="zh">中文</option>
-<option value="ja">日本語</option>
-<option value="ru">Русский</option>
-</select>
+<div class="side-menu" id="sideMenu">
+  <ul>
+    <li onclick="showHome()">Accueil</li>
+    <li onclick="showChat()">Nouvelle conversation</li>
+    <li onclick="showHistory()">Historique</li>
+    <li onclick="showPromo()">Code promo</li>
+  </ul>
 </div>
 
-<div class="card">
-<h3>🎨 Thème</h3>
-<select id="themeSelect" onchange="changeTheme(this.value)">
-<option value="green">Vert</option>
-<option value="red">Rouge</option>
-<option value="blue">Bleu</option>
-<option value="rose">Rose</option>
-<option value="violet">Violet</option>
-<option value="orange">Orange</option>
-</select>
-</div>
+<main id="mainContent">
+  <div id="homePage">
+    <h2>Accueil</h2>
+    <div class="tasks" id="taskList"></div>
+  </div>
 
-<div class="card">
-<h3>✅ Tâches</h3>
-<input id="taskInput" placeholder="Nouvelle tâche">
-<button onclick="addTask()">Ajouter</button>
-<ul id="tasks"></ul>
-</div>
+  <div id="chatPage" style="display:none;">
+    <div class="chat-container" id="chatContainer"></div>
+    <div class="input-area">
+      <input type="text" id="chatInput" placeholder="Écris un message...">
+      <button onclick="sendMessage()">➤</button>
+    </div>
+  </div>
 
-</div>
+  <div id="promoPage" style="display:none;">
+    <h3>Codes Promo</h3>
+    <div class="promo-container" id="promoContainer"></div>
+  </div>
+</main>
 
-<!-- SCORE & HOUR -->
-<div id="scoreBox">Points: <span id="points">0</span> | Niveau: <span id="level">1</span></div>
-<div id="hourBox"></div>
+<div class="bottom-info" id="bottomInfo">
+  <span id="score">Score: 0</span> | <span id="clock"></span>
+</div>
 
 <script>
-/* ===== GLOBAL ===== */
-let lang=localStorage.lang||"fr";
-let conversations=JSON.parse(localStorage.conversations||"[]");
-let currentConv=null;
-let tasks=JSON.parse(localStorage.tasks||"[]");
-let points=Number(localStorage.points||0);
-const meals=[
-"Spaghetti Bolognese","Poulet Curry","Salade César","Pizza Margherita","Tacos","Riz sauté","Soupe légumes","Burger","Poisson grillé","Paella","Quiche","Ratatouille",
-"Pad Thaï","Sushi","Chili con Carne","Falafel","Couscous","Pâtes au pesto","Lasagne","Boeuf Stroganoff","Moussaka","Gyoza"
-];
+  // ---- Side menu ----
+  function toggleMenu() {
+    document.getElementById('sideMenu').classList.toggle('active');
+  }
 
-/* ===== SAVE ===== */
-function saveAll(){
-localStorage.conversations=JSON.stringify(conversations);
-localStorage.tasks=JSON.stringify(tasks);
-localStorage.points=points;
-localStorage.lang=lang;
-renderAll();
-}
+  function showHome() {
+    document.getElementById('homePage').style.display='block';
+    document.getElementById('chatPage').style.display='none';
+    document.getElementById('promoPage').style.display='none';
+  }
+  function showChat() {
+    document.getElementById('homePage').style.display='none';
+    document.getElementById('chatPage').style.display='flex';
+    document.getElementById('promoPage').style.display='none';
+  }
+  function showHistory() {
+    alert("Historique non implémenté pour l'instant");
+  }
+  function showPromo() {
+    document.getElementById('homePage').style.display='none';
+    document.getElementById('chatPage').style.display='none';
+    document.getElementById('promoPage').style.display='block';
+  }
 
-/* ===== RENDER ===== */
-function renderAll(){
-document.getElementById("points").textContent=points;
-document.getElementById("level").textContent=Math.floor(points/50)+1;
-renderTasks();
-renderConvList();
-}
+  // ---- Language & theme ----
+  function changeLanguage() {
+    const lang = document.getElementById('lang-select').value;
+    localStorage.setItem('language', lang);
+  }
+  function changeTheme() {
+    const color = document.getElementById('theme-select').value;
+    document.body.style.background = color;
+    localStorage.setItem('theme', color);
+  }
+  // ---- Load saved settings ----
+  window.onload = function() {
+    const savedLang = localStorage.getItem('language');
+    if(savedLang) document.getElementById('lang-select').value = savedLang;
+    const savedTheme = localStorage.getItem('theme');
+    if(savedTheme) document.body.style.background = savedTheme;
+    updateClock();
+    setInterval(updateClock, 1000);
+    loadPromo();
+    loadTasks();
+  }
 
-/* ===== TASKS ===== */
-function addTask(){
-if(taskInput.value){
-tasks.push({t:taskInput.value,d:false});
-taskInput.value="";
-points+=5;
-saveAll();
-}
-}
-function renderTasks(){
-tasksEl=document.getElementById("tasks");
-tasksEl.innerHTML="";
-tasks.forEach((t,i)=>{
-let li=document.createElement("li");
-li.textContent=t.t;
-if(t.d) li.classList.add("done");
-li.onclick=()=>{
-t.d=!t.d;
-if(t.d) points+=5;
-saveAll();
-};
-tasksEl.appendChild(li);
-});
-}
+  // ---- Clock ----
+  function updateClock(){
+    const now = new Date();
+    document.getElementById('clock').textContent = now.getHours()+':'+now.getMinutes().toString().padStart(2,'0');
+  }
 
-/* ===== MENU SIDEBAR ===== */
-const sidebar=document.getElementById("sidebar");
-function toggleMenu(){sidebar.classList.toggle("active")}
-function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active")}
+  // ---- Chat IA locale ----
+  const chatContainer = document.getElementById('chatContainer');
+  function sendMessage(){
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if(!msg) return;
+    appendMessage(msg,'user');
+    input.value='';
+    // Réponse IA locale
+    const response = localAI(msg);
+    appendMessage(response,'bot');
+  }
 
-/* ===== CONVERSATIONS ===== */
-function newConversation(){
-const id=Date.now();
-conversations.unshift({id,title:`Conversation ${conversations.length+1}`,msgs:[]});
-currentConv=id;
-saveAll();
-openChat();
-}
+  function appendMessage(msg,cls){
+    const div = document.createElement('div');
+    div.className='chat-message '+cls;
+    div.textContent=msg;
+    chatContainer.appendChild(div);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
 
-function renderConvList(){
-const convList=document.getElementById("convList");
-convList.innerHTML="";
-conversations.forEach((c,i)=>{
-c.title=`Conversation ${conversations.length-i}`;
-let d=document.createElement("div");
-d.className="item";
-d.textContent=c.title;
-d.onclick=()=>{currentConv=c.id;openChat();};
-convList.appendChild(d);
-});
+  function localAI(msg){
+    msg = msg.toLowerCase();
+    if(msg.includes("salut")) return "Salut ! Comment ça va ?";
+    if(msg.includes("ça va")) return "Oui, ça va très bien, merci ! Et toi ?";
+    if(msg.includes("pâtes")) return "Pour des pâtes à la carbonara, prends des pâtes, œufs, lardons, parmesan, crème, et fais revenir le tout...";
+    return "Désolé, je n'ai pas compris, mais je peux t'aider avec des recettes, du code ou des infos !";
+  }
 
-}
+  // ---- Tasks ----
+  function loadTasks(){
+    const tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
+    const list = document.getElementById('taskList');
+    list.innerHTML='';
+    tasks.forEach((t,i)=>{
+      const div=document.createElement('div');
+      div.className='task';
+      div.innerHTML=`<span>${t}</span><button onclick="deleteTask(${i})">🗑</button>`;
+      list.appendChild(div);
+    });
+  }
+  function addTask(task){
+    const tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
+    tasks.push(task);
+    localStorage.setItem('tasks',JSON.stringify(tasks));
+    loadTasks();
+  }
+  function deleteTask(index){
+    const tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
+    tasks.splice(index,1);
+    localStorage.setItem('tasks',JSON.stringify(tasks));
+    loadTasks();
+  }
 
-function openChat(){
-if(currentConv===null)return;
-const c=conversations.find(x=>x.id===currentConv);
-if(!c)return;
-chat.style.display="flex";
-main.style.display="none";
-sidebar.classList.remove("active");
-renderMessages();
-chatInput.focus();
-}
+  // ---- Promo codes ----
+  const promoCodes = [
+    {label:'Créateur', code:'CRP2.0ROROOLNR'},
+    {label:'Utilisateur', code:'A4G7R2T9X1'},
+    {label:'Utilisateur', code:'M2Q8P5Z4R7'},
+    {label:'Utilisateur', code:'B9K1T7X2L5'},
+    {label:'Utilisateur', code:'F3V8P6Q1R9'},
+    {label:'Utilisateur', code:'G1X9M4T2V7'},
+    {label:'Utilisateur', code:'H7R2C9P1Q5'},
+    {label:'Utilisateur', code:'K4T1X7R3M9'},
+    {label:'Utilisateur', code:'L5Q2V9T6F1'},
+    {label:'Utilisateur', code:'N3P7K2X4B8'},
+    {label:'Utilisateur', code:'R2M9F4T1Q6'}
+  ];
 
-function renderMessages(){
-messages.innerHTML="";
-const c=conversations.find(x=>x.id===currentConv);
-if(!c)return;
-chatTitle.textContent=c.title;
-c.msgs.forEach(m=>{
-messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`;
-});
-messages.scrollTop=messages.scrollHeight;
-}
-
-function sendMsg(){
-const t=chatInput.value.trim();
-if(!t||currentConv===null)return;
-const c=conversations.find(x=>x.id===currentConv);
-c.msgs.push({w:"user",t});
-chatInput.value="";
-setTimeout(()=>{
-c.msgs.push({w:"ai",t:smartAI(t)});
-saveAll();
-renderMessages();
-},300);
-saveAll();
-}
-
-/* ===== IA LOCALE INTELLIGENTE ===== */
-function smartAI(text){
-text=text.toLowerCase();
-if(text.includes("recette")||text.includes("menu")){
-let r=[];
-for(let i=0;i<5;i++) r.push(meals[Math.floor(Math.random()*meals.length)]);
-return "Voici quelques idées : "+r.join(", ");
-}
-if(text.includes("salut")||text.includes("bonjour")) return "Salut ! Comment ça va ?";
-if(text.includes("comment ça va")) return "Je vais très bien, merci ! Et toi ?";
-if(text.includes("pâtes")||text.includes("carbonara")) return "Pour des pâtes carbonara, tu peux prendre pâtes, oeufs, parmesan et pancetta. Faire revenir la pancetta, mélanger les oeufs et le parmesan, puis ajouter aux pâtes chaudes.";
-return "Je peux t’aider avec des recettes, tâches et organisation !";
-}
-
-/* ===== LANG & THEME ===== */
-function changeLang(l){lang=l;localStorage.lang=lang;renderAll();}
-function changeTheme(t){document.body.className=t;localStorage.theme=t;}
-
-/* ===== PROMO ===== */
-const promoCodes=["ABC1234567","DEF2345678","GHI3456789","JKL4567890","MNO5678901","PQR6789012","STU7890123","VWX8901234","YZA9012345","CREATOR1234"];
-function openPromo(){promo.style.display="block";promoInput.value="";promoMsg.textContent="";}
-function applyPromo(){
-const code=promoInput.value.trim().toUpperCase();
-if(promoCodes.includes(code)){
-promoMsg.textContent="Code utilisable !";
-}else{promoMsg.textContent="Code invalide";}
-}
-
-/* ===== SCORE & HOUR ===== */
-function updateHour(){let d=new Date();hourBox.textContent=d.toLocaleTimeString();}
-setInterval(updateHour,1000);
-
-/* ===== INIT ===== */
-if(localStorage.theme) document.body.className=localStorage.theme;
-if(localStorage.lang) langSelect.value=localStorage.lang;
-renderAll();
-updateHour();
+  function loadPromo(){
+    const container = document.getElementById('promoContainer');
+    container.innerHTML='';
+    promoCodes.forEach(p=>{
+      const div = document.createElement('div');
+      div.className='promo '+(p.label==='Créateur'?'createur':'');
+      div.textContent=p.label + ": " + p.code;
+      container.appendChild(div);
+    });
+  }
 </script>
+
 </body>
   </html>
