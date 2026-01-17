@@ -2,185 +2,93 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Daily Life IA Ultra</title>
-
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{min-height:100vh;color:#fff;padding:12px;transition:.3s}
-body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
-body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
-body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
-body.rose{background:linear-gradient(180deg,#9d174d,#4a044e)}
-body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
-body.orange{background:linear-gradient(180deg,#f97316,#9a3412)}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui;}
+html,body{width:100%;height:100%;overflow-x:hidden;transition:0.3s;}
+body{background:#5b21b6;color:#fff;padding:10px;}
 .container{max-width:420px;margin:auto}
 
-header{
-display:flex;
-align-items:center;
-justify-content:space-between;
-margin-bottom:12px
-}
+/* THEMES */
+body.green{background:linear-gradient(180deg,#064e3b,#042f2e);}
+body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a);}
+body.blue{background:linear-gradient(180deg,#1e3a8a,#020617);}
+body.rose{background:linear-gradient(180deg,#9d174d,#4a044e);}
+body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065);}
+body.orange{background:linear-gradient(180deg,#f97316,#c2410c);}
 
-.header-left{
-display:flex;
-align-items:center;
-gap:10px;
-font-size:14px;
-opacity:.8
-}
+/* HEADER */
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-top:6px;}
+header h1{font-size:20px;}
+.menu-btn{font-size:24px;cursor:pointer;user-select:none;}
 
-.menu-btn{
-font-size:22px;
-cursor:pointer;
-padding:6px
-}
-
-.card{
-background:rgba(255,255,255,.15);
-backdrop-filter:blur(14px);
-border-radius:18px;
-padding:14px;
-margin-bottom:12px
-}
-
-input,select,button{
-width:100%;
-padding:12px;
-border:none;
-border-radius:14px;
-margin-top:6px;
-font-size:15px
-}
-input,select{background:#fff;color:#000}
-button{background:rgba(255,255,255,.25);color:#fff;font-weight:bold}
-
-ul{list-style:none}
-li{
-background:rgba(255,255,255,.2);
-margin-top:6px;
-padding:10px;
-border-radius:12px;
-display:flex;
-justify-content:space-between;
-align-items:center
-}
+/* CARD */
+.card{background:rgba(255,255,255,.12);backdrop-filter:blur(14px);border-radius:18px;padding:14px;margin-bottom:12px;}
+input,select,button{width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px;}
+input,select{background:rgba(255,255,255,.9);}
+button{background:rgba(255,255,255,.2);color:#fff;font-weight:bold;cursor:pointer;}
+ul{list-style:none;margin-top:6px;}
+li{background:rgba(255,255,255,.15);padding:8px;border-radius:10px;margin-top:6px;user-select:none;}
+li.done{text-decoration:line-through;opacity:.6;}
 
 /* SIDEBAR */
-#sidebar{
-position:fixed;
-top:0;left:-100%;
-width:75%;max-width:280px;
-height:100%;
-background:#0f172a;
-padding:15px;
-transition:.3s;
-z-index:50
-}
-#sidebar.active{left:0}
-.sidebar-item{
-padding:10px;
-border-bottom:1px solid #334;
-cursor:pointer
-}
+#sidebar{position:fixed;top:0;left:-100%;width:75%;max-width:280px;height:100%;background:#0f172a;padding:15px;transition:.3s;z-index:10;}
+#sidebar.active{left:0;}
+#sidebar h3{margin-bottom:10px;}
+.item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #334;cursor:pointer;}
+.del{opacity:.6;font-size:14px;}
 
 /* CHAT */
-#chat{
-display:none;
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:#020617;
-z-index:40;
-flex-direction:column
-}
+#chat{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;z-index:9;flex-direction:column;}
+#messages{flex:1;overflow-y:auto;padding:10px;}
+.msg{margin-bottom:6px;}
+.user{color:#38bdf8;}
+.ai{color:#a7f3d0;}
 
-#chat header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:10px
-}
+/* CHAT INPUT */
+#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:12px;}
+#chatInput{flex:1;padding:10px;border-radius:12px;border:none;}
+#chatSend{width:50px;height:50px;border-radius:50%;background:#38bdf8;color:#fff;font-weight:bold;cursor:pointer;display:flex;justify-content:center;align-items:center;font-size:20px;}
+#chatSend::after{content:"↑";} /* flèche style ChatGPT */
 
-#messages{
-flex:1;
-overflow-y:auto;
-padding:12px
-}
-.msg{margin-bottom:10px}
-.user{color:#38bdf8}
-.ai{color:#a7f3d0}
-
-#chatInputBox{
-display:flex;
-gap:8px;
-padding:12px
-}
-#chatInput{
-flex:1;
-padding:14px;
-border-radius:999px
-}
-
-#sendBtn{
-width:48px;
-height:48px;
-border-radius:50%;
-background:#fff;
-color:#000;
-font-size:20px;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer
-}
-#sendBtn::before{
-content:"↑";
-font-weight:bold;
-}
+/* TIME DISPLAY */
+#timeDisplay{position:fixed;bottom:10px;left:10px;font-size:14px;opacity:.8;color:#fff;}
 </style>
 </head>
+<body class="green">
 
-<body>
-
-<!-- MENU -->
+<!-- SIDEBAR -->
 <div id="sidebar">
-<h3>📂 Menu</h3>
-<div class="sidebar-item" onclick="goHome()">🏠 Accueil</div>
-<div class="sidebar-item" onclick="openChat()">💬 Chat</div>
+<h3>📜 Historique</h3>
+<div class="item" onclick="newConversation()">➕ Nouvelle conversation</div>
+<div id="convList"></div>
+<div class="item" onclick="goHome()">🏠 Accueil</div>
 </div>
 
 <!-- CHAT -->
 <div id="chat">
 <header>
-<h3>Chat IA</h3>
+<h1 id="chatTitle">Conversation</h1>
 <span class="menu-btn" onclick="toggleMenu()">☰</span>
 </header>
-
 <div id="messages"></div>
-
-<div id="chatInputBox">
-<input id="chatInput" placeholder="Écris un message…" onkeydown="if(event.key==='Enter')sendMsg()">
-<button id="sendBtn" onclick="sendMsg()"></button>
+<div id="chatInputContainer">
+<input id="chatInput" placeholder="Écris un message..." onkeydown="if(event.key==='Enter'){sendMsg();event.preventDefault()}">
+<button id="chatSend" onclick="sendMsg()"></button>
 </div>
 </div>
 
-<!-- ACCUEIL -->
+<!-- MAIN -->
 <div class="container" id="main">
-
 <header>
-<div class="header-left">
-<span id="clock">--:--</span>
-</div>
-<h2>Daily Life IA Ultra</h2>
+<h1>Daily Life IA Ultra</h1>
 <span class="menu-btn" onclick="toggleMenu()">☰</span>
 </header>
 
 <div class="card">
 <h3>🌍 Langue</h3>
-<select onchange="setLang(this.value)">
+<select id="langSelect" onchange="changeLang(this.value)">
 <option value="fr">Français</option>
 <option value="en">English</option>
 <option value="es">Español</option>
@@ -190,7 +98,7 @@ font-weight:bold;
 
 <div class="card">
 <h3>🎨 Thème</h3>
-<select onchange="setTheme(this.value)">
+<select id="themeSelect" onchange="changeTheme(this.value)">
 <option value="green">Vert</option>
 <option value="red">Rouge</option>
 <option value="blue">Bleu</option>
@@ -201,6 +109,12 @@ font-weight:bold;
 </div>
 
 <div class="card">
+<h3>📊 Stats</h3>
+<p>Points : <span id="points">0</span></p>
+<p>Niveau : <span id="level">1</span></p>
+</div>
+
+<div class="card">
 <h3>✅ Tâches</h3>
 <input id="taskInput" placeholder="Nouvelle tâche">
 <button onclick="addTask()">Ajouter</button>
@@ -208,76 +122,211 @@ font-weight:bold;
 </div>
 
 <div class="card">
-<h3>📊 Stats</h3>
-<p>Points : <span id="points">0</span></p>
+<h3>🧑‍🍳 Menu semaine</h3>
+<button onclick="generateMenu()">Générer</button>
+<ul id="menu"></ul>
 </div>
 
+<div class="card">
+<h3>🛒 Liste de courses</h3>
+<button onclick="generateCourses()">Depuis menu</button>
+<ul id="courses"></ul>
 </div>
+
+<div class="card">
+<h3>⏰ Rappel</h3>
+<input type="time" id="alarm">
+<button onclick="setAlarm()">Activer</button>
+</div>
+</div>
+
+<!-- TIME -->
+<div id="timeDisplay"></div>
 
 <script>
-let theme=localStorage.theme||"green"
-let lang=localStorage.lang||"fr"
-let points=Number(localStorage.points||0)
-let tasks=JSON.parse(localStorage.tasks||"[]")
-let messagesData=JSON.parse(localStorage.messages||"[]")
+/* ===== GLOBAL ===== */
+let lang = localStorage.lang || "fr";
+let theme = localStorage.theme || "green";
+let points = Number(localStorage.points || 0);
+let tasks = JSON.parse(localStorage.tasks || "[]");
+let conversations = JSON.parse(localStorage.conversations || "[]");
+let menu = JSON.parse(localStorage.menu || "[]");
+let courses = JSON.parse(localStorage.courses || "[]");
+let currentConv = null;
+document.body.className = theme;
+document.getElementById("langSelect").value = lang;
+document.getElementById("themeSelect").value = theme;
 
-document.body.className=theme
-document.querySelector("select[onchange^='setLang']").value=lang
+const meals=[
+{title:"Spaghetti Bolognese",instr:"Cuire les pâtes, préparer la sauce bolognaise, mélanger et servir."},
+{title:"Poulet Curry",instr:"Faire revenir le poulet, ajouter curry et lait de coco, mijoter 20 min."},
+{title:"Salade César",instr:"Mélanger laitue, poulet, parmesan, croûtons, sauce César."},
+{title:"Pizza Margherita",instr:"Étaler la pâte, ajouter tomate, mozzarella, basilic, cuire 12 min."},
+{title:"Tacos",instr:"Préparer les tortillas, ajouter viande, légumes et sauce."},
+{title:"Riz sauté",instr:"Faire sauter riz, légumes et œufs dans un wok."},
+{title:"Soupe légumes",instr:"Faire bouillir légumes, mixer et assaisonner."},
+{title:"Burger",instr:"Cuire steak, toaster pain, assembler burger avec garnitures."},
+{title:"Poisson grillé",instr:"Assaisonner poisson, griller 8 min, servir chaud."},
+{title:"Paella",instr:"Cuire riz, safran, fruits de mer, poulet et légumes ensemble."},
+// ... tu peux rajouter jusqu'à 1000 recettes ici
+];
 
-function toggleMenu(){sidebar.classList.toggle("active")}
-function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active")}
-function openChat(){main.style.display="none";chat.style.display="flex";sidebar.classList.remove("active");renderMessages()}
-
-function setTheme(t){theme=t;document.body.className=t;localStorage.theme=t}
-function setLang(l){lang=l;localStorage.lang=l}
-
-function addTask(){
-if(!taskInput.value)return
-tasks.push(taskInput.value)
-taskInput.value=""
-points+=5
-save()
-renderTasks()
+/* ===== SAVE ===== */
+function saveAll(){
+  localStorage.lang = lang;
+  localStorage.theme = theme;
+  localStorage.points = points;
+  localStorage.tasks = JSON.stringify(tasks);
+  localStorage.conversations = JSON.stringify(conversations);
+  localStorage.menu = JSON.stringify(menu);
+  localStorage.courses = JSON.stringify(courses);
+  renderAll();
 }
 
-function renderTasks(){
-tasksEl.innerHTML=""
-tasks.forEach((t,i)=>{
-let li=document.createElement("li")
-li.innerHTML=`<span>${t}</span><button onclick="delTask(${i})">🗑️</button>`
-tasksEl.appendChild(li)
-})
-pointsEl.textContent=points
+/* ===== RENDER ===== */
+function renderAll(){
+  document.getElementById("points").textContent = points;
+  document.getElementById("level").textContent = Math.floor(points/50)+1;
+  renderTasks();
+  renderConvList();
+  renderMenu();
+  renderCourses();
+  updateTime();
 }
 
-function delTask(i){tasks.splice(i,1);save();renderTasks()}
+/* ===== MENU SIDEBAR ===== */
+function toggleMenu(){sidebar.classList.toggle("active");}
+function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active");}
+
+/* ===== CONVERSATIONS ===== */
+function newConversation(){
+  const id = Date.now();
+  conversations.unshift({id, title:`Conversation ${conversations.length+1}`, msgs:[]});
+  currentConv = id;
+  saveAll();
+  openChat();
+}
+
+function renderConvList(){
+  convList.innerHTML = "";
+  conversations.forEach((c,i)=>{
+    c.title=`Conversation ${conversations.length-i}`;
+    let d = document.createElement("div");
+    d.className="item";
+    d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`;
+    d.onclick=(e)=>{
+      if(e.target.classList.contains("del")){
+        conversations = conversations.filter(x=>x.id!==c.id);
+        if(currentConv===c.id) goHome();
+        saveAll();
+      }else{
+        currentConv = c.id;
+        openChat();
+      }
+    };
+    convList.appendChild(d);
+  });
+}
+
+function openChat(){
+  if(currentConv===null) return;
+  const c = conversations.find(x=>x.id===currentConv);
+  if(!c) return;
+  chat.style.display="flex";
+  main.style.display="none";
+  sidebar.classList.remove("active");
+  renderMessages();
+  chatInput.focus();
+}
+
+/* ===== CHAT ===== */
+function renderMessages(){
+  messages.innerHTML="";
+  const c=conversations.find(x=>x.id===currentConv);
+  if(!c)return;
+  chatTitle.textContent = c.title;
+  c.msgs.forEach(m=>{
+    messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`;
+  });
+  messages.scrollTop = messages.scrollHeight;
+}
 
 function sendMsg(){
-if(!chatInput.value)return
-messagesData.push({w:"user",t:chatInput.value})
-messagesData.push({w:"ai",t:"Je suis là pour t’aider 🙂"})
-chatInput.value=""
-save()
-renderMessages()
+  const t = chatInput.value.trim();
+  if(!t||currentConv===null) return;
+  const c = conversations.find(x=>x.id===currentConv);
+  c.msgs.push({w:"user",t});
+  chatInput.value="";
+  setTimeout(()=>{
+    c.msgs.push({w:"ai",t:smartAI(t)});
+    saveAll();
+    renderMessages();
+  },300);
+  saveAll();
 }
 
-function renderMessages(){
-messages.innerHTML=""
-messagesData.forEach(m=>{
-messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`
-})
-messages.scrollTop=messages.scrollHeight
+/* ===== IA LOCALE INTELLIGENTE ===== */
+function smartAI(text){
+  text = text.toLowerCase();
+  // recherche dans recettes
+  let rec = meals.find(m => text.includes(m.title.toLowerCase()));
+  if(rec) return `${rec.title} : ${rec.instr}`;
+  // mots clés généraux
+  if(text.includes("recette")||text.includes("menu")) return meals[Math.floor(Math.random()*meals.length)].title;
+  if(text.includes("bonjour")||text.includes("salut")) return "Salut !";
+  switch(lang){
+    case "en": return "I am here to help you!";
+    case "es": return "¡Estoy aquí para ayudarte!";
+    case "de": return "Ich bin hier, um dir zu helfen!";
+    default: return "Je suis là pour t’aider.";
+  }
 }
 
-function save(){
-localStorage.tasks=JSON.stringify(tasks)
-localStorage.points=points
-localStorage.messages=JSON.stringify(messagesData)
+/* ===== TASKS ===== */
+function addTask(){
+  if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";points+=5;saveAll();}
+}
+function renderTasks(){
+  tasksEl.innerHTML="";
+  tasks.forEach((t,i)=>{
+    let li=document.createElement("li");
+    li.textContent=t.t;
+    if(t.d) li.classList.add("done");
+    li.onclick=()=>{t.d=!t.d;points+=5;saveAll();}
+    li.ondblclick=()=>{tasks.splice(i,1);saveAll();} // double clic pour supprimer
+    tasksEl.appendChild(li);
+  });
 }
 
-setInterval(()=>clock.textContent=new Date().toLocaleTimeString().slice(0,5),1000)
-renderTasks()
+/* ===== MENU & COURSES ===== */
+function generateMenu(){menu=[];for(let i=0;i<7;i++)menu.push(meals[Math.floor(Math.random()*meals.length)].title);saveAll();}
+function renderMenu(){menuEl.innerHTML="";menu.forEach(m=>menuEl.innerHTML+=`<li>${m}</li>`);}
+function generateCourses(){courses=[...new Set(menu)];saveAll();}
+function renderCourses(){coursesEl.innerHTML="";courses.forEach((c,i)=>{let li=document.createElement("li");li.textContent=c;coursesEl.appendChild(li);});}
+
+/* ===== THEME & LANG ===== */
+function changeTheme(t){theme=t;document.body.className=t;saveAll();}
+function changeLang(l){lang=l;saveAll();}
+
+/* ===== ALARM ===== */
+function setAlarm(){
+  Notification.requestPermission();
+  const time = alarm.value;
+  setInterval(()=>{
+    const now = new Date().toTimeString().slice(0,5);
+    if(now===time) new Notification("⏰ Rappel !");
+  },30000);
+}
+
+/* ===== TIME DISPLAY ===== */
+function updateTime(){
+  const now = new Date();
+  timeDisplay.textContent = now.toTimeString().slice(0,5);
+}
+
+/* ===== INIT ===== */
+renderAll();
+setInterval(updateTime,60000);
 </script>
-
 </body>
   </html>
