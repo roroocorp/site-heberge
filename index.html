@@ -5,273 +5,316 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life IA Ultra</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #4b0082;
-    color: white;
+  :root {
+    --main-color: #8e24aa;
+    --accent-color: #ffffff;
+    --chat-bg: #000000;
+    --input-bg: #111111;
+    --text-color: #ffffff;
+    --placeholder-color: #999999;
   }
-  .header {
+
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--main-color);
+    color: var(--text-color);
+  }
+
+  header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #800080;
-    padding: 1rem;
+    padding: 12px 16px;
+    background-color: var(--main-color);
   }
-  .menu-toggle {
-    font-size: 2rem;
-    cursor: pointer;
-  }
-  .container {
-    padding: 1rem;
-  }
-  select, input, button {
-    padding: 0.5rem;
-    font-size: 1rem;
-    border-radius: 0.5rem;
-    border: none;
-    margin-top: 0.5rem;
-    width: 100%;
-  }
-  .section {
-    margin-bottom: 1rem;
-    background: rgba(255,255,255,0.1);
-    padding: 1rem;
-    border-radius: 0.5rem;
-  }
-  .tasks li {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 0.5rem;
-  }
-  .tasks button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: white;
+
+  header h1 {
+    margin: 0;
     font-size: 1.2rem;
   }
-  .chat-container {
-    display: none;
-    flex-direction: column;
-    height: 70vh;
-  }
-  .chat-box {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1rem;
-    background: #111;
-    border-radius: 0.5rem;
-  }
-  .chat-input {
-    display: flex;
-    margin-top: 0.5rem;
-  }
-  .chat-input input {
-    flex: 1;
-    border-radius: 0.5rem 0 0 0.5rem;
-  }
-  .chat-input button {
-    border-radius: 0 0.5rem 0.5rem 0;
-    background: black;
-    color: white;
-  }
-  .sidebar {
-    position: fixed;
-    left: -250px;
-    top: 0;
-    width: 250px;
-    height: 100%;
-    background: #111;
-    padding: 1rem;
-    transition: 0.3s;
-    z-index: 10;
-  }
-  .sidebar.open {
-    left: 0;
-  }
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  .sidebar ul li {
-    margin: 1rem 0;
+
+  .menu-icon {
+    font-size: 1.5rem;
     cursor: pointer;
   }
-  .score {
-    margin-top: 2rem;
-    text-align: center;
+
+  nav {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background-color: #111;
+    color: var(--text-color);
+    padding: 16px;
+    transition: left 0.3s;
+    overflow-y: auto;
+    z-index: 1000;
+  }
+
+  nav.active {
+    left: 0;
+  }
+
+  nav h2 {
+    margin-top: 0;
+  }
+
+  nav a {
+    display: block;
+    padding: 10px 0;
+    color: var(--text-color);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  main {
+    padding: 16px;
+  }
+
+  .settings, .stats, .tasks, .menu-week, .shopping-list {
+    background-color: rgba(255,255,255,0.1);
+    margin-bottom: 16px;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .tasks input, .menu-week button, .shopping-list button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    margin-top: 8px;
+  }
+
+  /* Chat Styles */
+  .chat-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 50%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--chat-bg);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    overflow: hidden;
+  }
+
+  .chat-messages {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+  }
+
+  .chat-message {
+    margin-bottom: 10px;
+  }
+
+  .chat-message.user {
+    text-align: right;
+    color: #00bfff;
+  }
+
+  .chat-message.bot {
+    text-align: left;
+    color: #7fff00;
+  }
+
+  .chat-input-container {
+    display: flex;
+    padding: 8px;
+    background-color: var(--input-bg);
+  }
+
+  .chat-input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background-color: #222;
+    color: var(--text-color);
+  }
+
+  .chat-send {
+    background-color: #fff;
+    border: none;
+    padding: 0 16px;
+    margin-left: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #000;
   }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1 id="app-title">Daily Life IA Ultra</h1>
-  <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
-</div>
+<header>
+  <h1>Daily Life IA Ultra</h1>
+  <span class="menu-icon" id="menuToggle">&#9776;</span>
+</header>
 
-<div class="sidebar" id="sidebar">
-  <h3>Historique</h3>
-  <ul>
-    <li onclick="newConversation()">Nouvelle conversation</li>
-    <li onclick="showHome()">Accueil</li>
-  </ul>
-</div>
+<nav id="sideMenu">
+  <h2>Historique</h2>
+  <a id="newChat">Nouvelle conversation</a>
+  <a id="home">Accueil</a>
+</nav>
 
-<div class="container" id="home">
-
-  <div class="section">
-    🌐 <strong>Langue</strong>
-    <select id="lang-select" onchange="saveLang()">
-      <option value="fr">Français</option>
-      <option value="en">English</option>
+<main>
+  <div class="settings">
+    <label>🌎 Langue</label>
+    <select id="langSelect">
+      <option>Français</option>
+      <option>English</option>
+      <option>Español</option>
+    </select>
+    <label>🎨 Thème</label>
+    <select id="themeSelect">
+      <option>Vert</option>
+      <option>Rose</option>
+      <option>Bleu</option>
     </select>
   </div>
 
-  <div class="section">
-    🎨 <strong>Thème</strong>
-    <select id="theme-select" onchange="saveTheme()">
-      <option value="Vert">Vert</option>
-      <option value="Rose">Rose</option>
-      <option value="Orange">Orange</option>
-      <option value="Bleu">Bleu</option>
-    </select>
+  <div class="stats" id="stats">
+    📊 Points : 0<br>Niveau : 1
   </div>
 
-  <div class="section" id="stats-section">
-    📊 <strong>Stats</strong>
-    <div id="score-display">Points : 0 | Niveau : 1</div>
+  <div class="tasks">
+    ✅ Tâches
+    <input type="text" id="taskInput" placeholder="Nouvelle tâche">
+    <button id="addTask">Ajouter</button>
+    <ul id="taskList"></ul>
   </div>
 
-  <div class="section">
-    ✅ <strong>Tâches</strong>
-    <ul class="tasks" id="tasks-list"></ul>
-    <input type="text" id="task-input" placeholder="Nouvelle tâche">
-    <button onclick="addTask()">Ajouter</button>
+  <div class="menu-week">
+    👨‍🍳 Menu semaine
+    <button id="generateMenu">Générer</button>
   </div>
 
-</div>
+  <div class="shopping-list">
+    🛒 Liste de courses
+    <button id="shoppingList">Depuis menu</button>
+  </div>
+</main>
 
-<div class="container chat-container" id="chat-container">
-  <h2>Chat IA</h2>
-  <div class="chat-box" id="chat-box"></div>
-  <div class="chat-input">
-    <input type="text" id="chat-input" placeholder="Écris un message...">
-    <button onclick="sendMessage()">➤</button>
+<!-- Chat -->
+<div class="chat-container" id="chatContainer">
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-input-container">
+    <input type="text" id="chatInput" class="chat-input" placeholder="Écris un message...">
+    <button id="sendBtn" class="chat-send">&#9654;</button>
   </div>
 </div>
 
 <script>
-  // Sidebar
-  function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-  }
+  // Menu toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const sideMenu = document.getElementById('sideMenu');
+  menuToggle.addEventListener('click', () => {
+    sideMenu.classList.toggle('active');
+  });
 
-  // Home/Chat switch
-  function showHome() {
-    document.getElementById('home').style.display = 'block';
-    document.getElementById('chat-container').style.display = 'none';
-  }
+  // Nouvelle conversation
+  const newChatBtn = document.getElementById('newChat');
+  const chatMessages = document.getElementById('chatMessages');
+  newChatBtn.addEventListener('click', () => {
+    chatMessages.innerHTML = '';
+    addBotMessage("Bonjour ! Je suis là pour t'aider 😊");
+    sideMenu.classList.remove('active');
+  });
 
-  function newConversation() {
-    document.getElementById('home').style.display = 'none';
-    document.getElementById('chat-container').style.display = 'flex';
-    document.getElementById('chat-box').innerHTML = ''; // Nouveau chat
-  }
+  // Stats simulation
+  let points = 0;
+  let level = 1;
 
-  // Langue
-  function saveLang() {
-    const lang = document.getElementById('lang-select').value;
-    localStorage.setItem('lang', lang);
-  }
-
-  function loadLang() {
-    const lang = localStorage.getItem('lang');
-    if(lang) document.getElementById('lang-select').value = lang;
-  }
-
-  // Thème
-  function saveTheme() {
-    const theme = document.getElementById('theme-select').value;
-    localStorage.setItem('theme', theme);
-  }
-
-  function loadTheme() {
-    const theme = localStorage.getItem('theme');
-    if(theme) document.getElementById('theme-select').value = theme;
-  }
-
-  // Score
-  function updateScore(points, level) {
-    document.getElementById('score-display').textContent = `Points : ${points} | Niveau : ${level}`;
+  function updateStats() {
+    document.getElementById('stats').innerHTML = `📊 Points : ${points}<br>Niveau : ${level}`;
   }
 
   // Tâches
-  let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-
-  function saveTasks() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }
-
-  function renderTasks() {
-    const tasksList = document.getElementById('tasks-list');
-    tasksList.innerHTML = '';
-    tasks.forEach((task, i) => {
+  const taskInput = document.getElementById('taskInput');
+  const taskList = document.getElementById('taskList');
+  document.getElementById('addTask').addEventListener('click', () => {
+    if(taskInput.value.trim() !== '') {
       const li = document.createElement('li');
-      li.textContent = task;
+      li.textContent = taskInput.value;
       const del = document.createElement('button');
       del.textContent = '🗑';
-      del.onclick = () => { tasks.splice(i,1); saveTasks(); renderTasks(); };
+      del.addEventListener('click', () => li.remove());
       li.appendChild(del);
-      tasksList.appendChild(li);
-    });
-  }
-
-  function addTask() {
-    const input = document.getElementById('task-input');
-    if(input.value.trim() !== '') {
-      tasks.push(input.value.trim());
-      input.value = '';
-      saveTasks();
-      renderTasks();
+      taskList.appendChild(li);
+      taskInput.value = '';
+      points += 10;
+      updateStats();
     }
+  });
+
+  // Chat
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  function addUserMessage(msg) {
+    const div = document.createElement('div');
+    div.classList.add('chat-message', 'user');
+    div.textContent = msg;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  // Chat IA local simple
-  function sendMessage() {
-    const input = document.getElementById('chat-input');
-    const box = document.getElementById('chat-box');
-    if(input.value.trim() === '') return;
-    const userMsg = document.createElement('div');
-    userMsg.textContent = input.value;
-    userMsg.style.color = 'cyan';
-    box.appendChild(userMsg);
-
-    // Réponse IA locale
-    const botMsg = document.createElement('div');
-    botMsg.textContent = getLocalAIResponse(input.value);
-    botMsg.style.color = 'lightgreen';
-    box.appendChild(botMsg);
-    box.scrollTop = box.scrollHeight;
-    input.value = '';
+  function addBotMessage(msg) {
+    const div = document.createElement('div');
+    div.classList.add('chat-message', 'bot');
+    div.textContent = msg;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  function getLocalAIResponse(msg) {
-    // Réponses simples pour démo
+  sendBtn.addEventListener('click', () => {
+    const msg = chatInput.value.trim();
+    if(msg) {
+      addUserMessage(msg);
+      chatInput.value = '';
+      setTimeout(() => {
+        // Réponse locale IA
+        const response = generateBotResponse(msg);
+        addBotMessage(response);
+      }, 300);
+    }
+  });
+
+  chatInput.addEventListener('keypress', (e) => {
+    if(e.key === 'Enter') sendBtn.click();
+  });
+
+  function generateBotResponse(msg) {
+    // Exemple de réponses locales simples
     msg = msg.toLowerCase();
-    if(msg.includes('carbonara')) return "Voici une recette simple de carbonara : pâtes, oeufs, pancetta, parmesan.";
-    if(msg.includes('bonjour')) return "Bonjour ! Comment puis-je vous aider ?";
-    return "Je suis là pour t’aider 😊";
+    if(msg.includes('recette')) return "Voici une recette délicieuse pour toi ! 🍝";
+    if(msg.includes('bonjour')) return "Bonjour ! Comment ça va ?";
+    return "Je suis là pour t'aider 😊";
   }
 
-  // Initialisation
-  loadLang();
-  loadTheme();
-  renderTasks();
-  updateScore(0,1);
+  // Initial message
+  addBotMessage("Bonjour ! Je suis là pour t'aider 😊");
+
+  // Langue et thème
+  const langSelect = document.getElementById('langSelect');
+  langSelect.addEventListener('change', () => {
+    // Ici tu peux ajouter la logique de traduction
+  });
+
+  const themeSelect = document.getElementById('themeSelect');
+  themeSelect.addEventListener('change', () => {
+    const theme = themeSelect.value;
+    if(theme === 'Vert') document.body.style.backgroundColor = '#2e7d32';
+    if(theme === 'Rose') document.body.style.backgroundColor = '#d81b60';
+    if(theme === 'Bleu') document.body.style.backgroundColor = '#1976d2';
+  });
 </script>
 
 </body>
-  </html>
+    </html>
