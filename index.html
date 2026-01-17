@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Site IA + Codes Promo</title>
 <style>
-  /* ---- Reset & global ---- */
   * { margin:0; padding:0; box-sizing:border-box; font-family:sans-serif; }
-  html, body { height:100%; background:#f0f0f0; color:#000; }
-  body { display:flex; flex-direction:column; justify-content:flex-start; }
+  html, body { height:100%; }
+  body { background:#f0f0f0; display:flex; flex-direction:column; }
 
   /* ---- Header ---- */
   header { display:flex; justify-content:space-between; align-items:center; padding:10px; background:#222; color:#fff; position:sticky; top:0; z-index:10; }
@@ -45,7 +44,7 @@
   .task button { border:none; background:red; color:#fff; border-radius:50%; cursor:pointer; width:24px; height:24px; }
 
   /* ---- Score & horloge ---- */
-  .bottom-info { position:fixed; bottom:10px; left:10px; background:#222; color:#fff; padding:5px 10px; border-radius:8px; }
+  .bottom-info { position:fixed; bottom:10px; left:10px; background:#222; color:#fff; padding:5px 10px; border-radius:8px; display:flex; gap:10px; align-items:center; }
 
   /* ---- Responsive fix tablette ---- */
   @media (max-width:1024px) {
@@ -110,113 +109,49 @@
 
 <script>
   // ---- Side menu ----
-  function toggleMenu() {
-    document.getElementById('sideMenu').classList.toggle('active');
-  }
-
-  function showHome() {
-    document.getElementById('homePage').style.display='block';
-    document.getElementById('chatPage').style.display='none';
-    document.getElementById('promoPage').style.display='none';
-  }
-  function showChat() {
-    document.getElementById('homePage').style.display='none';
-    document.getElementById('chatPage').style.display='flex';
-    document.getElementById('promoPage').style.display='none';
-  }
-  function showHistory() {
-    alert("Historique non implémenté pour l'instant");
-  }
-  function showPromo() {
-    document.getElementById('homePage').style.display='none';
-    document.getElementById('chatPage').style.display='none';
-    document.getElementById('promoPage').style.display='block';
-  }
+  function toggleMenu() { document.getElementById('sideMenu').classList.toggle('active'); }
+  function showHome() { document.getElementById('homePage').style.display='block'; document.getElementById('chatPage').style.display='none'; document.getElementById('promoPage').style.display='none'; }
+  function showChat() { document.getElementById('homePage').style.display='none'; document.getElementById('chatPage').style.display='flex'; document.getElementById('promoPage').style.display='none'; }
+  function showHistory() { alert("Historique non implémenté pour l'instant"); }
+  function showPromo() { document.getElementById('homePage').style.display='none'; document.getElementById('chatPage').style.display='none'; document.getElementById('promoPage').style.display='block'; }
 
   // ---- Language & theme ----
-  function changeLanguage() {
-    const lang = document.getElementById('lang-select').value;
-    localStorage.setItem('language', lang);
-  }
-  function changeTheme() {
-    const color = document.getElementById('theme-select').value;
-    document.body.style.background = color;
-    localStorage.setItem('theme', color);
-  }
-  // ---- Load saved settings ----
+  function changeLanguage() { const lang = document.getElementById('lang-select').value; localStorage.setItem('language', lang); }
+  function changeTheme() { const color = document.getElementById('theme-select').value; document.body.style.background=color; localStorage.setItem('theme', color); }
+
   window.onload = function() {
-    const savedLang = localStorage.getItem('language');
-    if(savedLang) document.getElementById('lang-select').value = savedLang;
-    const savedTheme = localStorage.getItem('theme');
-    if(savedTheme) document.body.style.background = savedTheme;
-    updateClock();
-    setInterval(updateClock, 1000);
-    loadPromo();
-    loadTasks();
+    const savedLang = localStorage.getItem('language'); if(savedLang) document.getElementById('lang-select').value = savedLang;
+    const savedTheme = localStorage.getItem('theme'); if(savedTheme) document.body.style.background = savedTheme;
+    updateClock(); setInterval(updateClock,1000);
+    loadPromo(); loadTasks();
   }
 
   // ---- Clock ----
-  function updateClock(){
-    const now = new Date();
-    document.getElementById('clock').textContent = now.getHours()+':'+now.getMinutes().toString().padStart(2,'0');
-  }
+  function updateClock(){ const now=new Date(); document.getElementById('clock').textContent=now.getHours()+':'+now.getMinutes().toString().padStart(2,'0'); }
 
   // ---- Chat IA locale ----
-  const chatContainer = document.getElementById('chatContainer');
+  const chatContainer=document.getElementById('chatContainer');
   function sendMessage(){
-    const input = document.getElementById('chatInput');
-    const msg = input.value.trim();
-    if(!msg) return;
-    appendMessage(msg,'user');
-    input.value='';
-    // Réponse IA locale
-    const response = localAI(msg);
-    appendMessage(response,'bot');
+    const input=document.getElementById('chatInput'); const msg=input.value.trim();
+    if(!msg) return; appendMessage(msg,'user'); input.value='';
+    const response=localAI(msg); appendMessage(response,'bot');
   }
-
-  function appendMessage(msg,cls){
-    const div = document.createElement('div');
-    div.className='chat-message '+cls;
-    div.textContent=msg;
-    chatContainer.appendChild(div);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-  }
-
-  function localAI(msg){
-    msg = msg.toLowerCase();
+  function appendMessage(msg,cls){ const div=document.createElement('div'); div.className='chat-message '+cls; div.textContent=msg; chatContainer.appendChild(div); chatContainer.scrollTop=chatContainer.scrollHeight; }
+  function localAI(msg){ msg=msg.toLowerCase();
     if(msg.includes("salut")) return "Salut ! Comment ça va ?";
     if(msg.includes("ça va")) return "Oui, ça va très bien, merci ! Et toi ?";
-    if(msg.includes("pâtes")) return "Pour des pâtes à la carbonara, prends des pâtes, œufs, lardons, parmesan, crème, et fais revenir le tout...";
-    return "Désolé, je n'ai pas compris, mais je peux t'aider avec des recettes, du code ou des infos !";
+    if(msg.includes("pâtes")) return "Pour des pâtes à la carbonara : pâtes, œufs, lardons, parmesan, crème. Faites revenir le tout !";
+    return "Désolé, je n'ai pas compris, mais je peux t'aider avec recettes, code ou infos !";
   }
 
   // ---- Tasks ----
-  function loadTasks(){
-    const tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
-    const list = document.getElementById('taskList');
-    list.innerHTML='';
-    tasks.forEach((t,i)=>{
-      const div=document.createElement('div');
-      div.className='task';
-      div.innerHTML=`<span>${t}</span><button onclick="deleteTask(${i})">🗑</button>`;
-      list.appendChild(div);
-    });
-  }
-  function addTask(task){
-    const tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
-    tasks.push(task);
-    localStorage.setItem('tasks',JSON.stringify(tasks));
-    loadTasks();
-  }
-  function deleteTask(index){
-    const tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
-    tasks.splice(index,1);
-    localStorage.setItem('tasks',JSON.stringify(tasks));
-    loadTasks();
-  }
+  function loadTasks(){ const tasks=JSON.parse(localStorage.getItem('tasks')||'[]'); const list=document.getElementById('taskList'); list.innerHTML='';
+    tasks.forEach((t,i)=>{ const div=document.createElement('div'); div.className='task'; div.innerHTML=`<span>${t}</span><button onclick="deleteTask(${i})">🗑</button>`; list.appendChild(div); }); }
+  function addTask(task){ const tasks=JSON.parse(localStorage.getItem('tasks')||'[]'); tasks.push(task); localStorage.setItem('tasks',JSON.stringify(tasks)); loadTasks(); }
+  function deleteTask(index){ const tasks=JSON.parse(localStorage.getItem('tasks')||'[]'); tasks.splice(index,1); localStorage.setItem('tasks',JSON.stringify(tasks)); loadTasks(); }
 
   // ---- Promo codes ----
-  const promoCodes = [
+  const promoCodes=[
     {label:'Créateur', code:'CRP2.0ROROOLNR'},
     {label:'Utilisateur', code:'A4G7R2T9X1'},
     {label:'Utilisateur', code:'M2Q8P5Z4R7'},
@@ -226,21 +161,12 @@
     {label:'Utilisateur', code:'H7R2C9P1Q5'},
     {label:'Utilisateur', code:'K4T1X7R3M9'},
     {label:'Utilisateur', code:'L5Q2V9T6F1'},
-    {label:'Utilisateur', code:'N3P7K2X4B8'},
-    {label:'Utilisateur', code:'R2M9F4T1Q6'}
+    {label:'Utilisateur', code:'N3P7K2X4B8'}
   ];
-
-  function loadPromo(){
-    const container = document.getElementById('promoContainer');
-    container.innerHTML='';
-    promoCodes.forEach(p=>{
-      const div = document.createElement('div');
-      div.className='promo '+(p.label==='Créateur'?'createur':'');
-      div.textContent=p.label + ": " + p.code;
-      container.appendChild(div);
-    });
+  function loadPromo(){ const container=document.getElementById('promoContainer'); container.innerHTML='';
+    promoCodes.forEach(p=>{ const div=document.createElement('div'); div.className='promo '+(p.label==='Créateur'?'createur':''); div.textContent=p.label + ": " + p.code; container.appendChild(div); });
   }
 </script>
 
 </body>
-  </html>
+</html>
