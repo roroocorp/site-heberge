@@ -3,270 +3,275 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Life Ultra IA</title>
+<title>Daily Life IA Ultra</title>
 <style>
   body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(to bottom, #6a1b9a, #8e24aa);
+    background: #4b0082;
     color: white;
   }
-  header {
+  .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    font-size: 1.2em;
-    font-weight: bold;
-    background-color: #8e24aa;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    background: #800080;
+    padding: 1rem;
   }
-  .menu-bar {
-    font-size: 1.5em;
-    cursor: pointer;
-  }
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: -250px;
-    width: 250px;
-    height: 100%;
-    background: #111;
-    color: white;
-    padding: 20px;
-    transition: 0.3s;
-    z-index: 20;
-  }
-  .sidebar.show {
-    left: 0;
-  }
-  .sidebar h2 {
-    margin-top: 0;
-  }
-  .sidebar button, .sidebar a {
-    display: block;
-    padding: 10px;
-    margin: 5px 0;
-    text-decoration: none;
-    color: white;
-    background: none;
-    border: none;
-    text-align: left;
+  .menu-toggle {
+    font-size: 2rem;
     cursor: pointer;
   }
   .container {
-    padding: 20px;
+    padding: 1rem;
+  }
+  select, input, button {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    margin-top: 0.5rem;
+    width: 100%;
   }
   .section {
-    margin-bottom: 20px;
-    padding: 15px;
-    border-radius: 10px;
-    background-color: rgba(255,255,255,0.1);
+    margin-bottom: 1rem;
+    background: rgba(255,255,255,0.1);
+    padding: 1rem;
+    border-radius: 0.5rem;
   }
-  input, select, button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 8px;
-    border: none;
+  .tasks li {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
   }
-  #chatBox {
-    background: #111;
-    color: #fff;
-    height: 300px;
-    overflow-y: auto;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-  }
-  #chatInput {
-    width: calc(100% - 50px);
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-  }
-  #sendBtn {
-    width: 40px;
-    height: 40px;
-    margin-left: 10px;
-    border-radius: 50%;
-    background: black;
-    color: white;
-    font-weight: bold;
+  .tasks button {
+    background: transparent;
     border: none;
     cursor: pointer;
+    color: white;
+    font-size: 1.2rem;
+  }
+  .chat-container {
+    display: none;
+    flex-direction: column;
+    height: 70vh;
+  }
+  .chat-box {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #111;
+    border-radius: 0.5rem;
+  }
+  .chat-input {
+    display: flex;
+    margin-top: 0.5rem;
+  }
+  .chat-input input {
+    flex: 1;
+    border-radius: 0.5rem 0 0 0.5rem;
+  }
+  .chat-input button {
+    border-radius: 0 0.5rem 0.5rem 0;
+    background: black;
+    color: white;
+  }
+  .sidebar {
+    position: fixed;
+    left: -250px;
+    top: 0;
+    width: 250px;
+    height: 100%;
+    background: #111;
+    padding: 1rem;
+    transition: 0.3s;
+    z-index: 10;
+  }
+  .sidebar.open {
+    left: 0;
+  }
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  .sidebar ul li {
+    margin: 1rem 0;
+    cursor: pointer;
+  }
+  .score {
+    margin-top: 2rem;
+    text-align: center;
   }
 </style>
 </head>
 <body>
 
-<header>
-  <span>Daily Life Ultra IA</span>
-  <span class="menu-bar" id="menuToggle">&#9776;</span>
-</header>
-
-<div class="sidebar" id="sidebar">
-  <h2>📜 Historique</h2>
-  <button id="newChatBtn">➕ Nouvelle conversation</button>
-  <button id="homeBtn">🏠 Accueil</button>
+<div class="header">
+  <h1 id="app-title">Daily Life IA Ultra</h1>
+  <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
 </div>
 
-<div class="container">
+<div class="sidebar" id="sidebar">
+  <h3>Historique</h3>
+  <ul>
+    <li onclick="newConversation()">Nouvelle conversation</li>
+    <li onclick="showHome()">Accueil</li>
+  </ul>
+</div>
+
+<div class="container" id="home">
+
   <div class="section">
-    <label for="langSelect">🌍 Langue</label>
-    <select id="langSelect">
+    🌐 <strong>Langue</strong>
+    <select id="lang-select" onchange="saveLang()">
       <option value="fr">Français</option>
       <option value="en">English</option>
-      <option value="es">Español</option>
     </select>
   </div>
 
   <div class="section">
-    <label for="themeSelect">🎨 Thème</label>
-    <select id="themeSelect">
-      <option value="vert">Vert</option>
-      <option value="rose">Rose</option>
-      <option value="orange">Orange</option>
+    🎨 <strong>Thème</strong>
+    <select id="theme-select" onchange="saveTheme()">
+      <option value="Vert">Vert</option>
+      <option value="Rose">Rose</option>
+      <option value="Orange">Orange</option>
+      <option value="Bleu">Bleu</option>
     </select>
   </div>
 
-  <div class="section" id="tasksSection">
-    <label>✅ Tâches</label>
-    <input type="text" id="taskInput" placeholder="Nouvelle tâche">
-    <button id="addTaskBtn">Ajouter</button>
-    <ul id="taskList"></ul>
+  <div class="section" id="stats-section">
+    📊 <strong>Stats</strong>
+    <div id="score-display">Points : 0 | Niveau : 1</div>
   </div>
 
   <div class="section">
-    <label>👨‍🍳 Menu semaine</label>
-    <button id="generateMenuBtn">Générer</button>
-    <ul id="menuList"></ul>
+    ✅ <strong>Tâches</strong>
+    <ul class="tasks" id="tasks-list"></ul>
+    <input type="text" id="task-input" placeholder="Nouvelle tâche">
+    <button onclick="addTask()">Ajouter</button>
   </div>
 
-  <div class="section">
-    <label>🛒 Liste de courses</label>
-    <button id="generateShoppingBtn">Depuis menu</button>
-    <ul id="shoppingList"></ul>
-  </div>
+</div>
 
-  <div class="section" id="chatSection">
-    <h2>Chat IA</h2>
-    <div id="chatBox"></div>
-    <div style="display:flex;">
-      <input type="text" id="chatInput" placeholder="Écris un message...">
-      <button id="sendBtn">&#8593;</button>
-    </div>
-  </div>
-
-  <div class="section" id="statsSection">
-    <h2>📊 Stats</h2>
-    <p>Points : <span id="points">0</span></p>
-    <p>Niveau : <span id="level">1</span></p>
+<div class="container chat-container" id="chat-container">
+  <h2>Chat IA</h2>
+  <div class="chat-box" id="chat-box"></div>
+  <div class="chat-input">
+    <input type="text" id="chat-input" placeholder="Écris un message...">
+    <button onclick="sendMessage()">➤</button>
   </div>
 </div>
 
 <script>
-  // Menu toggle
-  const menuToggle = document.getElementById('menuToggle');
-  const sidebar = document.getElementById('sidebar');
-  menuToggle.addEventListener('click', () => sidebar.classList.toggle('show'));
+  // Sidebar
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
 
-  // Menu buttons
-  document.getElementById('homeBtn').addEventListener('click', () => {
-    sidebar.classList.remove('show');
-    window.scrollTo(0,0);
-  });
+  // Home/Chat switch
+  function showHome() {
+    document.getElementById('home').style.display = 'block';
+    document.getElementById('chat-container').style.display = 'none';
+  }
 
-  let chatCount = 1;
-  document.getElementById('newChatBtn').addEventListener('click', () => {
-    sidebar.classList.remove('show');
-    document.getElementById('chatBox').innerHTML = '';
-    chatCount++;
-    alert('Nouvelle conversation : Chat ' + chatCount);
-  });
+  function newConversation() {
+    document.getElementById('home').style.display = 'none';
+    document.getElementById('chat-container').style.display = 'flex';
+    document.getElementById('chat-box').innerHTML = ''; // Nouveau chat
+  }
 
-  // Theme & Langue
-  const themeSelect = document.getElementById('themeSelect');
-  const langSelect = document.getElementById('langSelect');
+  // Langue
+  function saveLang() {
+    const lang = document.getElementById('lang-select').value;
+    localStorage.setItem('lang', lang);
+  }
 
-  // Sauvegarde locale
-  themeSelect.value = localStorage.getItem('theme') || 'vert';
-  langSelect.value = localStorage.getItem('lang') || 'fr';
+  function loadLang() {
+    const lang = localStorage.getItem('lang');
+    if(lang) document.getElementById('lang-select').value = lang;
+  }
 
-  themeSelect.addEventListener('change', () => {
-    localStorage.setItem('theme', themeSelect.value);
-    alert('Thème changé : ' + themeSelect.value);
-  });
+  // Thème
+  function saveTheme() {
+    const theme = document.getElementById('theme-select').value;
+    localStorage.setItem('theme', theme);
+  }
 
-  langSelect.addEventListener('change', () => {
-    localStorage.setItem('lang', langSelect.value);
-    alert('Langue changée : ' + langSelect.value);
-  });
+  function loadTheme() {
+    const theme = localStorage.getItem('theme');
+    if(theme) document.getElementById('theme-select').value = theme;
+  }
+
+  // Score
+  function updateScore(points, level) {
+    document.getElementById('score-display').textContent = `Points : ${points} | Niveau : ${level}`;
+  }
 
   // Tâches
-  const taskInput = document.getElementById('taskInput');
-  const taskList = document.getElementById('taskList');
+  let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
 
-  function loadTasks() {
-    const tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
-    taskList.innerHTML = '';
-    tasks.forEach((t,i) => {
+  function saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }
+
+  function renderTasks() {
+    const tasksList = document.getElementById('tasks-list');
+    tasksList.innerHTML = '';
+    tasks.forEach((task, i) => {
       const li = document.createElement('li');
-      li.textContent = t;
-      const delBtn = document.createElement('button');
-      delBtn.textContent = '🗑️';
-      delBtn.addEventListener('click', () => {
-        tasks.splice(i,1);
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-        loadTasks();
-      });
-      li.appendChild(delBtn);
-      taskList.appendChild(li);
+      li.textContent = task;
+      const del = document.createElement('button');
+      del.textContent = '🗑';
+      del.onclick = () => { tasks.splice(i,1); saveTasks(); renderTasks(); };
+      li.appendChild(del);
+      tasksList.appendChild(li);
     });
   }
-  loadTasks();
 
-  document.getElementById('addTaskBtn').addEventListener('click', () => {
-    const tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
-    if(taskInput.value.trim()!==''){
-      tasks.push(taskInput.value.trim());
-      localStorage.setItem('tasks', JSON.stringify(tasks));
-      taskInput.value='';
-      loadTasks();
+  function addTask() {
+    const input = document.getElementById('task-input');
+    if(input.value.trim() !== '') {
+      tasks.push(input.value.trim());
+      input.value = '';
+      saveTasks();
+      renderTasks();
     }
-  });
+  }
 
   // Chat IA local simple
-  const chatBox = document.getElementById('chatBox');
-  const chatInput = document.getElementById('chatInput');
-  const sendBtn = document.getElementById('sendBtn');
-
-  sendBtn.addEventListener('click', sendMessage);
-  chatInput.addEventListener('keypress', (e) => { if(e.key==='Enter') sendMessage(); });
-
-  function sendMessage(){
-    const msg = chatInput.value.trim();
-    if(msg==='') return;
-    const userMsg = document.createElement('div'); userMsg.textContent = '👤 ' + msg;
-    chatBox.appendChild(userMsg);
+  function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const box = document.getElementById('chat-box');
+    if(input.value.trim() === '') return;
+    const userMsg = document.createElement('div');
+    userMsg.textContent = input.value;
+    userMsg.style.color = 'cyan';
+    box.appendChild(userMsg);
 
     // Réponse IA locale
     const botMsg = document.createElement('div');
-    botMsg.textContent = '🤖 Réponse intelligente à : ' + msg;
-    chatBox.appendChild(botMsg);
-    chatBox.scrollTop = chatBox.scrollHeight;
-    chatInput.value='';
+    botMsg.textContent = getLocalAIResponse(input.value);
+    botMsg.style.color = 'lightgreen';
+    box.appendChild(botMsg);
+    box.scrollTop = box.scrollHeight;
+    input.value = '';
   }
 
-  // Points/Niveau sauvegardé
-  const pointsElem = document.getElementById('points');
-  const levelElem = document.getElementById('level');
-  pointsElem.textContent = localStorage.getItem('points')||0;
-  levelElem.textContent = localStorage.getItem('level')||1;
+  function getLocalAIResponse(msg) {
+    // Réponses simples pour démo
+    msg = msg.toLowerCase();
+    if(msg.includes('carbonara')) return "Voici une recette simple de carbonara : pâtes, oeufs, pancetta, parmesan.";
+    if(msg.includes('bonjour')) return "Bonjour ! Comment puis-je vous aider ?";
+    return "Je suis là pour t’aider 😊";
+  }
+
+  // Initialisation
+  loadLang();
+  loadTheme();
+  renderTasks();
+  updateScore(0,1);
 </script>
 
 </body>
-      </html>
+  </html>
