@@ -2,299 +2,271 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Daily Life IA Ultra</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Life Ultra IA</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-html,body{width:100%;overflow-x:hidden}
-body{min-height:100vh;color:#fff;padding:10px;transition:0.3s}
-.container{max-width:420px;margin:auto}
-
-/* THEMES */
-body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
-body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
-body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
-body.rose{background:linear-gradient(180deg,#9d174d,#4a044e)}
-body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
-body.orange{background:linear-gradient(180deg,#ea580c,#7c2d12)}
-
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-top:6px}
-header h1{font-size:20px}
-.menu-btn{font-size:24px;cursor:pointer}
-
-.card{background:rgba(255,255,255,.12);backdrop-filter:blur(14px);border-radius:18px;padding:14px;margin-bottom:12px}
-input,select,button{width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px}
-input,select{background:rgba(255,255,255,.9)}
-button{background:rgba(255,255,255,.2);color:#fff;font-weight:bold;cursor:pointer}
-ul{list-style:none;margin-top:6px}
-li{background:rgba(255,255,255,.15);padding:8px;border-radius:10px;margin-top:6px;user-select:none}
-li.done{text-decoration:line-through;opacity:.6}
-
-/* SIDEBAR */
-#sidebar{position:fixed;top:0;left:-100%;width:75%;max-width:280px;height:100%;background:#0f172a;padding:15px;transition:.3s;z-index:10}
-#sidebar.active{left:0}
-#sidebar h3{margin-bottom:10px}
-.item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #334;cursor:pointer}
-.del{opacity:.6;font-size:14px}
-
-/* CHAT */
-#chat{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;z-index:9;flex-direction:column}
-#messages{flex:1;overflow-y:auto;padding:10px}
-.msg{margin-bottom:6px}
-.user{color:#38bdf8}
-.ai{color:#a7f3d0}
-
-/* CHAT INPUT */
-#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:12px;}
-#chatInput{flex:1;padding:10px;border-radius:12px;border:none;}
-#chatSend{padding:10px;border-radius:12px;background:#38bdf8;color:#fff;font-weight:bold;cursor:pointer;}
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom, #6a1b9a, #8e24aa);
+    color: white;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    font-size: 1.2em;
+    font-weight: bold;
+    background-color: #8e24aa;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .menu-bar {
+    font-size: 1.5em;
+    cursor: pointer;
+  }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background: #111;
+    color: white;
+    padding: 20px;
+    transition: 0.3s;
+    z-index: 20;
+  }
+  .sidebar.show {
+    left: 0;
+  }
+  .sidebar h2 {
+    margin-top: 0;
+  }
+  .sidebar button, .sidebar a {
+    display: block;
+    padding: 10px;
+    margin: 5px 0;
+    text-decoration: none;
+    color: white;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+  }
+  .container {
+    padding: 20px;
+  }
+  .section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: rgba(255,255,255,0.1);
+  }
+  input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: none;
+  }
+  #chatBox {
+    background: #111;
+    color: #fff;
+    height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  #chatInput {
+    width: calc(100% - 50px);
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+  }
+  #sendBtn {
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
+    border-radius: 50%;
+    background: black;
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
 </style>
 </head>
-<body class="green">
+<body>
 
-<!-- SIDEBAR -->
-<div id="sidebar">
-<h3>📜 Historique</h3>
-<div class="item" onclick="newConversation()">➕ Nouvelle conversation</div>
-<div id="convList"></div>
-<div class="item" onclick="goHome()">🏠 Accueil</div>
-</div>
-
-<!-- CHAT -->
-<div id="chat">
 <header>
-<h1 id="chatTitle">Conversation</h1>
-<span class="menu-btn" onclick="toggleMenu()">☰</span>
-</header>
-<div id="messages"></div>
-<div id="chatInputContainer">
-<input id="chatInput" placeholder="Écris un message..." onkeydown="if(event.key==='Enter'){sendMsg();event.preventDefault()}">
-<button id="chatSend" onclick="sendMsg()">➤</button>
-</div>
-</div>
-
-<!-- MAIN -->
-<div class="container" id="main">
-<header>
-<h1>Daily Life Ultra IA</h1>
-<span class="menu-btn" onclick="toggleMenu()">☰</span>
+  <span>Daily Life Ultra IA</span>
+  <span class="menu-bar" id="menuToggle">&#9776;</span>
 </header>
 
-<div class="card">
-<h3>🌍 Langue</h3>
-<select onchange="changeLang(this.value)">
-<option value="fr">Français</option>
-<option value="en">English</option>
-<option value="es">Español</option>
-<option value="de">Deutsch</option>
-</select>
+<div class="sidebar" id="sidebar">
+  <h2>📜 Historique</h2>
+  <button id="newChatBtn">➕ Nouvelle conversation</button>
+  <button id="homeBtn">🏠 Accueil</button>
 </div>
 
-<div class="card">
-<h3>🎨 Thème</h3>
-<select onchange="changeTheme(this.value)">
-<option value="green">Vert</option>
-<option value="red">Rouge</option>
-<option value="blue">Bleu</option>
-<option value="rose">Rose</option>
-<option value="violet">Violet</option>
-<option value="orange">Orange</option>
-</select>
-</div>
+<div class="container">
+  <div class="section">
+    <label for="langSelect">🌍 Langue</label>
+    <select id="langSelect">
+      <option value="fr">Français</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+    </select>
+  </div>
 
-<div class="card">
-<h3>📊 Stats</h3>
-<p>Points : <span id="points">0</span></p>
-<p>Niveau : <span id="level">1</span></p>
-</div>
+  <div class="section">
+    <label for="themeSelect">🎨 Thème</label>
+    <select id="themeSelect">
+      <option value="vert">Vert</option>
+      <option value="rose">Rose</option>
+      <option value="orange">Orange</option>
+    </select>
+  </div>
 
-<div class="card">
-<h3>✅ Tâches</h3>
-<input id="taskInput" placeholder="Nouvelle tâche">
-<button onclick="addTask()">Ajouter</button>
-<ul id="tasks"></ul>
-</div>
+  <div class="section" id="tasksSection">
+    <label>✅ Tâches</label>
+    <input type="text" id="taskInput" placeholder="Nouvelle tâche">
+    <button id="addTaskBtn">Ajouter</button>
+    <ul id="taskList"></ul>
+  </div>
 
-<div class="card">
-<h3>🧑‍🍳 Menu semaine</h3>
-<button onclick="generateMenu()">Générer</button>
-<ul id="menu"></ul>
-</div>
+  <div class="section">
+    <label>👨‍🍳 Menu semaine</label>
+    <button id="generateMenuBtn">Générer</button>
+    <ul id="menuList"></ul>
+  </div>
 
-<div class="card">
-<h3>🛒 Liste de courses</h3>
-<button onclick="generateCourses()">Depuis menu</button>
-<ul id="courses"></ul>
-</div>
+  <div class="section">
+    <label>🛒 Liste de courses</label>
+    <button id="generateShoppingBtn">Depuis menu</button>
+    <ul id="shoppingList"></ul>
+  </div>
 
-<div class="card">
-<h3>⏰ Rappel</h3>
-<input type="time" id="alarm">
-<button onclick="setAlarm()">Activer</button>
-</div>
+  <div class="section" id="chatSection">
+    <h2>Chat IA</h2>
+    <div id="chatBox"></div>
+    <div style="display:flex;">
+      <input type="text" id="chatInput" placeholder="Écris un message...">
+      <button id="sendBtn">&#8593;</button>
+    </div>
+  </div>
+
+  <div class="section" id="statsSection">
+    <h2>📊 Stats</h2>
+    <p>Points : <span id="points">0</span></p>
+    <p>Niveau : <span id="level">1</span></p>
+  </div>
 </div>
 
 <script>
-/* ===== GLOBAL ===== */
-let lang=localStorage.lang||"fr"
-let conversations=JSON.parse(localStorage.conversations||"[]")
-let currentConv=null
-let tasks=JSON.parse(localStorage.tasks||"[]")
-let points=Number(localStorage.points||0)
-let menu=JSON.parse(localStorage.menu||"[]")
-let courses=JSON.parse(localStorage.courses||"[]")
-const meals=[
-"Spaghetti Bolognese","Poulet Curry","Salade César","Pizza Margherita","Tacos","Riz sauté","Soupe légumes","Burger","Poisson grillé","Paella","Quiche","Ratatouille",
-"Pad Thaï","Sushi","Chili con Carne","Falafel","Couscous","Pâtes au pesto","Lasagne","Boeuf Stroganoff","Moussaka","Gyoza"
-]
+  // Menu toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('sidebar');
+  menuToggle.addEventListener('click', () => sidebar.classList.toggle('show'));
 
-/* ===== SAVE ===== */
-function saveAll(){
-localStorage.conversations=JSON.stringify(conversations)
-localStorage.tasks=JSON.stringify(tasks)
-localStorage.points=points
-localStorage.lang=lang
-localStorage.menu=JSON.stringify(menu)
-localStorage.courses=JSON.stringify(courses)
-renderAll()
-}
+  // Menu buttons
+  document.getElementById('homeBtn').addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    window.scrollTo(0,0);
+  });
 
-/* ===== RENDER ===== */
-function renderAll(){
-document.getElementById("points").textContent=points
-document.getElementById("level").textContent=Math.floor(points/50)+1
-renderTasks()
-renderConvList()
-renderMenu()
-renderCourses()
-}
+  let chatCount = 1;
+  document.getElementById('newChatBtn').addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    document.getElementById('chatBox').innerHTML = '';
+    chatCount++;
+    alert('Nouvelle conversation : Chat ' + chatCount);
+  });
 
-/* ===== MENU SIDEBAR ===== */
-function toggleMenu(){sidebar.classList.toggle("active")}
-function goHome(){chat.style.display="none";main.style.display="block";sidebar.classList.remove("active")}
+  // Theme & Langue
+  const themeSelect = document.getElementById('themeSelect');
+  const langSelect = document.getElementById('langSelect');
 
-/* ===== CONVERSATIONS ===== */
-function newConversation(){
-  const id = Date.now();
-  conversations.unshift({id, title:`Conversation ${conversations.length+1}`, msgs:[]});
-  currentConv = id;
-  saveAll();
-  openChat(); // Affiche le chat immédiatement
-}
+  // Sauvegarde locale
+  themeSelect.value = localStorage.getItem('theme') || 'vert';
+  langSelect.value = localStorage.getItem('lang') || 'fr';
 
-function renderConvList(){
-convList.innerHTML=""
-conversations.forEach((c,i)=>{
-c.title=`Conversation ${conversations.length-i}`
-let d=document.createElement("div")
-d.className="item"
-d.innerHTML=`<span>${c.title}</span><span class="del">🗑️</span>`
-d.onclick=(e)=>{
-if(e.target.classList.contains("del")){
-conversations=conversations.filter(x=>x.id!==c.id)
-if(currentConv===c.id) goHome()
-saveAll()
-}else{currentConv=c.id;openChat()}
-}
-convList.appendChild(d)
-})
-}
+  themeSelect.addEventListener('change', () => {
+    localStorage.setItem('theme', themeSelect.value);
+    alert('Thème changé : ' + themeSelect.value);
+  });
 
-function openChat(){
-if(currentConv===null) return;
-const c = conversations.find(x => x.id === currentConv);
-if(!c) return;
-chat.style.display="flex";
-main.style.display="none";
-sidebar.classList.remove("active");
-renderMessages();
-chatInput.focus(); // Active le champ texte
-}
+  langSelect.addEventListener('change', () => {
+    localStorage.setItem('lang', langSelect.value);
+    alert('Langue changée : ' + langSelect.value);
+  });
 
-/* ===== CHAT ===== */
-function renderMessages(){
-messages.innerHTML=""
-const c=conversations.find(x=>x.id===currentConv)
-if(!c)return
-chatTitle.textContent=c.title
-c.msgs.forEach(m=>{
-messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`
-})
-messages.scrollTop=messages.scrollHeight
-}
+  // Tâches
+  const taskInput = document.getElementById('taskInput');
+  const taskList = document.getElementById('taskList');
 
-function sendMsg(){
-const t=chatInput.value.trim()
-if(!t||currentConv===null)return
-const c=conversations.find(x=>x.id===currentConv)
-c.msgs.push({w:"user",t})
-chatInput.value=""
-setTimeout(()=>{
-c.msgs.push({w:"ai",t:getBotResponse(t)})
-saveAll()
-renderMessages()
-},300)
-saveAll()
-}
-
-/* ===== IA LOCALE HYPER INTELLIGENTE ===== */
-function getBotResponse(txt){
-  const recipes = [
-    "Carbonara: œufs, pancetta, parmesan, poivre noir.",
-    "Paella: riz, poulet, fruits de mer, safran.",
-    "Poulet Curry: poulet, lait de coco, curry, légumes.",
-    "Spaghetti Bolognese: viande hachée, tomate, oignon, spaghetti.",
-    "Ratatouille: courgettes, aubergines, poivrons, tomates.",
-    "Lasagnes: pâtes, bœuf haché, béchamel, fromage.",
-    "Tarte aux pommes: pommes, pâte brisée, sucre, cannelle.",
-    "Quiche Lorraine: pâte, lardons, œufs, crème, fromage.",
-    "Salade César: salade, poulet, parmesan, croûtons, sauce César.",
-    "Gâteau au chocolat: chocolat, beurre, œufs, sucre, farine."
-  ];
-  while(recipes.length < 1000){
-    const n = recipes.length+1;
-    recipes.push(`Recette ${n}: ingrédient A, ingrédient B, ingrédient C.`);
+  function loadTasks() {
+    const tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
+    taskList.innerHTML = '';
+    tasks.forEach((t,i) => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '🗑️';
+      delBtn.addEventListener('click', () => {
+        tasks.splice(i,1);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        loadTasks();
+      });
+      li.appendChild(delBtn);
+      taskList.appendChild(li);
+    });
   }
-  return recipes[Math.floor(Math.random()*recipes.length)];
-}
+  loadTasks();
 
-/* ===== TASKS ===== */
-function addTask(){
-if(taskInput.value){tasks.push({t:taskInput.value,d:false});taskInput.value="";points+=5;saveAll()}
-}
-function renderTasks(){
-tasksEl.innerHTML=""
-tasks.forEach((t)=>{
-let li=document.createElement("li")
-li.textContent=t.t
-if(t.d)li.classList.add("done")
-li.onclick=()=>{t.d=!t.d;points+=5;saveAll()}
-tasksEl.appendChild(li)
-})
-}
+  document.getElementById('addTaskBtn').addEventListener('click', () => {
+    const tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
+    if(taskInput.value.trim()!==''){
+      tasks.push(taskInput.value.trim());
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      taskInput.value='';
+      loadTasks();
+    }
+  });
 
-/* ===== MENU & COURSES ===== */
-function generateMenu(){menu=[];for(let i=0;i<7;i++)menu.push(meals[Math.floor(Math.random()*meals.length)]);saveAll()}
-function renderMenu(){menuEl.innerHTML="";menu.forEach(m=>menuEl.innerHTML+=`<li>${m}</li>`)}
-function generateCourses(){courses=[...new Set(menu)];saveAll()}
-function renderCourses(){coursesEl.innerHTML="";courses.forEach((c,i)=>{let li=document.createElement("li");li.textContent=c;let timer;li.addEventListener("touchstart",()=>timer=setTimeout(()=>{courses.splice(i,1);saveAll()},600));li.addEventListener("touchend",()=>clearTimeout(timer));coursesEl.appendChild(li)})}
+  // Chat IA local simple
+  const chatBox = document.getElementById('chatBox');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
 
-/* ===== THEME & LANG ===== */
-function changeTheme(t){document.body.className=t;saveAll()}
-function changeLang(l){lang=l;saveAll()}
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', (e) => { if(e.key==='Enter') sendMessage(); });
 
-/* ===== ALARM ===== */
-function setAlarm(){
-Notification.requestPermission()
-const time=alarm.value
-setInterval(()=>{
-const now=new Date().toTimeString().slice(0,5)
-if(now===time) new Notification("⏰ Rappel !")
-},30000)
-}
+  function sendMessage(){
+    const msg = chatInput.value.trim();
+    if(msg==='') return;
+    const userMsg = document.createElement('div'); userMsg.textContent = '👤 ' + msg;
+    chatBox.appendChild(userMsg);
 
-/* ===== INIT ===== */
-renderAll()
+    // Réponse IA locale
+    const botMsg = document.createElement('div');
+    botMsg.textContent = '🤖 Réponse intelligente à : ' + msg;
+    chatBox.appendChild(botMsg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    chatInput.value='';
+  }
+
+  // Points/Niveau sauvegardé
+  const pointsElem = document.getElementById('points');
+  const levelElem = document.getElementById('level');
+  pointsElem.textContent = localStorage.getItem('points')||0;
+  levelElem.textContent = localStorage.getItem('level')||1;
 </script>
+
 </body>
-</html>
+      </html>
