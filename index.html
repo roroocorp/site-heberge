@@ -50,11 +50,13 @@ li.done{text-decoration:line-through;opacity:.6}
 #chatSend{width:40px;height:40px;border-radius:50%;background:#38bdf8;color:#000;font-weight:bold;cursor:pointer;display:flex;justify-content:center;align-items:center;font-size:18px;}
 #chatSend::after{content:'➤';font-weight:bold;}
 
-/* SCORE */
-#scoreCard{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.12);padding:12px 16px;border-radius:16px;backdrop-filter:blur(14px);text-align:center;width:180px}
+/* SCORE ET HORLOGE FIXE */
+#scoreCard{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.12);padding:12px 16px;border-radius:16px;backdrop-filter:blur(14px);text-align:center;width:180px;z-index:100}
+#clock{position:fixed;bottom:10px;left:10px;font-weight:bold;z-index:100}
 
-/* HORLOGE */
-#clock{position:fixed;bottom:10px;left:10px;font-weight:bold;}
+/* BOUTON CONVERSATION FIX */
+#chatTitle{margin-left:50px}
+.menu-btn.chat-top-right{position:absolute;top:8px;right:10px}
 </style>
 </head>
 <body class="green">
@@ -70,8 +72,8 @@ li.done{text-decoration:line-through;opacity:.6}
 <!-- CHAT -->
 <div id="chat">
 <header>
-<h1 id="chatTitle" style="margin-left:40px;">Conversation</h1>
-<span class="menu-btn" onclick="toggleMenu()" style="position:relative;top:4px;left:4px;">☰</span>
+<h1 id="chatTitle">Conversation</h1>
+<span class="menu-btn chat-top-right" onclick="toggleMenu()">☰</span>
 </header>
 <div id="messages"></div>
 <div id="chatInputContainer">
@@ -209,7 +211,7 @@ chatInput.focus();
 /* ===== CHAT ===== */
 function renderMessages(){
 messages.innerHTML=""
-const c=conversations.find(x => x.id === currentConv)
+const c=conversations.find(x => x.id===currentConv)
 if(!c)return
 chatTitle.textContent=c.title
 c.msgs.forEach(m=>{
@@ -232,25 +234,19 @@ renderMessages()
 saveAll()
 }
 
-/* ===== IA LOCALE ===== */
+/* ===== IA LOCALE INTELLIGENTE ===== */
 function smartAI(text){
 text=text.toLowerCase()
-if(text.includes("recette")||text.includes("menu")) return menu[Math.floor(Math.random()*menu.length)]
-if(text.includes("aide")){
-switch(lang){
-case "en": return "I can help organize your day."
-case "es": return "Puedo ayudarte a organizar tu día."
-case "de": return "Ich kann dir helfen, deinen Tag zu organisieren."
-default: return "Je peux t’aider à organiser ta journée."
+if(text.includes("recette")||text.includes("menu")){
+return menu[Math.floor(Math.random()*menu.length)]
 }
+if(text.includes("salut")){
+return "Salut, ça va ?"
 }
-if(text.includes("bonjour")||text.includes("salut")) {
-switch(lang){
-case "en": return "Hello!"
-case "es": return "¡Hola!"
-case "de": return "Hallo!"
-default: return "Salut !"
-}
+if(text.includes("dropin")||text.includes("idée")){
+let ideas=[]
+for(let i=1;i<=50;i++)ideas.push("Idée dropin "+i)
+return ideas.join(", ")
 }
 switch(lang){
 case "en": return "I am here to assist you."
@@ -299,4 +295,4 @@ updateClock()
 renderAll()
 </script>
 </body>
-  </html>
+</html>
