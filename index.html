@@ -4,109 +4,191 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
-<style>
-*{box-sizing:border-box;font-family:system-ui;margin:0;padding:0}
-body{min-height:100vh;color:white;transition:.3s}
 
-/* THEMES */
-body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
-body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
-body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
-body.rose{background:linear-gradient(180deg,#f43f5e,#be185d)}
-body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
-body.orange{background:linear-gradient(180deg,#f97316,#b45309)}
+<style>
+*{
+  box-sizing:border-box;
+  font-family:system-ui;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  color:white;
+  background:linear-gradient(180deg,#064e3b,#042f2e);
+}
 
 /* HEADER */
-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(0,0,0,.2)}
-.menuBtn{font-size:24px;cursor:pointer}
+header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+}
 
-/* TOP NAV */
-#topNav{display:flex;gap:8px;padding:10px}
-.navBox{flex:1;background:rgba(255,255,255,.18);border-radius:16px;padding:12px;text-align:center;cursor:pointer;font-weight:600}
+header h3{
+  margin:0;
+  font-size:20px;
+}
 
-/* SIDEBAR */
-#sidebar{position:fixed;top:0;left:-260px;width:260px;height:100%;background:#020617;padding:15px;transition:.3s;z-index:100}
-#sidebar.active{left:0}
-.sideItem{padding:12px;border-bottom:1px solid #334;cursor:pointer}
+#time{
+  background:rgba(0,0,0,.35);
+  padding:8px 16px;
+  border-radius:16px;
+  font-size:14px;
+}
+
+.menuBtn{
+  margin-left:auto;
+  font-size:26px;
+  cursor:pointer;
+}
+
+/* TOP NAV — PLUS GRAND */
+#topNav{
+  display:flex;
+  gap:14px;
+  padding:16px;
+}
+
+.navBox{
+  flex:1;
+  background:rgba(255,255,255,.25);
+  border-radius:22px;
+  padding:22px 0;          /* ⬅️ PLUS HAUT */
+  text-align:center;
+  font-weight:800;
+  cursor:pointer;
+  font-size:18px;          /* ⬅️ TEXTE PLUS GRAND */
+}
 
 /* PAGE */
-.page{display:none;padding:16px}
-.page.active{display:block}
+.page{
+  display:none;
+  padding:16px;
+}
+
+.page.active{
+  display:block;
+}
 
 /* CARD */
-.card{background:rgba(255,255,255,.18);border-radius:20px;padding:18px;margin-bottom:14px}
+.card{
+  background:rgba(255,255,255,.2);
+  border-radius:24px;
+  padding:22px;
+  margin-bottom:18px;
+}
 
-/* INPUTS & BUTTONS */
-select,input,button{width:100%;padding:12px;border-radius:14px;border:none;margin-top:10px}
-button{background:#38bdf8;font-weight:bold;cursor:pointer}
+.card h3{
+  margin-top:0;
+  margin-bottom:14px;
+  font-size:18px;
+}
+
+/* INPUTS */
+select,
+input,
+button{
+  width:100%;
+  padding:18px;
+  border-radius:18px;
+  border:none;
+  font-size:16px;
+}
+
+button{
+  margin-top:12px;
+  background:#38bdf8;
+  font-weight:700;
+}
 
 /* TASKS */
-.task{display:flex;justify-content:space-between;align-items:center;padding:10px;background:rgba(255,255,255,.2);border-radius:12px;margin-top:8px}
-.trash{cursor:pointer}
+.task{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  background:rgba(255,255,255,.25);
+  border-radius:16px;
+  margin-top:10px;
+}
 
-/* PROMO BADGES */
-.badge{padding:8px;border-radius:12px;font-weight:bold;text-align:center;margin-bottom:10px}
-.creator{background:#facc15;color:#000}
-.user{background:#38bdf8;color:#000}
+.trash{
+  cursor:pointer;
+}
 
-/* TIME */
-#timeBox{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.35);padding:6px 14px;border-radius:12px;font-size:14px;}
+/* SIDEBAR */
+#sidebar{
+  position:fixed;
+  top:0;
+  left:-260px;
+  width:260px;
+  height:100%;
+  background:#020617;
+  padding:16px;
+  transition:.3s;
+  z-index:100;
+}
+
+#sidebar.active{
+  left:0;
+}
+
+.sideItem{
+  padding:16px;
+  border-bottom:1px solid #334;
+  font-size:16px;
+  cursor:pointer;
+}
 </style>
 </head>
 
-<body class="green">
-
-<!-- TIME -->
-<div id="timeBox"><span id="time"></span></div>
+<body>
 
 <!-- SIDEBAR -->
 <div id="sidebar">
-  <div class="sideItem" onclick="showPage('home')">🏠 Accueil</div>
-  <div class="sideItem" onclick="showPage('ia')">🧠 IA</div>
-  <div class="sideItem" onclick="showPage('history')">📜 Historique</div>
-  <div class="sideItem" onclick="showPage('promo')">💳 Code Promo</div>
+  <div class="sideItem" onclick="showPage('home')">Accueil</div>
+  <div class="sideItem" onclick="showPage('ia')">IA</div>
+  <div class="sideItem" onclick="showPage('promo')">Code Promo</div>
 </div>
 
 <header>
   <h3>Daily Life Ultra IA</h3>
+  <div id="time"></div>
   <div class="menuBtn" onclick="toggleMenu()">☰</div>
 </header>
 
+<!-- BOUTONS DU HAUT (GRANDS) -->
 <div id="topNav">
   <div class="navBox" onclick="showPage('home')">Accueil</div>
   <div class="navBox" onclick="showPage('ia')">IA</div>
   <div class="navBox" onclick="showPage('promo')">Code Promo</div>
-  <div class="navBox" onclick="showPage('history')">Historique</div>
 </div>
 
-<!-- HOME -->
+<!-- ACCUEIL -->
 <div id="home" class="page active">
 
-  <!-- THEME -->
   <div class="card">
     <h3>🎨 Thème</h3>
-    <select id="themeSelect" onchange="changeTheme(this.value)">
-      <option value="green">Vert</option>
-      <option value="red">Rouge</option>
-      <option value="blue">Bleu</option>
-      <option value="rose">Rose</option>
-      <option value="violet">Violet</option>
-      <option value="orange">Orange</option>
+    <select>
+      <option>Vert</option>
+      <option>Rouge</option>
+      <option>Bleu</option>
+      <option>Rose</option>
     </select>
   </div>
 
-  <!-- LANGUE -->
   <div class="card">
     <h3>🌍 Langue</h3>
-    <select id="langSelect" onchange="changeLang(this.value)">
-      <option value="fr">Français</option>
-      <option value="en">Anglais</option>
-      <option value="es">Espagnol</option>
-      <option value="de">Allemand</option>
+    <select>
+      <option>Français</option>
+      <option>Anglais</option>
+      <option>Espagnol</option>
+      <option>Allemand</option>
     </select>
   </div>
 
-  <!-- TÂCHES -->
   <div class="card">
     <h3>✅ Tâches</h3>
     <input id="taskInput" placeholder="Nouvelle tâche">
@@ -119,123 +201,69 @@ button{background:#38bdf8;font-weight:bold;cursor:pointer}
 <!-- IA -->
 <div id="ia" class="page">
   <div class="card">
-    <h3>🧠 IA Locale</h3>
-    <p id="iaText">Pose-moi une question.</p>
+    <h3>IA</h3>
+    <p id="iaText">Salut 👋 Que puis-je faire pour toi ?</p>
     <input id="iaInput" placeholder="Écris ici">
-    <button onclick="askIA()">➡️ Envoyer</button>
-  </div>
-</div>
-
-<!-- HISTORY -->
-<div id="history" class="page">
-  <div class="card">
-    <h3>📊 Stats</h3>
-    <p>⭐ Points : <span id="points">0</span></p>
-    <p>🎯 Niveau : <span id="level">1</span></p>
+    <button onclick="askIA()">⬆️ Envoyer</button>
   </div>
 </div>
 
 <!-- PROMO -->
 <div id="promo" class="page">
-  <div id="promoStatus"></div>
   <div class="card">
-    <h3>💳 Code Promo</h3>
-    <input id="promoInput" placeholder="Entrer un code">
-    <button onclick="applyPromo()">Valider</button>
+    <h3>Code Promo</h3>
+    <input placeholder="Entre ton code">
+    <button>Valider</button>
   </div>
 </div>
 
 <script>
-const sidebar=document.getElementById("sidebar");
+/* TIME */
+setInterval(()=>{
+  time.textContent=new Date().toLocaleTimeString();
+},1000);
 
 /* MENU */
-function toggleMenu(){sidebar.classList.toggle("active")}
+function toggleMenu(){
+  sidebar.classList.toggle("active");
+}
+
 function showPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
-  document.getElementById(id).classList.add("active")
-  sidebar.classList.remove("active")
-}
-
-/* TIME */
-setInterval(()=>{time.textContent=new Date().toLocaleTimeString()},1000)
-
-/* THEME */
-function changeTheme(t){
-  document.body.className=t
-  localStorage.theme=t
-}
-if(localStorage.theme){
-  document.body.className=localStorage.theme
-  themeSelect.value=localStorage.theme
-}
-
-/* LANGUE */
-function changeLang(l){
-  localStorage.lang=l
-  langSelect.value=l
-  // Mettre tout le site à jour selon la langue
-  document.querySelector('.navBox:nth-child(1)').textContent = (l==='fr'?'Accueil':l==='en'?'Home':l==='es'?'Inicio':'Startseite')
-  document.querySelector('.navBox:nth-child(2)').textContent = (l==='fr'?'IA':l==='en'?'AI':l==='es'?'IA':'KI')
-  document.querySelector('.navBox:nth-child(3)').textContent = (l==='fr'?'Code Promo':l==='en'?'Promo Code':l==='es'?'Código Promo':'Gutscheincode')
-  document.querySelector('.navBox:nth-child(4)').textContent = (l==='fr'?'Historique':l==='en'?'History':l==='es'?'Historial':'Historie')
-}
-if(localStorage.lang){
-  changeLang(localStorage.lang)
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  sidebar.classList.remove("active");
 }
 
 /* TASKS */
-let tasks=[]
-let points=0
+let tasks=[];
 function addTask(){
-  if(!taskInput.value)return
-  tasks.push({t:taskInput.value,d:false})
-  taskInput.value=""
-  points+=5
-  renderTasks()
+  if(!taskInput.value)return;
+  tasks.push(taskInput.value);
+  taskInput.value="";
+  renderTasks();
 }
 function renderTasks(){
-  taskList.innerHTML=""
-  tasks.forEach((x,i)=>{
-    let d=document.createElement("div")
-    d.className="task"
-    d.innerHTML=`<span>${x.t}</span><span class="trash" onclick="delTask(${i});event.stopPropagation()">🗑️</span>`
-    taskList.appendChild(d)
-  })
-  updateStats()
+  taskList.innerHTML="";
+  tasks.forEach((t,i)=>{
+    let d=document.createElement("div");
+    d.className="task";
+    d.innerHTML=`<span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`;
+    taskList.appendChild(d);
+  });
 }
-function delTask(i){tasks.splice(i,1);renderTasks()}
-
-/* STATS */
-function updateStats(){
-  pointsEl=document.getElementById("points")
-  pointsEl.textContent=points
-  level.textContent=Math.floor(points/50)+1
+function delTask(i){
+  tasks.splice(i,1);
+  renderTasks();
 }
 
 /* IA */
 function askIA(){
-  const q=iaInput.value.toLowerCase()
-  if(!q)return
-  if(q.includes("bonjour")) iaText.textContent="Salut 👋"
-  else if(q.includes("recette")) iaText.textContent="Pâtes, riz ou pizza 🍝"
-  else iaText.textContent="Je réfléchis 🤖"
-  iaInput.value=""
-}
-
-/* PROMO */
-const creatorCodes=["CRP2.0ROROOLNR"]
-const userCodes=["A4G7R2T9X1","M2Q8P5Z4R7","B9K1T7X2L5","F3V8P6Q1R9","G1X9M4T2V7","H7R2C9P1Q5","K4T1X7R3M9","L5Q2V9T6F1","N3P7K2X4B8","R2M9F4T1Q6"]
-
-function applyPromo(){
-  const c=promoInput.value.toUpperCase()
-  promoStatus.innerHTML=""
-  if(creatorCodes.includes(c)){
-    promoStatus.innerHTML='<div class="badge creator">CODE CRÉATEUR ACTIF</div>'
-  }else if(userCodes.includes(c)){
-    promoStatus.innerHTML='<div class="badge user">CODE UTILISATEUR ACTIF</div>'
-  }else{
-    promoStatus.innerHTML='<div class="badge">Code invalide</div>'
-  }
+  const q=iaInput.value.trim();
+  if(!q)return;
+  iaText.textContent = q.toLowerCase().includes("salut")
+    ? "Salut 😄 Je suis là pour t’aider."
+    : "Je réfléchis 🤖";
+  iaInput.value="";
 }
 </script>
 
