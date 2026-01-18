@@ -39,22 +39,23 @@ header{
 }
 .navBox{
   flex:1;
-  background:rgba(255,255,255,.15);
-  border-radius:14px;
-  padding:10px;
+  background:rgba(255,255,255,.18);
+  border-radius:16px;
+  padding:12px;
   text-align:center;
   cursor:pointer;
+  font-weight:600;
 }
 
 /* TIME */
 #timeBox{
   position:fixed;
-  top:60px;
-  left:12px;
+  top:85px;
+  right:35px;
   background:rgba(0,0,0,.35);
-  padding:6px 12px;
+  padding:6px 14px;
   border-radius:12px;
-  font-size:13px;
+  font-size:14px;
 }
 
 /* SIDEBAR */
@@ -71,7 +72,7 @@ header{
 }
 #sidebar.active{left:0}
 .sideItem{
-  padding:10px;
+  padding:12px;
   border-bottom:1px solid #334;
   cursor:pointer;
 }
@@ -82,52 +83,78 @@ header{
 
 /* CARD */
 .card{
-  background:rgba(255,255,255,.15);
-  border-radius:18px;
-  padding:14px;
-  margin-bottom:12px;
+  background:rgba(255,255,255,.18);
+  border-radius:20px;
+  padding:18px;
+  margin-bottom:14px;
 }
 
 select,input,button{
   width:100%;
-  padding:10px;
-  border-radius:12px;
+  padding:12px;
+  border-radius:14px;
   border:none;
-  margin-top:6px;
+  margin-top:10px;
 }
 button{background:#38bdf8;font-weight:bold}
+
+/* TASKS */
+.task{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px;
+  background:rgba(255,255,255,.2);
+  border-radius:12px;
+  margin-top:8px;
+}
+.task.done{text-decoration:line-through;opacity:.6}
+.trash{cursor:pointer}
+
+/* PROMO BADGES */
+.badge{
+  padding:8px;
+  border-radius:12px;
+  font-weight:bold;
+  text-align:center;
+  margin-bottom:10px;
+}
+.creator{background:#facc15;color:#000}
+.user{background:#38bdf8;color:#000}
 </style>
 </head>
 
 <body class="green">
 
 <!-- TIME -->
-<div id="timeBox">⏰ <span id="time"></span></div>
+<div id="timeBox"><span id="time"></span></div>
 
 <!-- SIDEBAR -->
 <div id="sidebar">
-  <div class="sideItem" onclick="showPage('home')">🏠 <span data-t="home">Accueil</span></div>
-  <div class="sideItem" onclick="showPage('promo')">💳 <span data-t="promo">Code Promo</span></div>
-  <div class="sideItem" onclick="showPage('history')">📜 <span data-t="history">Historique</span></div>
+  <div class="sideItem" onclick="showPage('home')">🏠 Accueil</div>
+  <div class="sideItem" onclick="showPage('ia')">🧠 IA</div>
+  <div class="sideItem" onclick="showPage('history')">📜 Historique</div>
+  <div class="sideItem" onclick="showPage('promo')">💳 Code Promo</div>
 </div>
 
 <header>
-  <h3 data-t="title">Daily Life Ultra IA</h3>
+  <h3>Daily Life Ultra IA</h3>
   <div class="menuBtn" onclick="toggleMenu()">☰</div>
 </header>
 
 <div id="topNav">
-  <div class="navBox" onclick="showPage('home')" data-t="home">Accueil</div>
-  <div class="navBox" onclick="showPage('promo')" data-t="promo">Code Promo</div>
-  <div class="navBox" onclick="showPage('history')" data-t="history">Historique</div>
+  <div class="navBox" onclick="showPage('home')">Accueil</div>
+  <div class="navBox" onclick="showPage('ia')">IA</div>
+  <div class="navBox" onclick="showPage('history')">Historique</div>
+  <div class="navBox" onclick="showPage('promo')">Code Promo</div>
 </div>
 
 <!-- HOME -->
 <div id="home" class="page active">
   <div class="card">
-    <h3 data-t="settings">Paramètres</h3>
+    <h3>⚙️ Paramètres</h3>
 
-    <label data-t="theme">Thème</label>
+    <label>🎨 Thème</label>
     <select id="themeSelect" onchange="changeTheme(this.value)">
       <option value="green">Vert</option>
       <option value="red">Rouge</option>
@@ -137,40 +164,61 @@ button{background:#38bdf8;font-weight:bold}
       <option value="orange">Orange</option>
     </select>
 
-    <label data-t="lang">Langue</label>
-    <select id="langSelect" onchange="changeLang(this.value)">
-      <option value="fr">Français</option>
-      <option value="en">English</option>
-      <option value="es">Español</option>
-      <option value="de">Deutsch</option>
+    <label>🌍 Langue</label>
+    <select>
+      <option>Français</option>
+      <option>English</option>
+      <option>Español</option>
+      <option>Deutsch</option>
     </select>
+  </div>
+
+  <div class="card">
+    <h3>✅ Tâches</h3>
+    <input id="taskInput" placeholder="Nouvelle tâche">
+    <button onclick="addTask()">Ajouter</button>
+    <div id="taskList"></div>
   </div>
 </div>
 
-<!-- PROMO -->
-<div id="promo" class="page">
+<!-- IA -->
+<div id="ia" class="page">
   <div class="card">
-    <h3 data-t="promo">Code Promo</h3>
-    <input id="promoInput" placeholder="Code">
-    <button onclick="checkPromo()" data-t="validate">Valider</button>
-    <p id="promoResult"></p>
+    <h3>🧠 IA Locale</h3>
+    <p id="iaText">Pose-moi une question.</p>
+    <input id="iaInput" placeholder="Écris ici">
+    <button onclick="askIA()">Envoyer</button>
   </div>
 </div>
 
 <!-- HISTORY -->
 <div id="history" class="page">
   <div class="card">
-    <h3 data-t="history">Historique</h3>
+    <h3>📊 Stats</h3>
     <p>⭐ Points : <span id="points">0</span></p>
     <p>🎯 Niveau : <span id="level">1</span></p>
+  </div>
+
+  <div class="card">
+    <h3>🏆 Classement</h3>
+    <p>Toi → #1</p>
+  </div>
+</div>
+
+<!-- PROMO -->
+<div id="promo" class="page">
+  <div id="promoStatus"></div>
+
+  <div class="card">
+    <h3>💳 Code Promo</h3>
+    <input id="promoInput" placeholder="Entrer un code">
+    <button onclick="applyPromo()">Valider</button>
   </div>
 </div>
 
 <script>
 /* MENU */
-function toggleMenu(){
-  sidebar.classList.toggle("active")
-}
+function toggleMenu(){sidebar.classList.toggle("active")}
 function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
   document.getElementById(id).classList.add("active")
@@ -178,21 +226,7 @@ function showPage(id){
 }
 
 /* TIME */
-setInterval(()=>{
-  time.textContent=new Date().toLocaleTimeString()
-},1000)
-
-/* SCORE */
-let points=0
-function updateScore(){
-  pointsEl.textContent=points
-  level.textContent=Math.floor(points/50)+1
-}
-
-/* PROMO */
-function checkPromo(){
-  promoResult.textContent="Code vérifié"
-}
+setInterval(()=>{time.textContent=new Date().toLocaleTimeString()},1000)
 
 /* THEME */
 function changeTheme(t){
@@ -204,26 +238,62 @@ if(localStorage.theme){
   themeSelect.value=localStorage.theme
 }
 
-/* LANG */
-const translations={
-fr:{home:"Accueil",promo:"Code Promo",history:"Historique",settings:"Paramètres",theme:"Thème",lang:"Langue",validate:"Valider",title:"Daily Life Ultra IA"},
-en:{home:"Home",promo:"Promo Code",history:"History",settings:"Settings",theme:"Theme",lang:"Language",validate:"Validate",title:"Daily Life Ultra IA"},
-es:{home:"Inicio",promo:"Código Promo",history:"Historial",settings:"Configuración",theme:"Tema",lang:"Idioma",validate:"Validar",title:"Daily Life Ultra IA"},
-de:{home:"Start",promo:"Promo-Code",history:"Verlauf",settings:"Einstellungen",theme:"Thema",lang:"Sprache",validate:"Bestätigen",title:"Daily Life Ultra IA"}
+/* TASKS */
+let tasks=[]
+let points=0
+
+function addTask(){
+  if(!taskInput.value)return
+  tasks.push({t:taskInput.value,d:false})
+  taskInput.value=""
+  points+=5
+  renderTasks()
+}
+function renderTasks(){
+  taskList.innerHTML=""
+  tasks.forEach((x,i)=>{
+    let d=document.createElement("div")
+    d.className="task"+(x.d?" done":"")
+    d.innerHTML=`<span>${x.t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`
+    d.onclick=()=>{x.d=!x.d;renderTasks()}
+    taskList.appendChild(d)
+  })
+  updateStats()
+}
+function delTask(i){tasks.splice(i,1);renderTasks()}
+
+/* STATS */
+function updateStats(){
+  pointsEl.textContent=points
+  level.textContent=Math.floor(points/50)+1
 }
 
-function changeLang(l){
-  localStorage.lang=l
-  applyLang(l)
+/* IA */
+function askIA(){
+  const q=iaInput.value.toLowerCase()
+  if(!q)return
+  if(q.includes("bonjour")) iaText.textContent="Salut 👋"
+  else if(q.includes("recette")) iaText.textContent="Pâtes, riz ou pizza 🍝"
+  else iaText.textContent="Je réfléchis 🤖"
+  iaInput.value=""
 }
-function applyLang(l){
-  document.querySelectorAll("[data-t]").forEach(e=>{
-    e.textContent=translations[l][e.dataset.t]
-  })
-  langSelect.value=l
+
+/* PROMO */
+const creatorCodes=["CREATOR1234"]
+const userCodes=["USER1111","USER2222"]
+
+function applyPromo(){
+  const c=promoInput.value.toUpperCase()
+  promoStatus.innerHTML=""
+  if(creatorCodes.includes(c)){
+    promoStatus.innerHTML='<div class="badge creator">CODE CRÉATEUR ACTIF</div>'
+  }else if(userCodes.includes(c)){
+    promoStatus.innerHTML='<div class="badge user">CODE UTILISATEUR ACTIF</div>'
+  }else{
+    promoStatus.innerHTML='<div class="badge">Code invalide</div>'
+  }
 }
-applyLang(localStorage.lang||"fr")
 </script>
 
 </body>
-</html>
+      </html>
