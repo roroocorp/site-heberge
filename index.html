@@ -3,262 +3,297 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Life IA Ultra</title>
+<title>Daily Life Ultra IA</title>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-html,body{width:100%;height:100%;overflow-x:hidden}
-body{background:linear-gradient(180deg,#064e3b,#042f2e);color:#fff;transition:0.3s}
-.container{max-width:420px;margin:auto;padding:10px}
+*{box-sizing:border-box;font-family:system-ui}
+body{
+  margin:0;
+  min-height:100vh;
+  color:white;
+  transition:.3s;
+}
+
+/* THEMES */
+body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
+body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
+body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
+body.rose{background:linear-gradient(180deg,#f43f5e,#be185d)}
+body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
+body.orange{background:linear-gradient(180deg,#f97316,#b45309)}
 
 /* HEADER */
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-top:6px}
-header h1{font-size:20px}
-.menu-btn{font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 14px;
+}
+.menuBtn{font-size:24px;cursor:pointer}
 
-/* NAVIGATION TOP */
-.nav-top{display:flex;gap:8px;margin-bottom:12px}
-.nav-item{flex:1;text-align:center;background:rgba(255,255,255,.12);padding:8px;border-radius:12px;cursor:pointer;user-select:none}
-.nav-item.active{background:rgba(255,255,255,.25);font-weight:bold}
+/* TOP NAV */
+#topNav{
+  display:flex;
+  gap:8px;
+  padding:10px;
+}
+.navBox{
+  flex:1;
+  background:rgba(255,255,255,.18);
+  border-radius:16px;
+  padding:12px;
+  text-align:center;
+  cursor:pointer;
+  font-weight:600;
+}
 
-/* CARD */
-.card{background:rgba(255,255,255,.12);backdrop-filter:blur(14px);border-radius:18px;padding:14px;margin-bottom:12px}
-input,select,button{width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px}
-input,select{background:rgba(255,255,255,.9)}
-button{background:rgba(255,255,255,.2);color:#fff;font-weight:bold;cursor:pointer}
-ul{list-style:none;margin-top:6px}
-li{background:rgba(255,255,255,.15);padding:8px;border-radius:10px;margin-top:6px;user-select:none;display:flex;justify-content:space-between;align-items:center}
-li.done{text-decoration:line-through;opacity:.6}
-.delete-task{cursor:pointer;color:red;font-weight:bold;margin-left:6px}
+/* TIME */
+#timeBox{
+  position:fixed;
+  top:85px;
+  right:35px;
+  background:rgba(0,0,0,.35);
+  padding:6px 14px;
+  border-radius:12px;
+  font-size:14px;
+}
 
 /* SIDEBAR */
-#sidebar{position:fixed;top:0;left:-100%;width:75%;max-width:280px;height:100%;background:#0f172a;padding:15px;transition:.3s;z-index:10}
+#sidebar{
+  position:fixed;
+  top:0;
+  left:-260px;
+  width:260px;
+  height:100%;
+  background:#020617;
+  padding:15px;
+  transition:.3s;
+  z-index:100;
+}
 #sidebar.active{left:0}
-#sidebar h3{margin-bottom:10px}
-.item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #334;cursor:pointer}
+.sideItem{
+  padding:12px;
+  border-bottom:1px solid #334;
+  cursor:pointer;
+}
 
-/* CHAT */
-#chat{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;z-index:9;flex-direction:column}
-#messages{flex:1;overflow-y:auto;padding:10px}
-.msg{margin-bottom:6px}
-.user{color:#38bdf8}
-.ai{color:#a7f3d0}
+/* PAGE */
+.page{display:none;padding:16px}
+.page.active{display:block}
 
-/* CHAT INPUT */
-#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:50px;align-items:center;}
-#chatInput{flex:1;padding:12px 14px;border-radius:50px;border:none;background:#fff;color:#000;font-size:16px;}
-#chatSend{padding:10px;border-radius:50%;background:#38bdf8;color:#fff;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;}
+/* CARD */
+.card{
+  background:rgba(255,255,255,.18);
+  border-radius:20px;
+  padding:18px;
+  margin-bottom:14px;
+}
 
-/* CODE PROMO */
-#promoPage{display:none;width:100%;height:100%;position:fixed;top:0;left:0;background:linear-gradient(180deg,#064e3b,#042f2e);z-index:20;flex-direction:column;align-items:center;justify-content:center;}
-#promoPage h1{margin-bottom:20px}
-#promoInput{width:250px;padding:10px;border-radius:12px;border:none;margin-bottom:10px}
-#promoMsg{margin-top:10px;color:#fff;text-align:center}
-#promoCodesDisplay{margin-bottom:10px}
+select,input,button{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:none;
+  margin-top:10px;
+}
+button{background:#38bdf8;font-weight:bold}
 
-/* SCORE & HOUR IN HISTORIQUE */
-#scoreBox{background:rgba(0,0,0,.3);padding:8px 12px;border-radius:12px;margin-bottom:10px;text-align:center}
-#hourBox{display:inline-block;margin-left:8px}
+/* TASKS */
+.task{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px;
+  background:rgba(255,255,255,.2);
+  border-radius:12px;
+  margin-top:8px;
+}
+.task.done{text-decoration:line-through;opacity:.6}
+.trash{cursor:pointer}
+
+/* PROMO BADGES */
+.badge{
+  padding:8px;
+  border-radius:12px;
+  font-weight:bold;
+  text-align:center;
+  margin-bottom:10px;
+}
+.creator{background:#facc15;color:#000}
+.user{background:#38bdf8;color:#000}
 </style>
 </head>
-<body>
 
-<!-- NAVIGATION TOP -->
-<div class="nav-top">
-<div class="nav-item active" onclick="showSection('home')">Accueil</div>
-<div class="nav-item" onclick="showSection('ia')">IA</div>
-<div class="nav-item" onclick="showSection('promo')">Code Promo</div>
-<div class="nav-item" onclick="showSection('history')">Historique</div>
+<body class="green">
+
+<!-- TIME -->
+<div id="timeBox"><span id="time"></span></div>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sideItem" onclick="showPage('home')">🏠 Accueil</div>
+  <div class="sideItem" onclick="showPage('ia')">🧠 IA</div>
+  <div class="sideItem" onclick="showPage('history')">📜 Historique</div>
+  <div class="sideItem" onclick="showPage('promo')">💳 Code Promo</div>
 </div>
 
-<!-- MAIN CONTAINER -->
-<div class="container">
-
-<!-- ACCUEIL -->
-<div id="homeSection">
-<div class="card">
-<h3>🌍 Langue</h3>
-<select id="langSelect" onchange="changeLang(this.value)">
-<option value="fr">Français</option>
-<option value="en">English</option>
-<option value="es">Español</option>
-<option value="de">Deutsch</option>
-<option value="zh">中文</option>
-<option value="ja">日本語</option>
-<option value="ru">Русский</option>
-</select>
-</div>
-
-<div class="card">
-<h3>🎨 Thème</h3>
-<select id="themeSelect" onchange="changeTheme(this.value)">
-<option value="green">Vert</option>
-<option value="red">Rouge</option>
-<option value="blue">Bleu</option>
-<option value="rose">Rose</option>
-<option value="violet">Violet</option>
-<option value="orange">Orange</option>
-</select>
-</div>
-
-<div class="card">
-<h3>✅ Tâches</h3>
-<input id="taskInput" placeholder="Nouvelle tâche">
-<button onclick="addTask()">Ajouter</button>
-<ul id="tasks"></ul>
-</div>
-</div>
-
-<!-- IA CHAT -->
-<div id="iaSection" style="display:none">
 <header>
-<h1 id="chatTitle">IA</h1>
+  <h3>Daily Life Ultra IA</h3>
+  <div class="menuBtn" onclick="toggleMenu()">☰</div>
 </header>
-<div id="chat">
-<div id="messages"></div>
-<div id="chatInputContainer">
-<input id="chatInput" placeholder="Écris un message..." onkeydown="if(event.key==='Enter'){sendMsg();event.preventDefault()}">
-<button id="chatSend" onclick="sendMsg()">➤</button>
-</div>
-</div>
+
+<div id="topNav">
+  <div class="navBox" onclick="showPage('home')">Accueil</div>
+  <div class="navBox" onclick="showPage('ia')">IA</div>
+  <div class="navBox" onclick="showPage('history')">Historique</div>
+  <div class="navBox" onclick="showPage('promo')">Code Promo</div>
 </div>
 
-<!-- CODE PROMO PAGE -->
-<div id="promoPage" style="display:none;flex-direction:column">
-<h1>💳 Code Promo</h1>
-<div id="promoCodesDisplay"></div>
-<input id="promoInput" placeholder="Entrez votre code">
-<button onclick="applyPromo()">Envoyer</button>
-<div id="promoMsg"></div>
+<!-- HOME -->
+<div id="home" class="page active">
+  <div class="card">
+    <h3>⚙️ Paramètres</h3>
+
+    <label>🎨 Thème</label>
+    <select id="themeSelect" onchange="changeTheme(this.value)">
+      <option value="green">Vert</option>
+      <option value="red">Rouge</option>
+      <option value="blue">Bleu</option>
+      <option value="rose">Rose</option>
+      <option value="violet">Violet</option>
+      <option value="orange">Orange</option>
+    </select>
+
+    <label>🌍 Langue</label>
+    <select>
+      <option>Français</option>
+      <option>English</option>
+      <option>Español</option>
+      <option>Deutsch</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <h3>✅ Tâches</h3>
+    <input id="taskInput" placeholder="Nouvelle tâche">
+    <button onclick="addTask()">Ajouter</button>
+    <div id="taskList"></div>
+  </div>
 </div>
 
-<!-- HISTORIQUE -->
-<div id="historySection" style="display:none">
-<div id="scoreBox">
-Points: <span id="points">0</span> | Niveau: <span id="level">1</span>
-<span id="hourBox"></span>
-</div>
-<ul id="historyList"></ul>
+<!-- IA -->
+<div id="ia" class="page">
+  <div class="card">
+    <h3>🧠 IA Locale</h3>
+    <p id="iaText">Pose-moi une question.</p>
+    <input id="iaInput" placeholder="Écris ici">
+    <button onclick="askIA()">Envoyer</button>
+  </div>
 </div>
 
+<!-- HISTORY -->
+<div id="history" class="page">
+  <div class="card">
+    <h3>📊 Stats</h3>
+    <p>⭐ Points : <span id="points">0</span></p>
+    <p>🎯 Niveau : <span id="level">1</span></p>
+  </div>
+
+  <div class="card">
+    <h3>🏆 Classement</h3>
+    <p>Toi → #1</p>
+  </div>
+</div>
+
+<!-- PROMO -->
+<div id="promo" class="page">
+  <div id="promoStatus"></div>
+
+  <div class="card">
+    <h3>💳 Code Promo</h3>
+    <input id="promoInput" placeholder="Entrer un code">
+    <button onclick="applyPromo()">Valider</button>
+  </div>
 </div>
 
 <script>
-/* ===== GLOBAL ===== */
-let lang=localStorage.lang||"fr";
-let theme=localStorage.theme||"green";
-let tasks=JSON.parse(localStorage.tasks||"[]");
-let points=Number(localStorage.points||0);
-let conversations=JSON.parse(localStorage.conversations||"[]");
-let currentConv=null;
-
-const promoCodes=["CRP2.0ROROOLNR","A4G7R2T9X1","M2Q8P5Z4R7","B9K1T7X2L5","F3V8P6Q1R9","G1X9M4T2V7","H7R2C9P1Q5","K4T1X7R3M9","L5Q2V9T6F1","N3P7K2X4B8","R2M9F4T1Q6"];
-let activePromo="";
-
-/* ===== SAVE & RENDER ===== */
-function saveAll(){
-localStorage.tasks=JSON.stringify(tasks);
-localStorage.points=points;
-localStorage.lang=lang;
-localStorage.theme=theme;
-renderAll();
-}
-function renderAll(){
-document.getElementById("points").textContent=points;
-document.getElementById("level").textContent=Math.floor(points/50)+1;
-renderTasks();
-renderPromoDisplay();
+/* MENU */
+function toggleMenu(){sidebar.classList.toggle("active")}
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
+  document.getElementById(id).classList.add("active")
+  sidebar.classList.remove("active")
 }
 
-/* ===== TASKS ===== */
+/* TIME */
+setInterval(()=>{time.textContent=new Date().toLocaleTimeString()},1000)
+
+/* THEME */
+function changeTheme(t){
+  document.body.className=t
+  localStorage.theme=t
+}
+if(localStorage.theme){
+  document.body.className=localStorage.theme
+  themeSelect.value=localStorage.theme
+}
+
+/* TASKS */
+let tasks=[]
+let points=0
+
 function addTask(){
-let input=document.getElementById("taskInput");
-if(input.value){
-tasks.push({t:input.value,d:false});
-input.value="";
-points+=5;
-saveAll();
-}
+  if(!taskInput.value)return
+  tasks.push({t:taskInput.value,d:false})
+  taskInput.value=""
+  points+=5
+  renderTasks()
 }
 function renderTasks(){
-let el=document.getElementById("tasks");
-el.innerHTML="";
-tasks.forEach((t,i)=>{
-let li=document.createElement("li");
-li.textContent=t.t;
-if(t.d) li.classList.add("done");
-let del=document.createElement("span");
-del.textContent="🗑";
-del.className="delete-task";
-del.onclick=(e)=>{tasks.splice(i,1);saveAll();e.stopPropagation();}
-li.appendChild(del);
-li.onclick=()=>{t.d=!t.d;if(t.d) points+=5;saveAll();}
-el.appendChild(li);
-})
+  taskList.innerHTML=""
+  tasks.forEach((x,i)=>{
+    let d=document.createElement("div")
+    d.className="task"+(x.d?" done":"")
+    d.innerHTML=`<span>${x.t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`
+    d.onclick=()=>{x.d=!x.d;renderTasks()}
+    taskList.appendChild(d)
+  })
+  updateStats()
+}
+function delTask(i){tasks.splice(i,1);renderTasks()}
+
+/* STATS */
+function updateStats(){
+  pointsEl.textContent=points
+  level.textContent=Math.floor(points/50)+1
 }
 
-/* ===== NAVIGATION ===== */
-function showSection(section){
-document.getElementById("homeSection").style.display="none";
-document.getElementById("iaSection").style.display="none";
-document.getElementById("promoPage").style.display="none";
-document.getElementById("historySection").style.display="none";
-document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
-document.querySelector(`.nav-item[onclick*="${section}"]`).classList.add("active");
-if(section=="home") document.getElementById("homeSection").style.display="block";
-if(section=="ia") document.getElementById("iaSection").style.display="block";
-if(section=="promo") document.getElementById("promoPage").style.display="flex";
-if(section=="history") document.getElementById("historySection").style.display="block";
+/* IA */
+function askIA(){
+  const q=iaInput.value.toLowerCase()
+  if(!q)return
+  if(q.includes("bonjour")) iaText.textContent="Salut 👋"
+  else if(q.includes("recette")) iaText.textContent="Pâtes, riz ou pizza 🍝"
+  else iaText.textContent="Je réfléchis 🤖"
+  iaInput.value=""
 }
 
-/* ===== LANG & THEME ===== */
-function changeLang(l){lang=l;localStorage.lang=lang;}
-function changeTheme(t){theme=t;document.body.style.background=(t=="green"?"linear-gradient(180deg,#064e3b,#042f2e)":
-t=="red"?"linear-gradient(180deg,#7f1d1d,#450a0a)":
-t=="blue"?"linear-gradient(180deg,#1e3a8a,#020617)":
-t=="rose"?"linear-gradient(180deg,#f43f5e,#be185d)":
-t=="violet"?"linear-gradient(180deg,#5b21b6,#2e1065)":
-t=="orange"?"linear-gradient(180deg,#f97316,#b45309)":"#064e3b");localStorage.theme=theme;}
+/* PROMO */
+const creatorCodes=["CREATOR1234"]
+const userCodes=["USER1111","USER2222"]
 
-/* ===== PROMO ===== */
 function applyPromo(){
-let code=document.getElementById("promoInput").value.trim().toUpperCase();
-if(promoCodes.includes(code)){
-document.getElementById("promoMsg").textContent="Code utilisable !";
-activePromo=code;
-renderPromoDisplay();
-}else{document.getElementById("promoMsg").textContent="Code invalide";}
+  const c=promoInput.value.toUpperCase()
+  promoStatus.innerHTML=""
+  if(creatorCodes.includes(c)){
+    promoStatus.innerHTML='<div class="badge creator">CODE CRÉATEUR ACTIF</div>'
+  }else if(userCodes.includes(c)){
+    promoStatus.innerHTML='<div class="badge user">CODE UTILISATEUR ACTIF</div>'
+  }else{
+    promoStatus.innerHTML='<div class="badge">Code invalide</div>'
+  }
 }
-function renderPromoDisplay(){
-let disp=document.getElementById("promoCodesDisplay");
-disp.innerHTML="";
-if(activePromo) disp.textContent="Code actif : "+activePromo;
-}
-
-/* ===== CHAT IA ===== */
-function sendMsg(){
-let input=document.getElementById("chatInput");
-let text=input.value.trim();
-if(!text) return;
-if(currentConv===null){currentConv=Date.now();conversations.push({id:currentConv,msgs:[]});}
-let c=conversations.find(x=>x.id===currentConv);
-c.msgs.push({w:"user",t:text});
-input.value="";
-setTimeout(()=>{c.msgs.push({w:"ai",t:"Réponse IA : "+text});renderChat();},300);
-renderChat();
-}
-function renderChat(){
-let messages=document.getElementById("messages");
-messages.innerHTML="";
-let c=conversations.find(x=>x.id===currentConv);
-if(!c) return;
-c.msgs.forEach(m=>{messages.innerHTML+=`<div class="msg ${m.w}">${m.w==="user"?"👤":"🤖"} ${m.t}</div>`});
-messages.scrollTop=messages.scrollHeight;
-}
-
-/* ===== INIT ===== */
-changeTheme(theme);
-renderAll();
-setInterval(()=>{document.getElementById("hourBox").textContent=new Date().toLocaleTimeString()},1000);
 </script>
+
 </body>
   </html>
