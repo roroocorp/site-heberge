@@ -3,202 +3,276 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Life Ultra IA</title>
-
+<title>Daily Life IA Ultra</title>
 <style>
-*{box-sizing:border-box;font-family:system-ui}
-body{
-  margin:0;
-  min-height:100vh;
-  color:white;
-  background:linear-gradient(180deg,#064e3b,#042f2e);
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+html,body{width:100%;height:100%;overflow-x:hidden}
+body{min-height:100vh;color:#fff;padding:10px;transition:0.3s}
+.container{max-width:420px;margin:auto}
 
-/* HEADER */
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 16px;
-}
-.menuBtn{font-size:24px;cursor:pointer}
+/* THEMES */
+body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
+body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a)}
+body.blue{background:linear-gradient(180deg,#1e3a8a,#020617)}
+body.rose{background:linear-gradient(180deg,#f43f5e,#be185d)}
+body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
+body.orange{background:linear-gradient(180deg,#f97316,#b45309)}
 
-/* TOP NAV */
-#topNav{
-  display:flex;
-  gap:8px;
-  padding:10px;
-}
-.navBox{
-  flex:1;
-  background:rgba(255,255,255,.2);
-  border-radius:16px;
-  padding:12px;
-  text-align:center;
-  cursor:pointer;
-  font-weight:600;
-}
-
-/* SIDEBAR */
-#sidebar{
-  position:fixed;
-  top:0;
-  left:-260px;
-  width:260px;
-  height:100%;
-  background:#020617;
-  padding:16px;
-  transition:.3s;
-}
-#sidebar.active{left:0}
-.sideItem{
-  padding:12px;
-  border-bottom:1px solid #334;
-  cursor:pointer;
-}
-
-/* PAGE */
-.page{display:none;padding:16px}
-.page.active{display:block}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding-top:6px}
+header h1{font-size:20px}
+.menu-btn{font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
 /* CARD */
-.card{
-  background:rgba(255,255,255,.2);
-  border-radius:20px;
-  padding:18px;
-  margin-bottom:16px;
-}
+.card{background:rgba(255,255,255,.12);backdrop-filter:blur(14px);border-radius:18px;padding:14px;margin-bottom:12px}
+input,select,button{width:100%;padding:10px;border:none;border-radius:12px;margin-top:6px}
+input,select{background:rgba(255,255,255,.9)}
+button{background:rgba(255,255,255,.2);color:#fff;font-weight:bold;cursor:pointer}
+ul{list-style:none;margin-top:6px}
+li{background:rgba(255,255,255,.15);padding:8px;border-radius:10px;margin-top:6px;user-select:none;display:flex;justify-content:space-between;align-items:center}
+li.done{text-decoration:line-through;opacity:.6}
+li button.del{background:none;border:none;color:#fff;cursor:pointer;margin-left:6px}
 
-/* INPUTS */
-input,select,button{
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:none;
-  margin-top:10px;
-}
-button{background:#38bdf8;font-weight:bold}
+/* SIDEBAR */
+#sidebar{position:fixed;top:0;left:-100%;width:75%;max-width:280px;height:100%;background:#0f172a;padding:15px;transition:.3s;z-index:10}
+#sidebar.active{left:0}
+#sidebar h3{margin-bottom:10px}
+.item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #334;cursor:pointer}
 
-/* TASKS */
-.task{
-  display:flex;
-  justify-content:space-between;
-  padding:10px;
-  background:rgba(255,255,255,.25);
-  border-radius:12px;
-  margin-top:8px;
-}
+/* CHAT */
+#chat{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;z-index:9;flex-direction:column}
+#messages{flex:1;overflow-y:auto;padding:10px}
+.msg{margin-bottom:6px}
+.user{color:#38bdf8}
+.ai{color:#a7f3d0}
 
-/* IA INPUT */
-.iaBox{
-  display:flex;
-  gap:8px;
-}
-.iaInput{
-  flex:1;
-  background:#e5e7eb;
-  color:#000;
-}
-.sendBtn{
-  width:50px;
-  font-size:18px;
-}
+/* CHAT INPUT */
+#chatInputContainer{display:flex;gap:6px;padding:6px;background:rgba(0,0,0,0.1);border-radius:50px;align-items:center;}
+#chatInput{flex:1;padding:12px 14px;border-radius:50px;border:none;background:#fff;color:#000;font-size:16px;}
+#chatSend{padding:10px;border-radius:50%;background:#38bdf8;color:#fff;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;}
 
-/* PROMO OLD STYLE */
-.promoInput{
-  background:#facc15;
-  color:#000;
-  font-weight:bold;
-}
+/* SCORE & HOUR */
+#scoreHourBox{position:fixed;top:10px;right:10px;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:12px;display:flex;gap:10px;align-items:center;z-index:11}
+#hourBox{color:#fff}
+#pointsBox{color:#fff}
+
+/* NAVIGATION */
+#navTop{display:flex;gap:10px;margin-bottom:12px;justify-content:center}
+.nav-card{padding:10px 14px;border-radius:12px;background:rgba(255,255,255,0.2);cursor:pointer;flex:1;text-align:center}
+.nav-card.active{background:rgba(255,255,255,0.4)}
 </style>
 </head>
+<body class="green">
 
-<body>
-
-<header>
-  <h3>Daily Life Ultra IA</h3>
-  <div class="menuBtn" onclick="toggleMenu()">☰</div>
-</header>
-
-<!-- SIDEBAR : CODE PROMO ↔ IA ÉCHANGÉS -->
-<div id="sidebar">
-  <div class="sideItem" onclick="showPage('home')">🏠 Accueil</div>
-  <div class="sideItem" onclick="showPage('ia')">🤖 IA</div>
-  <div class="sideItem" onclick="showPage('promo')">🎁 Code promo</div>
-  <div class="sideItem" onclick="showPage('history')">📜 Historique</div>
+<!-- NAVIGATION -->
+<div id="navTop">
+<div class="nav-card active" onclick="showPage('main')">Accueil</div>
+<div class="nav-card" onclick="showPage('ia')">IA</div>
+<div class="nav-card" onclick="showPage('promo')">Code Promo</div>
+<div class="nav-card" onclick="showPage('history')">Historique</div>
 </div>
 
-<!-- TOP NAV (ACCUEIL INCHANGÉ) -->
-<div id="topNav">
-  <div class="navBox">🏠 Accueil</div>
-  <div class="navBox">🤖 IA</div>
-  <div class="navBox">🎁 Code promo</div>
-  <div class="navBox">📜 Historique</div>
+<!-- SCORE & HOUR -->
+<div id="scoreHourBox">
+<div id="pointsBox">Points: <span id="points">0</span> | Niveau: <span id="level">1</span></div>
+<div id="hourBox"></div>
 </div>
 
-<!-- ACCUEIL -->
-<div id="home" class="page active">
-  <div class="card" style="padding-bottom:40px">
-    <h3>⚙️ Paramètres</h3>
+<!-- MAIN -->
+<div class="container" id="main">
 
-    <label style="margin-top:30px">🎨 Thème</label>
-    <select>
-      <option>Vert</option><option>Rouge</option>
-      <option>Bleu</option><option>Rose</option>
-    </select>
+<div class="card">
+<h3>🌍 Langue</h3>
+<select id="langSelect" onchange="changeLang(this.value)">
+<option value="fr">Français</option>
+<option value="en">English</option>
+<option value="es">Español</option>
+<option value="de">Deutsch</option>
+<option value="zh">中文</option>
+<option value="ja">日本語</option>
+<option value="ru">Русский</option>
+</select>
+</div>
 
-    <label style="margin-top:20px">🌍 Langue</label>
-    <select>
-      <option>Français</option><option>English</option>
-      <option>Español</option><option>Deutsch</option>
-    </select>
-  </div>
+<div class="card">
+<h3>🎨 Thème</h3>
+<select id="themeSelect" onchange="changeTheme(this.value)">
+<option value="green">Vert</option>
+<option value="red">Rouge</option>
+<option value="blue">Bleu</option>
+<option value="rose">Rose</option>
+<option value="violet">Violet</option>
+<option value="orange">Orange</option>
+</select>
+</div>
 
-  <div class="card">
-    <h3>📝 Tâches</h3>
-    <input placeholder="Nouvelle tâche">
-    <button>Ajouter</button>
-  </div>
+<div class="card">
+<h3>✅ Tâches</h3>
+<input id="taskInput" placeholder="Nouvelle tâche">
+<button onclick="addTask()">Ajouter</button>
+<ul id="tasks"></ul>
+</div>
+
 </div>
 
 <!-- IA -->
-<div id="ia" class="page">
-  <div class="card">
-    <h3>🤖 IA</h3>
-    <div class="iaBox">
-      <input class="iaInput" placeholder="Écris ici...">
-      <button class="sendBtn">⬆️</button>
-    </div>
-  </div>
+<div class="container" id="ia" style="display:none">
+<div class="card">
+<h3>💬 Chat IA</h3>
+<div id="messages"></div>
+<div id="chatInputContainer">
+<input id="chatInput" placeholder="Écris ici..." onkeydown="if(event.key==='Enter'){sendMsg();event.preventDefault()}">
+<button id="chatSend" onclick="sendMsg()">➤</button>
+</div>
+</div>
 </div>
 
-<!-- PROMO -->
-<div id="promo" class="page">
-  <div class="card">
-    <h3>🎁 Code Promo</h3>
-    <input class="promoInput" placeholder="ENTRE TON CODE">
-    <button>Valider</button>
-  </div>
+<!-- CODE PROMO -->
+<div class="container" id="promo" style="display:none">
+<div class="card">
+<h3>💳 Code Promo</h3>
+<div id="promoBadge"></div>
+<input id="promoInput" placeholder="Entrez votre code" style="margin-top:6px;">
+<button onclick="applyPromo()">Envoyer</button>
+<div id="promoMsg" style="margin-top:10px;"></div>
+</div>
 </div>
 
 <!-- HISTORIQUE -->
-<div id="history" class="page">
-  <div class="card">
-    <h3>📜 Historique</h3>
-    <p>Stats, niveaux, points…</p>
-  </div>
+<div class="container" id="history" style="display:none">
+<div class="card">
+<h3>📜 Historique des conversations</h3>
+<div id="convList"></div>
+</div>
 </div>
 
 <script>
-function toggleMenu(){
-  document.getElementById("sidebar").classList.toggle("active")
-}
-function showPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
-  document.getElementById(id).classList.add("active")
-  document.getElementById("sidebar").classList.remove("active")
-}
-</script>
+/* ===== GLOBAL ===== */
+let lang=localStorage.lang||"fr";
+let theme=localStorage.theme||"green";
+let conversations=JSON.parse(localStorage.conversations||"[]");
+let currentConv=null;
+let tasks=JSON.parse(localStorage.tasks||"[]");
+let points=Number(localStorage.points||0);
+const promoCodes={
+  "CRP2.0ROROOLNR":"Créateur",
+  "A4G7R2T9X1":"Utilisateur",
+  "M2Q8P5Z4R7":"Utilisateur",
+  "B9K1T7X2L5":"Utilisateur",
+  "F3V8P6Q1R9":"Utilisateur",
+  "G1X9M4T2V7":"Utilisateur",
+  "H7R2C9P1Q5":"Utilisateur",
+  "K4T1X7R3M9":"Utilisateur",
+  "L5Q2V9T6F1":"Utilisateur",
+  "N3P7K2X4B8":"Utilisateur",
+  "R2M9F4T1Q6":"Utilisateur"
+};
+const meals=["Spaghetti","Poulet Curry","Salade César","Pizza","Tacos","Riz sauté","Soupe","Burger","Poisson","Paella"];
 
+/* ===== SAVE ===== */
+function saveAll(){
+localStorage.conversations=JSON.stringify(conversations);
+localStorage.tasks=JSON.stringify(tasks);
+localStorage.points=points;
+localStorage.lang=lang;
+localStorage.theme=theme;
+renderAll();
+}
+
+/* ===== RENDER ===== */
+function renderAll(){
+document.getElementById("points").textContent=points;
+document.getElementById("level").textContent=Math.floor(points/50)+1;
+renderTasks();
+renderConvList();
+}
+
+/* ===== TASKS ===== */
+function addTask(){
+if(taskInput.value){
+tasks.push({t:taskInput.value,d:false});
+taskInput.value="";
+points+=5;
+saveAll();
+}
+}
+function renderTasks(){
+let tasksEl=document.getElementById("tasks");
+tasksEl.innerHTML="";
+tasks.forEach((t,i)=>{
+let li=document.createElement("li");
+li.textContent=t.t;
+if(t.d) li.classList.add("done");
+let delBtn=document.createElement("button");
+delBtn.textContent="🗑️";
+delBtn.className="del";
+delBtn.onclick=e=>{e.stopPropagation();tasks.splice(i,1);saveAll();};
+li.appendChild(delBtn);
+li.onclick=()=>{t.d=!t.d;if(t.d) points+=5;saveAll();};
+tasksEl.appendChild(li);
+});
+}
+
+/* ===== NAVIGATION ===== */
+function showPage(p){
+document.getElementById("main").style.display="none";
+document.getElementById("ia").style.display="none";
+document.getElementById("promo").style.display="none";
+document.getElementById("history").style.display="none";
+document.getElementById(p).style.display="block";
+document.querySelectorAll(".nav-card").forEach(c=>c.classList.remove("active"));
+if(p=="main")document.querySelector(".nav-card:nth-child(1)").classList.add("active");
+if(p=="ia")document.querySelector(".nav-card:nth-child(2)").classList.add("active");
+if(p=="promo")document.querySelector(".nav-card:nth-child(3)").classList.add("active");
+if(p=="history")document.querySelector(".nav-card:nth-child(4)").classList.add("active");
+}
+
+/* ===== PROMO ===== */
+function applyPromo(){
+const code=promoInput.value.trim().toUpperCase();
+if(promoCodes[code]){
+promoMsg.textContent="Code valide ! Type : "+promoCodes[code];
+promoBadge.textContent=promoCodes[code];
+promoBadge.style.background=promoCodes[code]=="Créateur"?"gold":"yellow";
+promoBadge.style.color="#000";
+promoBadge.style.padding="4px 8px";
+promoBadge.style.borderRadius="6px";
+}else{promoMsg.textContent="Code invalide";promoBadge.textContent="";}
+}
+
+/* ===== LANG & THEME ===== */
+function changeLang(l){lang=l;localStorage.lang=lang;}
+function changeTheme(t){theme=t;document.body.className=theme;localStorage.theme=theme;}
+
+/* ===== CONVERSATIONS ===== */
+function renderConvList(){
+const convList=document.getElementById("convList");
+convList.innerHTML="";
+conversations.forEach((c,i)=>{
+let d=document.createElement("div");
+d.className="item";
+d.textContent=c.title;
+d.onclick=()=>{currentConv=c.id;showPage('ia');};
+convList.appendChild(d);
+});
+}
+
+/* ===== CHAT ===== */
+function sendMsg(){
+const t=document.getElementById("chatInput").value.trim();
+if(!t) return;
+conversations.push({id:Date.now(),title:"Conversation "+(conversations.length+1),msgs:[{w:"user",t}]});
+document.getElementById("chatInput").value="";
+renderConvList();
+saveAll();
+}
+
+/* ===== SCORE & HOUR ===== */
+function updateHour(){document.getElementById("hourBox").textContent=new Date().toLocaleTimeString();}
+setInterval(updateHour,1000);
+updateHour();
+renderAll();
+document.body.className=theme;
+document.getElementById("langSelect").value=lang;
+</script>
 </body>
-</html>
+  </html>
