@@ -6,13 +6,8 @@
 <title>Daily Life Ultra IA</title>
 
 <style>
-*{box-sizing:border-box;font-family:system-ui}
-body{
-  margin:0;
-  min-height:100vh;
-  color:white;
-  transition:.3s;
-}
+*{box-sizing:border-box;font-family:system-ui;margin:0;padding:0}
+body{min-height:100vh;color:white;transition:.3s}
 
 /* THEMES */
 body.green{background:linear-gradient(180deg,#064e3b,#042f2e)}
@@ -23,104 +18,45 @@ body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065)}
 body.orange{background:linear-gradient(180deg,#f97316,#b45309)}
 
 /* HEADER */
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px 14px;
-}
+header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(0,0,0,.2)}
 .menuBtn{font-size:24px;cursor:pointer}
 
 /* TOP NAV */
-#topNav{
-  display:flex;
-  gap:8px;
-  padding:10px;
-}
-.navBox{
-  flex:1;
-  background:rgba(255,255,255,.18);
-  border-radius:16px;
-  padding:12px;
-  text-align:center;
-  cursor:pointer;
-  font-weight:600;
-}
+#topNav{display:flex;gap:8px;padding:10px}
+.navBox{flex:1;background:rgba(255,255,255,.18);border-radius:16px;padding:12px;text-align:center;cursor:pointer;font-weight:600}
 
 /* TIME */
-#timeBox{
-  position:fixed;
-  top:85px;
-  right:35px;
-  background:rgba(0,0,0,.35);
-  padding:6px 14px;
-  border-radius:12px;
-  font-size:14px;
-}
+#timeBox{position:fixed;top:85px;right:35px;background:rgba(0,0,0,.35);padding:6px 14px;border-radius:12px;font-size:14px;}
 
 /* SIDEBAR */
-#sidebar{
-  position:fixed;
-  top:0;
-  left:-260px;
-  width:260px;
-  height:100%;
-  background:#020617;
-  padding:15px;
-  transition:.3s;
-  z-index:100;
-}
+#sidebar{position:fixed;top:0;left:-260px;width:260px;height:100%;background:#020617;padding:15px;transition:.3s;z-index:100}
 #sidebar.active{left:0}
-.sideItem{
-  padding:12px;
-  border-bottom:1px solid #334;
-  cursor:pointer;
-}
+.sideItem{padding:12px;border-bottom:1px solid #334;cursor:pointer}
 
 /* PAGE */
 .page{display:none;padding:16px}
 .page.active{display:block}
 
 /* CARD */
-.card{
-  background:rgba(255,255,255,.18);
-  border-radius:20px;
-  padding:18px;
-  margin-bottom:14px;
-}
+.card{background:rgba(255,255,255,.18);border-radius:20px;padding:18px;margin-bottom:14px}
 
-select,input,button{
-  width:100%;
-  padding:12px;
-  border-radius:14px;
-  border:none;
-  margin-top:10px;
-}
-button{background:#38bdf8;font-weight:bold}
+/* INPUTS & BUTTONS */
+select,input,button{width:100%;padding:12px;border-radius:14px;border:none;margin-top:10px}
+button{background:#38bdf8;font-weight:bold;cursor:pointer}
 
 /* TASKS */
-.task{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px;
-  background:rgba(255,255,255,.2);
-  border-radius:12px;
-  margin-top:8px;
-}
+.task{display:flex;justify-content:space-between;align-items:center;padding:10px;background:rgba(255,255,255,.2);border-radius:12px;margin-top:8px}
 .task.done{text-decoration:line-through;opacity:.6}
 .trash{cursor:pointer}
 
 /* PROMO BADGES */
-.badge{
-  padding:8px;
-  border-radius:12px;
-  font-weight:bold;
-  text-align:center;
-  margin-bottom:10px;
-}
+.badge{padding:8px;border-radius:12px;font-weight:bold;text-align:center;margin-bottom:10px}
 .creator{background:#facc15;color:#000}
 .user{background:#38bdf8;color:#000}
+
+/* ACCUEIL CARDS FLEX */
+#homeCards{display:flex;gap:10px;flex-wrap:wrap}
+#homeCards .card{flex:1;min-width:120px}
 </style>
 </head>
 
@@ -151,10 +87,23 @@ button{background:#38bdf8;font-weight:bold}
 
 <!-- HOME -->
 <div id="home" class="page active">
-  <div class="card">
-    <h3>⚙️ Paramètres</h3>
+  <div id="homeCards">
+    <!-- CODE PROMO À GAUCHE -->
+    <div class="card" onclick="showPage('promo')">
+      <h3>💳 Code Promo</h3>
+      <p>Accède aux codes promos</p>
+    </div>
 
-    <label>🎨 Thème</label>
+    <!-- HISTORIQUE À DROITE -->
+    <div class="card" onclick="showPage('history')">
+      <h3>📊 Historique</h3>
+      <p>Points, niveau et stats</p>
+    </div>
+  </div>
+
+  <!-- THEME -->
+  <div class="card">
+    <h3>🎨 Thème</h3>
     <select id="themeSelect" onchange="changeTheme(this.value)">
       <option value="green">Vert</option>
       <option value="red">Rouge</option>
@@ -163,16 +112,20 @@ button{background:#38bdf8;font-weight:bold}
       <option value="violet">Violet</option>
       <option value="orange">Orange</option>
     </select>
+  </div>
 
-    <label>🌍 Langue</label>
-    <select>
-      <option>Français</option>
-      <option>English</option>
-      <option>Español</option>
-      <option>Deutsch</option>
+  <!-- LANGUE -->
+  <div class="card">
+    <h3>🌍 Langue</h3>
+    <select id="langSelect" onchange="changeLang(this.value)">
+      <option value="fr">Français</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="de">Deutsch</option>
     </select>
   </div>
 
+  <!-- TÂCHES -->
   <div class="card">
     <h3>✅ Tâches</h3>
     <input id="taskInput" placeholder="Nouvelle tâche">
@@ -187,7 +140,7 @@ button{background:#38bdf8;font-weight:bold}
     <h3>🧠 IA Locale</h3>
     <p id="iaText">Pose-moi une question.</p>
     <input id="iaInput" placeholder="Écris ici">
-    <button onclick="askIA()">Envoyer</button>
+    <button onclick="askIA()">➡️ Envoyer</button>
   </div>
 </div>
 
@@ -218,6 +171,7 @@ button{background:#38bdf8;font-weight:bold}
 
 <script>
 /* MENU */
+const sidebar=document.getElementById("sidebar");
 function toggleMenu(){sidebar.classList.toggle("active")}
 function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
@@ -238,10 +192,18 @@ if(localStorage.theme){
   themeSelect.value=localStorage.theme
 }
 
+/* LANGUE */
+function changeLang(l){
+  localStorage.lang=l
+  alert("Langue changée : "+l)
+}
+if(localStorage.lang){
+  langSelect.value=localStorage.lang
+}
+
 /* TASKS */
 let tasks=[]
 let points=0
-
 function addTask(){
   if(!taskInput.value)return
   tasks.push({t:taskInput.value,d:false})
@@ -254,7 +216,7 @@ function renderTasks(){
   tasks.forEach((x,i)=>{
     let d=document.createElement("div")
     d.className="task"+(x.d?" done":"")
-    d.innerHTML=`<span>${x.t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`
+    d.innerHTML=`<span>${x.t}</span><span class="trash" onclick="delTask(${i});event.stopPropagation()">🗑️</span>`
     d.onclick=()=>{x.d=!x.d;renderTasks()}
     taskList.appendChild(d)
   })
@@ -264,6 +226,7 @@ function delTask(i){tasks.splice(i,1);renderTasks()}
 
 /* STATS */
 function updateStats(){
+  pointsEl=document.getElementById("points")
   pointsEl.textContent=points
   level.textContent=Math.floor(points/50)+1
 }
@@ -279,8 +242,8 @@ function askIA(){
 }
 
 /* PROMO */
-const creatorCodes=["CREATOR1234"]
-const userCodes=["USER1111","USER2222"]
+const creatorCodes=["CRP2.0ROROOLNR"]
+const userCodes=["A4G7R2T9X1","M2Q8P5Z4R7","B9K1T7X2L5","F3V8P6Q1R9","G1X9M4T2V7","H7R2C9P1Q5","K4T1X7R3M9","L5Q2V9T6F1","N3P7K2X4B8","R2M9F4T1Q6"]
 
 function applyPromo(){
   const c=promoInput.value.toUpperCase()
@@ -296,4 +259,4 @@ function applyPromo(){
 </script>
 
 </body>
-  </html>
+    </html>
