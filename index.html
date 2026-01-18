@@ -53,10 +53,6 @@ button{background:#38bdf8;font-weight:bold;cursor:pointer}
 .badge{padding:8px;border-radius:12px;font-weight:bold;text-align:center;margin-bottom:10px}
 .creator{background:#facc15;color:#000}
 .user{background:#38bdf8;color:#000}
-
-/* ACCUEIL CARDS FLEX */
-#homeCards{display:flex;gap:10px;flex-wrap:wrap}
-#homeCards .card{flex:1;min-width:120px}
 </style>
 </head>
 
@@ -81,25 +77,12 @@ button{background:#38bdf8;font-weight:bold;cursor:pointer}
 <div id="topNav">
   <div class="navBox" onclick="showPage('home')">Accueil</div>
   <div class="navBox" onclick="showPage('ia')">IA</div>
-  <div class="navBox" onclick="showPage('history')">Historique</div>
   <div class="navBox" onclick="showPage('promo')">Code Promo</div>
+  <div class="navBox" onclick="showPage('history')">Historique</div>
 </div>
 
 <!-- HOME -->
 <div id="home" class="page active">
-  <div id="homeCards">
-    <!-- CODE PROMO À GAUCHE -->
-    <div class="card" onclick="showPage('promo')">
-      <h3>💳 Code Promo</h3>
-      <p>Accède aux codes promos</p>
-    </div>
-
-    <!-- HISTORIQUE À DROITE -->
-    <div class="card" onclick="showPage('history')">
-      <h3>📊 Historique</h3>
-      <p>Points, niveau et stats</p>
-    </div>
-  </div>
 
   <!-- THEME -->
   <div class="card">
@@ -132,6 +115,7 @@ button{background:#38bdf8;font-weight:bold;cursor:pointer}
     <button onclick="addTask()">Ajouter</button>
     <div id="taskList"></div>
   </div>
+
 </div>
 
 <!-- IA -->
@@ -151,17 +135,11 @@ button{background:#38bdf8;font-weight:bold;cursor:pointer}
     <p>⭐ Points : <span id="points">0</span></p>
     <p>🎯 Niveau : <span id="level">1</span></p>
   </div>
-
-  <div class="card">
-    <h3>🏆 Classement</h3>
-    <p>Toi → #1</p>
-  </div>
 </div>
 
 <!-- PROMO -->
 <div id="promo" class="page">
   <div id="promoStatus"></div>
-
   <div class="card">
     <h3>💳 Code Promo</h3>
     <input id="promoInput" placeholder="Entrer un code">
@@ -170,8 +148,9 @@ button{background:#38bdf8;font-weight:bold;cursor:pointer}
 </div>
 
 <script>
-/* MENU */
 const sidebar=document.getElementById("sidebar");
+
+/* MENU */
 function toggleMenu(){sidebar.classList.toggle("active")}
 function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
@@ -215,9 +194,8 @@ function renderTasks(){
   taskList.innerHTML=""
   tasks.forEach((x,i)=>{
     let d=document.createElement("div")
-    d.className="task"+(x.d?" done":"")
+    d.className="task"
     d.innerHTML=`<span>${x.t}</span><span class="trash" onclick="delTask(${i});event.stopPropagation()">🗑️</span>`
-    d.onclick=()=>{x.d=!x.d;renderTasks()}
     taskList.appendChild(d)
   })
   updateStats()
@@ -259,4 +237,4 @@ function applyPromo(){
 </script>
 
 </body>
-    </html>
+  </html>
