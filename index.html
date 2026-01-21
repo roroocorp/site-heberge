@@ -3,63 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daily Life Ultra IA</title>
+<title>Daily Life Ultra IA Futuriste</title>
 <style>
-* { box-sizing:border-box; font-family:system-ui; margin:0; padding:0;}
-body { min-height:100vh; color:white; background:linear-gradient(180deg,#064e3b,#042f2e); display:flex; flex-direction:column; transition:.3s;}
-/* HEADER */
-header { display:flex; align-items:center; padding:14px; gap:12px; position:relative; z-index:10;}
-header h3 { margin:0; font-size:20px; flex:1;}
-#time { background:rgba(0,0,0,.35); padding:8px 16px; border-radius:16px; font-size:14px;}
-.menuBtn { font-size:26px; cursor:pointer;}
-/* TOP NAV */
-#topNav { display:flex; gap:14px; padding:16px; }
-.navBox { flex:1; background:rgba(255,255,255,.25); border-radius:22px; padding:22px 0; text-align:center; font-weight:800; cursor:pointer; font-size:18px; transition:.2s;}
-.navBox:hover { background:rgba(255,255,255,.35);}
-.page { display:none; flex:1; padding:16px; overflow-y:auto;}
-.page.active { display:flex; flex-direction:column; }
-/* CARD */
-.card { background:rgba(255,255,255,.2); border-radius:24px; padding:22px; margin-bottom:18px; }
-.card h3 { margin-bottom:14px; font-size:18px; }
-/* INPUTS */
-select,input,button { width:100%; padding:14px; border-radius:18px; border:none; font-size:16px; margin-top:10px; }
-button { background:#38bdf8; font-weight:700; cursor:pointer; transition:.2s;}
-button:hover { background:#0ea5e9;}
-/* TASKS */
-.task { display:flex; justify-content:space-between; align-items:center; padding:14px; background:rgba(255,255,255,.25); border-radius:16px; margin-top:10px;}
-.trash { cursor:pointer; }
-/* SIDEBAR */
-#sidebar { position:fixed; top:0; left:-260px; width:260px; height:100%; background:#020617; padding:16px; transition:.3s; z-index:100;}
-#sidebar.active { left:0;}
-.sideItem { padding:16px; border-bottom:1px solid #334; font-size:16px; cursor:pointer; }
-.sideItem:hover { background:#333; }
-/* IA CHAT */
-#chatContainer { display:flex; flex-direction:column; flex:1; overflow:hidden; gap:10px; margin-bottom:10px; }
-.chatMsg { padding:12px; border-radius:16px; max-width:70%; animation:fadeIn .3s; word-break:break-word;}
-.userMsg { background:#38bdf8; color:#000; align-self:flex-end;}
-.aiMsg { background:rgba(255,255,255,.25); align-self:flex-start;}
-@keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
-/* IA INPUT */
-#iaInputContainer { display:flex; gap:8px; position:relative; bottom:0; background:rgba(0,0,0,.1); padding:10px; border-radius:20px;}
-#iaInput { flex:1; border-radius:20px; padding:12px; font-size:16px; }
-#sendBtn { border:none; background:#38bdf8; color:#000; border-radius:50%; padding:12px 16px; font-size:18px; cursor:pointer; transition:.2s; }
-#sendBtn:hover { background:#0ea5e9; }
-/* IA SQUARE */
-#iaOptions { display:flex; gap:10px; margin-bottom:10px;}
-.iaOption { flex:1; background:rgba(255,255,255,.25); padding:10px; border-radius:16px; text-align:center; cursor:pointer; font-weight:600; transition:.2s;}
-.iaOption:hover { background:rgba(255,255,255,.35); }
-/* THEMES */
+*{box-sizing:border-box;font-family:system-ui;margin:0;padding:0;}
+body{min-height:100vh;color:white;display:flex;flex-direction:column;transition:0.5s;background:linear-gradient(180deg,#064e3b,#042f2e);}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px;gap:12px;}
+header h3{font-size:20px;margin:0;}
+#time{background:rgba(0,0,0,0.35);padding:8px 16px;border-radius:16px;font-size:14px;}
+.menuBtn{font-size:26px;cursor:pointer;}
+#topNav{display:flex;gap:14px;padding:16px;overflow-x:auto;}
+.navBox{flex:1;text-align:center;font-weight:800;font-size:18px;background:rgba(255,255,255,0.25);padding:20px 0;border-radius:22px;cursor:pointer;transition:0.3s;}
+.navBox:hover{transform:scale(1.05);background:rgba(255,255,255,0.35);}
+.page{display:flex;flex-direction:column;flex:1;padding:16px;overflow-y:auto;position:absolute;width:100%;top:120px;left:0;opacity:0;transition:0.5s;}
+.page.active{opacity:1;z-index:1;}
+.card{background:rgba(255,255,255,0.2);border-radius:24px;padding:22px;margin-bottom:18px;backdrop-filter:blur(8px);}
+.card h3{margin-bottom:14px;font-size:18px;}
+select,input,button{width:100%;padding:14px;border-radius:16px;border:none;font-size:16px;}
+button{margin-top:12px;font-weight:700;background:#38bdf8;cursor:pointer;transition:0.2s;}
+button:hover{background:#22c55e;}
+.task{display:flex;justify-content:space-between;align-items:center;padding:14px;background:rgba(255,255,255,0.25);border-radius:16px;margin-top:10px;}
+.trash{cursor:pointer;}
+#sidebar{position:fixed;top:0;left:-260px;width:260px;height:100%;background:#020617;padding:16px;transition:.3s;z-index:100;}
+#sidebar.active{left:0;}
+.sideItem{padding:16px;border-bottom:1px solid #334;font-size:16px;cursor:pointer;transition:0.2s;}
+.sideItem:hover{background:rgba(255,255,255,0.1);}
 body.green{background:linear-gradient(180deg,#064e3b,#042f2e);}
 body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a);}
 body.blue{background:linear-gradient(180deg,#1e3a8a,#020617);}
 body.rose{background:linear-gradient(180deg,#f43f5e,#be185d);}
 body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065);}
 body.orange{background:linear-gradient(180deg,#f97316,#b45309);}
+
+/* Chat futuriste */
+#chatContainer{display:flex;flex-direction:column;flex:1;background:rgba(255,255,255,0.05);border-radius:24px;padding:16px;overflow-y:auto;margin-bottom:12px;scroll-behavior:smooth;}
+.message{padding:12px;margin-bottom:8px;border-radius:16px;max-width:80%;opacity:0;animation:fadeIn 0.3s forwards;}
+.userMsg{background:rgba(56,189,248,0.5);align-self:flex-end;}
+.iaMsg{background:rgba(250,204,21,0.5);align-self:flex-start;}
+#iaInputContainer{display:flex;gap:12px;margin-top:auto;}
+#iaInput{flex:1;border-radius:16px;padding:14px;}
+.sendBtn{border-radius:50%;padding:14px;font-size:20px;background:#38bdf8;border:none;cursor:pointer;transition:0.2s;}
+.sendBtn:hover{background:#22c55e;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 </style>
 </head>
-<body>
+<body class="green">
 
-<!-- SIDEBAR -->
+<!-- Sidebar -->
 <div id="sidebar">
   <div class="sideItem" onclick="showPage('home')">🏠 Accueil</div>
 </div>
@@ -70,7 +59,6 @@ body.orange{background:linear-gradient(180deg,#f97316,#b45309);}
   <div class="menuBtn" onclick="toggleMenu()">☰</div>
 </header>
 
-<!-- TOP NAV -->
 <div id="topNav">
   <div class="navBox" onclick="showPage('home')">Accueil</div>
   <div class="navBox" onclick="showPage('ia')">IA</div>
@@ -109,16 +97,12 @@ body.orange{background:linear-gradient(180deg,#f97316,#b45309);}
 
 <!-- IA -->
 <div id="ia" class="page">
-  <div class="card" style="flex:1; display:flex; flex-direction:column;">
+  <div class="card" style="display:flex;flex-direction:column;height:70vh;">
     <h3>IA</h3>
-    <div id="iaOptions">
-      <div class="iaOption" onclick="newChat()">🕒 Historique</div>
-      <div class="iaOption" onclick="newChat()">🆕 Nouveau chat</div>
-    </div>
     <div id="chatContainer"></div>
     <div id="iaInputContainer">
       <input id="iaInput" placeholder="Écris ici">
-      <button id="sendBtn" onclick="askIA()">➤</button>
+      <button class="sendBtn" onclick="askIA()">➤</button>
     </div>
   </div>
 </div>
@@ -135,18 +119,40 @@ body.orange{background:linear-gradient(180deg,#f97316,#b45309);}
 
 <script>
 /* TIME */
-setInterval(()=>{time.textContent=new Date().toLocaleTimeString();},1000);
+setInterval(()=>{ time.textContent=new Date().toLocaleTimeString(); },1000);
 
 /* MENU */
 function toggleMenu(){ sidebar.classList.toggle("active"); }
-function showPage(id){ 
+function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  sidebar.classList.remove("active");
 }
 
+/* THEMES */
+function changeTheme(theme){
+  document.body.className=theme;
+  localStorage.setItem("theme",theme);
+}
+if(localStorage.getItem("theme")){
+  document.body.className = localStorage.getItem("theme");
+  themeSelect.value = localStorage.getItem("theme");
+}
+
+/* LANGUES */
+function changeLang(lang){
+  localStorage.setItem("lang",lang);
+  alert("Langue changée : " + (lang==="fr"?"Français":lang==="en"?"Anglais":lang==="es"?"Espagnol":"Allemand"));
+}
+if(localStorage.getItem("lang")) langSelect.value = localStorage.getItem("lang");
+
 /* TASKS */
-let tasks=JSON.parse(localStorage.getItem('tasks')||"[]");
+let tasks=[];
+function addTask(){
+  if(!taskInput.value) return;
+  tasks.push(taskInput.value);
+  taskInput.value="";
+  renderTasks();
+}
 function renderTasks(){
   taskList.innerHTML="";
   tasks.forEach((t,i)=>{
@@ -156,58 +162,57 @@ function renderTasks(){
     taskList.appendChild(d);
   });
 }
-function addTask(){
-  if(!taskInput.value)return;
-  tasks.push(taskInput.value);
-  taskInput.value="";
-  localStorage.setItem('tasks',JSON.stringify(tasks));
-  renderTasks();
-}
-function delTask(i){ tasks.splice(i,1); localStorage.setItem('tasks',JSON.stringify(tasks)); renderTasks(); }
-renderTasks();
-
-/* THEMES */
-if(localStorage.theme){ document.body.className=localStorage.theme; themeSelect.value=localStorage.theme; }
-function changeTheme(t){ document.body.className=t; localStorage.theme=t; }
-
-/* LANGUES */
-if(localStorage.lang){ langSelect.value=localStorage.lang; }
-function changeLang(l){ localStorage.lang=l; }
-
-/* IA CHAT */
-function askIA(){
-  const q=iaInput.value.trim();
-  if(!q) return;
-  addChat("user", q);
-  let rep="";
-  if(q.toLowerCase().includes("salut")) rep="Salut 😄 Je suis là pour t’aider !";
-  else if(q.toLowerCase().includes("repas")){
-    let n=parseInt(q.replace(/\D/g,''))||1;
-    rep="";
-    for(let i=1;i<=n;i++) rep+=`🥘 Idée repas ${i}: Pâtes, riz ou pizza 🍝\n`;
-  } else rep="Je réfléchis 🤖";
-  setTimeout(()=>{addChat("ai", rep);},300);
-  iaInput.value="";
-}
-function addChat(type,text){
-  const d=document.createElement("div");
-  d.className="chatMsg "+(type==="user"?"userMsg":"aiMsg");
-  d.textContent=text;
-  chatContainer.appendChild(d);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-function newChat(){ chatContainer.innerHTML=""; }
+function delTask(i){ tasks.splice(i,1); renderTasks(); }
 
 /* PROMO */
-const creatorCodes=["CRP2.0ROROOLNR"];
-const userCodes=["A4G7R2T9X1","M2Q8P5Z4R7","B9K1T7X2L5","F3V8P6Q1R9","G1X9M4T2V7","H7R2C9P1Q5","K4T1X7R3M9","L5Q2V9T6F1","N3P7K2X4B8","R2M9F4T1Q6"];
+const creatorCodes = ["CRP2.0ROROOLNR"];
+const userCodes = ["A4G7R2T9X1","M2Q8P5Z4R7","B9K1T7X2L5"];
 function applyPromo(){
-  const c=promoInput.value.toUpperCase();
+  const code = promoInput.value.toUpperCase();
   promoStatus.innerHTML="";
-  if(creatorCodes.includes(c)) promoStatus.innerHTML='<div class="badge creator">CODE CRÉATEUR ACTIF</div>';
-  else if(userCodes.includes(c)) promoStatus.innerHTML='<div class="badge user">CODE UTILISATEUR ACTIF</div>';
-  else promoStatus.innerHTML='<div class="badge">Code invalide</div>';
+  if(creatorCodes.includes(code)){
+    promoStatus.innerHTML='<div class="badge creator">CODE CRÉATEUR ACTIF</div>';
+  }else if(userCodes.includes(code)){
+    promoStatus.innerHTML='<div class="badge user">CODE UTILISATEUR ACTIF</div>';
+  }else{
+    promoStatus.innerHTML='<div class="badge">Code invalide</div>';
+  }
+}
+
+/* IA Chat */
+const meals = ["Pizza 🍕","Pâtes 🍝","Salade 🥗","Burger 🍔","Sushi 🍣","Tacos 🌮"];
+function askIA(){
+  const q = iaInput.value.trim();
+  if(!q) return;
+  const userDiv = document.createElement("div");
+  userDiv.className="message userMsg";
+  userDiv.textContent=q;
+  chatContainer.appendChild(userDiv);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  const iaDiv = document.createElement("div");
+  iaDiv.className="message iaMsg";
+
+  if(q.toLowerCase().includes("salut")){
+    iaDiv.textContent="Salut 😄 Je suis là pour t’aider !";
+  } else if(q.toLowerCase().includes("génère-moi")){
+    const match = q.match(/\d+/);
+    let n = match ? parseInt(match[0]) : 1;
+    n = Math.min(n,5);
+    const generated = [];
+    for(let i=0;i<n;i++){
+      const meal = meals[Math.floor(Math.random()*meals.length)];
+      generated.push(meal);
+    }
+    iaDiv.textContent = "Voici votre(s) repas : " + generated.join(", ");
+  } else {
+    iaDiv.textContent="Je réfléchis 🤖";
+  }
+
+  chatContainer.appendChild(iaDiv);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+  iaInput.value="";
 }
 </script>
 </body>
-  </html>
+</html>
