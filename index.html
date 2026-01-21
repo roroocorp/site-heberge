@@ -5,68 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
 <style>
-* { box-sizing:border-box; font-family:system-ui; margin:0; padding:0; }
-body { min-height:100vh; color:white; background:linear-gradient(180deg,#064e3b,#042f2e); transition:0.3s; }
-header{ display:flex; align-items:center; gap:12px; padding:14px; }
-header h3{ margin:0; font-size:20px; }
-#time{ background:rgba(0,0,0,.35); padding:8px 16px; border-radius:16px; font-size:14px; }
-.menuBtn{ margin-left:auto; font-size:26px; cursor:pointer; }
-
+* { box-sizing:border-box; font-family: system-ui; margin:0; padding:0; }
+body { min-height:100vh; color:white; background: linear-gradient(180deg,#064e3b,#042f2e); transition:.3s; display:flex; flex-direction:column;}
+/* HEADER */
+header { display:flex; align-items:center; padding:14px; gap:12px; position:relative; z-index:10; }
+header h3 { margin:0; font-size:20px; }
+#time { background:rgba(0,0,0,.35); padding:8px 16px; border-radius:16px; font-size:14px; margin-left:auto; }
+.menuBtn { font-size:26px; cursor:pointer; }
 /* TOP NAV */
-#topNav{ display:flex; gap:14px; padding:16px; }
-.navBox{ flex:1; background:rgba(255,255,255,.2); border-radius:22px; padding:22px 0; text-align:center; font-weight:800; cursor:pointer; font-size:18px; transition:0.3s; }
-.navBox:hover{ background:rgba(255,255,255,.35); }
-
+#topNav { display:flex; gap:14px; padding:16px; }
+.navBox { flex:1; background:rgba(255,255,255,.25); border-radius:22px; padding:22px 0; text-align:center; font-weight:800; cursor:pointer; font-size:18px; transition:.2s; }
+.navBox:hover { background:rgba(255,255,255,.35); }
 /* PAGE */
-.page{ display:none; padding:16px; opacity:0; transition:0.3s; }
-.page.active{ display:block; opacity:1; }
-
+.page { display:none; flex:1; padding:16px; overflow-y:auto; }
+.page.active { display:flex; flex-direction:column; }
 /* CARD */
-.card{ background:rgba(255,255,255,.15); border-radius:24px; padding:22px; margin-bottom:18px; transition:0.3s; }
-.card:hover{ background:rgba(255,255,255,.25); }
-.card h3{ margin-bottom:14px; font-size:18px; }
-
+.card { background:rgba(255,255,255,.2); border-radius:24px; padding:22px; margin-bottom:18px; }
+.card h3 { margin-bottom:14px; font-size:18px; }
 /* INPUTS */
-select,input,button{ width:100%; padding:18px; border-radius:18px; border:none; font-size:16px; transition:0.3s; }
-button{ margin-top:12px; background:#38bdf8; font-weight:700; cursor:pointer; }
-button:hover{ background:#0ea5e9; }
-
+select, input, button { width:100%; padding:14px; border-radius:18px; border:none; font-size:16px; margin-top:10px; }
+button { background:#38bdf8; font-weight:700; cursor:pointer; transition:.2s; }
+button:hover { background:#0ea5e9; }
 /* TASKS */
-.task{ display:flex; justify-content:space-between; align-items:center; padding:14px; background:rgba(255,255,255,.25); border-radius:16px; margin-top:10px; cursor:pointer; transition:0.2s; }
-.task.done span:first-child{ text-decoration:line-through; opacity:0.6; }
-.trash{ cursor:pointer; margin-left:10px; }
-
+.task { display:flex; justify-content:space-between; align-items:center; padding:14px; background:rgba(255,255,255,.25); border-radius:16px; margin-top:10px; cursor:pointer; transition:.2s; }
+.task.done { text-decoration: line-through; opacity:.6; }
+.task:hover { background:rgba(255,255,255,.35); }
+.trash { cursor:pointer; margin-left:8px; }
 /* SIDEBAR */
-#sidebar{ position:fixed; top:0; left:-260px; width:260px; height:100%; background:#020617; padding:16px; transition:.3s; z-index:100; }
-#sidebar.active{ left:0; }
-.sideItem{ padding:16px; border-bottom:1px solid #334; font-size:16px; cursor:pointer; }
-.sideItem:hover{ background:#111827; }
-
-/* IA Chat Style */
-#iaBox{ display:flex; flex-direction:column; height:400px; background:rgba(0,0,0,.2); border-radius:16px; padding:16px; overflow-y:auto; margin-bottom:12px; }
-.message{ padding:10px 14px; border-radius:12px; margin-bottom:8px; max-width:80%; word-wrap:break-word; }
-.userMsg{ background:#38bdf8; color:#000; align-self:flex-end; }
-.iaMsg{ background:rgba(255,255,255,.3); color:#000; align-self:flex-start; }
-#iaInputContainer{ display:flex; gap:10px; }
-#iaInputContainer input{ flex:1; }
-#iaInputContainer button{ width:50px; border-radius:50%; padding:0; font-size:20px; }
-
+#sidebar { position:fixed; top:0; left:-260px; width:260px; height:100%; background:#020617; padding:16px; transition:.3s; z-index:100; }
+#sidebar.active { left:0; }
+.sideItem { padding:16px; border-bottom:1px solid #334; font-size:16px; cursor:pointer; }
+.sideItem:hover { background:#333; }
+/* IA CHAT */
+#chatContainer { display:flex; flex-direction:column; flex:1; overflow-y:auto; gap:10px; margin-bottom:10px; }
+.chatMsg { padding:12px; border-radius:16px; max-width:70%; animation:fadeIn .3s; }
+.userMsg { background:#38bdf8; color:#000; align-self:flex-end; }
+.aiMsg { background:rgba(255,255,255,.25); align-self:flex-start; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+/* IA INPUT */
+#iaInputContainer { display:flex; gap:8px; position:sticky; bottom:0; background:rgba(0,0,0,.1); padding:10px; border-radius:20px; }
+#iaInput { flex:1; border-radius:20px; padding:12px; font-size:16px; }
+#sendBtn { border:none; background:#38bdf8; color:#000; border-radius:50%; padding:12px 16px; font-size:18px; cursor:pointer; transition:.2s; }
+#sendBtn:hover { background:#0ea5e9; }
 /* THEMES */
-body.green{ background:linear-gradient(180deg,#064e3b,#042f2e);}
-body.red{ background:linear-gradient(180deg,#7f1d1d,#450a0a);}
-body.blue{ background:linear-gradient(180deg,#1e3a8a,#020617);}
-body.rose{ background:linear-gradient(180deg,#f43f5e,#be185d);}
-body.violet{ background:linear-gradient(180deg,#5b21b6,#2e1065);}
-body.orange{ background:linear-gradient(180deg,#f97316,#b45309);}
+body.green{background:linear-gradient(180deg,#064e3b,#042f2e);}
+body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a);}
+body.blue{background:linear-gradient(180deg,#1e3a8a,#020617);}
+body.rose{background:linear-gradient(180deg,#f43f5e,#be185d);}
+body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065);}
+body.orange{background:linear-gradient(180deg,#f97316,#b45309);}
 </style>
 </head>
-<body class="green">
+<body>
 
 <!-- SIDEBAR -->
 <div id="sidebar">
-  <div class="sideItem" onclick="showPage('home')">Accueil</div>
-  <div class="sideItem" onclick="showPage('ia')">IA</div>
-  <div class="sideItem" onclick="showPage('promo')">Code Promo</div>
+  <div class="sideItem" onclick="showPage('home')">🏠 Accueil</div>
 </div>
 
 <header>
@@ -95,7 +89,6 @@ body.orange{ background:linear-gradient(180deg,#f97316,#b45309);}
       <option value="orange">Orange</option>
     </select>
   </div>
-
   <div class="card">
     <h3>🌍 Langue</h3>
     <select id="langSelect" onchange="changeLang(this.value)">
@@ -105,7 +98,6 @@ body.orange{ background:linear-gradient(180deg,#f97316,#b45309);}
       <option value="de">Allemand</option>
     </select>
   </div>
-
   <div class="card">
     <h3>✅ Tâches</h3>
     <input id="taskInput" placeholder="Nouvelle tâche">
@@ -116,11 +108,12 @@ body.orange{ background:linear-gradient(180deg,#f97316,#b45309);}
 
 <!-- IA -->
 <div id="ia" class="page">
-  <div class="card" style="display:flex; flex-direction:column; height:500px;">
-    <div id="iaBox"></div>
+  <div class="card" style="flex:1; display:flex; flex-direction:column;">
+    <h3>IA</h3>
+    <div id="chatContainer"></div>
     <div id="iaInputContainer">
       <input id="iaInput" placeholder="Écris ici">
-      <button onclick="askIA()">⬆️</button>
+      <button id="sendBtn" onclick="askIA()">➤</button>
     </div>
   </div>
 </div>
@@ -137,74 +130,85 @@ body.orange{ background:linear-gradient(180deg,#f97316,#b45309);}
 
 <script>
 /* TIME */
-setInterval(()=>{ document.getElementById('time').textContent=new Date().toLocaleTimeString(); },1000);
+setInterval(()=>{time.textContent=new Date().toLocaleTimeString();},1000);
 
 /* MENU */
-function toggleMenu(){ document.getElementById('sidebar').classList.toggle("active"); }
-function showPage(id){
+function toggleMenu(){ sidebar.classList.toggle("active"); }
+function showPage(id){ 
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  document.getElementById('sidebar').classList.remove("active");
+  sidebar.classList.remove("active");
 }
-
-/* THEME & LANGUE */
-if(localStorage.theme){ document.body.className=localStorage.theme; document.getElementById('themeSelect').value=localStorage.theme; }
-function changeTheme(t){ document.body.className=t; localStorage.theme=t; }
-
-if(localStorage.lang){ document.getElementById('langSelect').value=localStorage.lang; }
-function changeLang(l){ localStorage.lang=l; }
 
 /* TASKS */
-let tasks=[]; 
-function addTask(){ 
-  const val=document.getElementById('taskInput').value; 
-  if(!val) return; 
-  tasks.push({text:val,done:false}); 
-  document.getElementById('taskInput').value=""; 
-  renderTasks(); 
-}
+let tasks=JSON.parse(localStorage.getItem('tasks')||"[]");
 function renderTasks(){
-  const taskList=document.getElementById('taskList');
   taskList.innerHTML="";
   tasks.forEach((t,i)=>{
-    const d=document.createElement('div');
-    d.className="task"+(t.done?" done":"");
-    d.innerHTML=`<span>${t.text}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`;
-    d.onclick=()=>{ t.done=!t.done; renderTasks(); }
+    let d=document.createElement("div");
+    d.className="task";
+    d.innerHTML=`<span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`;
+    d.onclick=()=>{ d.classList.toggle("done"); }
     taskList.appendChild(d);
   });
 }
-function delTask(i){ tasks.splice(i,1); renderTasks(); }
+function addTask(){
+  if(!taskInput.value)return;
+  tasks.push(taskInput.value);
+  taskInput.value="";
+  localStorage.setItem('tasks',JSON.stringify(tasks));
+  renderTasks();
+}
+function delTask(i){ tasks.splice(i,1); localStorage.setItem('tasks',JSON.stringify(tasks)); renderTasks(); }
+renderTasks();
 
-/* IA */
+/* THEMES */
+if(localStorage.theme){ document.body.className=localStorage.theme; themeSelect.value=localStorage.theme; }
+function changeTheme(t){ document.body.className=t; localStorage.theme=t; }
+
+/* LANGUES */
+if(localStorage.lang){ langSelect.value=localStorage.lang; }
+function changeLang(l){ localStorage.lang=l; }
+
+/* IA CHAT */
 function askIA(){
-  const q=document.getElementById('iaInput').value.trim();
+  const q=iaInput.value.trim();
   if(!q) return;
-  const box=document.getElementById('iaBox');
-  const userMsg=document.createElement('div');
-  userMsg.className='message userMsg'; userMsg.textContent=q;
-  box.appendChild(userMsg);
-
-  let reply='Je réfléchis 🤖';
-  if(q.toLowerCase().includes('salut')) reply='Salut 😄 Je suis là pour t’aider.';
-  else if(q.toLowerCase().includes('recette')) reply='Pâtes, riz ou pizza 🍝';
-
-  const iaMsg=document.createElement('div'); iaMsg.className='message iaMsg'; iaMsg.textContent=reply;
-  box.appendChild(iaMsg);
-  box.scrollTop=box.scrollHeight;
-  document.getElementById('iaInput').value="";
+  addChat("user", q);
+  let rep="";
+  if(q.toLowerCase().includes("salut")) rep="Salut 😄 Je suis là pour t’aider !";
+  else if(q.toLowerCase().includes("repas")){
+    let n=parseInt(q.replace(/\D/g,''))||1;
+    rep="";
+    for(let i=1;i<=n;i++) rep+=`🥘 Idée repas ${i}: Pâtes, riz ou pizza 🍝\n`;
+  } else rep="Je réfléchis 🤖";
+  setTimeout(()=>{addChat("ai", rep);},300);
+  iaInput.value="";
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+function addChat(type,text){
+  const d=document.createElement("div");
+  d.className="chatMsg "+(type==="user"?"userMsg":"aiMsg");
+  d.textContent=text;
+  chatContainer.appendChild(d);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
 /* PROMO */
 const creatorCodes=["CRP2.0ROROOLNR"];
 const userCodes=["A4G7R2T9X1","M2Q8P5Z4R7","B9K1T7X2L5","F3V8P6Q1R9","G1X9M4T2V7","H7R2C9P1Q5","K4T1X7R3M9","L5Q2V9T6F1","N3P7K2X4B8","R2M9F4T1Q6"];
 function applyPromo(){
-  const c=document.getElementById('promoInput').value.toUpperCase();
-  const ps=document.getElementById('promoStatus'); ps.innerHTML="";
-  if(creatorCodes.includes(c)) ps.innerHTML='<div class="badge creator">CODE CRÉATEUR ACTIF</div>';
-  else if(userCodes.includes(c)) ps.innerHTML='<div class="badge user">CODE UTILISATEUR ACTIF</div>';
-  else ps.innerHTML='<div class="badge">Code invalide</div>';
+  const c=promoInput.value.toUpperCase();
+  promoStatus.innerHTML="";
+  if(creatorCodes.includes(c)){
+    promoStatus.innerHTML='<div class="badge creator">CODE CRÉATEUR ACTIF</div>';
+  } else if(userCodes.includes(c)){
+    promoStatus.innerHTML='<div class="badge user">CODE UTILISATEUR ACTIF</div>';
+  } else {
+    promoStatus.innerHTML='<div class="badge">Code invalide</div>';
+  }
 }
 </script>
+
 </body>
-  </html>
+</html>
