@@ -4,138 +4,61 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
-
 <style>
-*{box-sizing:border-box;font-family:system-ui}
-body{
-  margin:0;
-  min-height:100vh;
-  color:white;
-  background:linear-gradient(180deg,#064e3b,#042f2e);
-}
+*{box-sizing:border-box;font-family:system-ui;margin:0;padding:0;}
+body{min-height:100vh;color:white;background:linear-gradient(180deg,#064e3b,#042f2e);transition:.3s;}
 
 /* HEADER */
-header{
-  display:flex;
-  align-items:center;
-  padding:14px;
-  gap:12px;
-}
-header h3{margin:0;font-size:20px}
-#time{
-  background:rgba(0,0,0,.35);
-  padding:6px 14px;
-  border-radius:14px;
-  font-size:14px;
-}
-.menuBtn{margin-left:auto;font-size:26px;cursor:pointer}
+header{display:flex;align-items:center;gap:12px;padding:14px;}
+header h3{margin:0;font-size:20px;}
+#time{background:rgba(0,0,0,.35);padding:8px 16px;border-radius:16px;font-size:14px;margin-left:12px;}
+.menuBtn{margin-left:auto;font-size:26px;cursor:pointer;}
 
 /* TOP NAV */
-#topNav{
-  display:flex;
-  gap:14px;
-  padding:16px;
-}
-.navBox{
-  flex:1;
-  background:rgba(255,255,255,.25);
-  border-radius:22px;
-  padding:22px 0;
-  text-align:center;
-  font-weight:800;
-  cursor:pointer;
-  font-size:18px;
-}
+#topNav{display:flex;gap:14px;padding:16px;}
+.navBox{flex:1;background:rgba(255,255,255,.25);border-radius:22px;padding:22px 0;text-align:center;font-weight:800;cursor:pointer;font-size:18px;transition:.2s;}
+.navBox:hover{background:rgba(255,255,255,.35);}
 
 /* PAGE */
-.page{display:none;padding:16px}
-.page.active{display:block}
+.page{display:none;padding:16px;}
+.page.active{display:block;}
 
 /* CARD */
-.card{
-  background:rgba(255,255,255,.2);
-  border-radius:24px;
-  padding:22px;
-  margin-bottom:18px;
-}
+.card{background:rgba(255,255,255,.2);border-radius:24px;padding:22px;margin-bottom:18px;}
+.card h3{margin-top:0;margin-bottom:14px;font-size:18px;}
 
 /* INPUTS */
-select,input,button{
-  width:100%;
-  padding:16px;
-  border-radius:16px;
-  border:none;
-  font-size:16px;
-}
-button{background:#38bdf8;font-weight:700}
+select,input,button{width:100%;padding:16px;border-radius:18px;border:none;font-size:16px;}
+button{margin-top:12px;background:#38bdf8;font-weight:700;cursor:pointer;transition:.2s;}
+button:hover{opacity:.85;}
+
+/* TASKS */
+.task{display:flex;justify-content:space-between;align-items:center;padding:14px;background:rgba(255,255,255,.25);border-radius:16px;margin-top:10px;cursor:pointer;}
+.task.done{text-decoration:line-through;opacity:.6;}
+.trash{cursor:pointer;margin-left:12px;}
 
 /* SIDEBAR */
-#sidebar{
-  position:fixed;
-  top:0;
-  left:-260px;
-  width:260px;
-  height:100%;
-  background:#020617;
-  padding:16px;
-  transition:.3s;
-  z-index:100;
-}
-#sidebar.active{left:0}
-.sideItem{
-  padding:16px;
-  border-bottom:1px solid #334;
-  cursor:pointer;
-}
+#sidebar{position:fixed;top:0;left:-260px;width:260px;height:100%;background:#020617;padding:16px;transition:.3s;z-index:100;}
+#sidebar.active{left:0;}
+.sideItem{padding:16px;border-bottom:1px solid #334;font-size:16px;cursor:pointer;}
 
-/* IA CHAT */
-.chat{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  max-height:55vh;
-  overflow-y:auto;
-}
-.msg{
-  padding:12px 16px;
-  border-radius:16px;
-  max-width:80%;
-}
-.user{align-self:flex-end;background:#38bdf8;color:black}
-.bot{align-self:flex-start;background:rgba(255,255,255,.25)}
+/* IA */
+#iaInput{margin-top:12px;}
+#iaSend{width:50px;height:50px;border-radius:50%;background:#38bdf8;color:#000;font-weight:bold;border:none;cursor:pointer;margin-left:8px;}
 
-.chatBar{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:#042f2e;
-  padding:12px;
-  display:flex;
-  gap:10px;
-}
-.chatBar input{flex:1}
-.sendBtn{
-  width:52px;
-  border-radius:50%;
-  font-size:20px;
-}
-.delBtn{
-  width:52px;
-  border-radius:50%;
-  background:#ef4444;
-  font-size:18px;
-}
+/* PROMO BADGE */
+.badge{padding:8px;border-radius:12px;font-weight:bold;text-align:center;margin-bottom:10px;}
+.creator{background:#facc15;color:#000;}
+.user{background:#38bdf8;color:#000;}
 </style>
 </head>
-
 <body>
 
 <!-- SIDEBAR -->
 <div id="sidebar">
   <div class="sideItem" onclick="showPage('home')">Accueil</div>
-  <div class="sideItem">⚙️ Paramètres</div>
-  <div class="sideItem">📋 Tâches</div>
+  <div class="sideItem" onclick="showPage('ia')">IA</div>
+  <div class="sideItem" onclick="showPage('promo')">Code Promo</div>
 </div>
 
 <header>
@@ -144,6 +67,7 @@ button{background:#38bdf8;font-weight:700}
   <div class="menuBtn" onclick="toggleMenu()">☰</div>
 </header>
 
+<!-- TOP NAV -->
 <div id="topNav">
   <div class="navBox" onclick="showPage('home')">Accueil</div>
   <div class="navBox" onclick="showPage('ia')">IA</div>
@@ -152,89 +76,136 @@ button{background:#38bdf8;font-weight:700}
 
 <!-- ACCUEIL -->
 <div id="home" class="page active">
+
   <div class="card">
     <h3>🎨 Thème</h3>
-    <select>
-      <option>Vert</option>
-      <option>Rouge</option>
-      <option>Bleu</option>
-      <option>Rose</option>
+    <select id="themeSelect" onchange="changeTheme(this.value)">
+      <option value="green">Vert</option>
+      <option value="red">Rouge</option>
+      <option value="blue">Bleu</option>
+      <option value="rose">Rose</option>
     </select>
   </div>
 
   <div class="card">
     <h3>🌍 Langue</h3>
-    <select>
-      <option>Français</option>
-      <option>Anglais</option>
-      <option>Espagnol</option>
-      <option>Allemand</option>
+    <select id="langSelect" onchange="changeLang(this.value)">
+      <option value="fr">Français</option>
+      <option value="en">Anglais</option>
+      <option value="es">Espagnol</option>
+      <option value="de">Allemand</option>
     </select>
+  </div>
+
+  <div class="card">
+    <h3>✅ Tâches</h3>
+    <input id="taskInput" placeholder="Nouvelle tâche">
+    <button onclick="addTask()">Ajouter</button>
+    <div id="taskList"></div>
   </div>
 </div>
 
 <!-- IA -->
 <div id="ia" class="page">
   <div class="card">
-    <div class="chat" id="chat"></div>
+    <h3>IA</h3>
+    <p id="iaText">Salut 👋 Que puis-je faire pour toi ?</p>
+    <div style="display:flex;align-items:center;">
+      <input id="iaInput" placeholder="Écris ici">
+      <button id="iaSend" onclick="askIA()">⬆️</button>
+    </div>
   </div>
-</div>
-
-<div class="chatBar">
-  <input id="iaInput" placeholder="Écrire un message…">
-  <button class="delBtn" onclick="deleteLast()">🗑️</button>
-  <button class="sendBtn" onclick="sendMsg()">⬆️</button>
 </div>
 
 <!-- PROMO -->
 <div id="promo" class="page">
+  <div id="promoStatus"></div>
   <div class="card">
     <h3>Code Promo</h3>
-    <input placeholder="Entre ton code promo">
-    <button style="margin-top:12px">Valider</button>
+    <input id="promoInput" placeholder="Entre ton code">
+    <button onclick="applyPromo()">Valider</button>
   </div>
 </div>
 
 <script>
 /* TIME */
-setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000)
+setInterval(()=>{time.textContent=new Date().toLocaleTimeString();},1000);
 
 /* MENU */
-function toggleMenu(){sidebar.classList.toggle("active")}
+function toggleMenu(){sidebar.classList.toggle("active");}
 function showPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
-  document.getElementById(id).classList.add("active")
-  sidebar.classList.remove("active")
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  sidebar.classList.remove("active");
 }
 
+/* THEME */
+function changeTheme(t){
+  document.body.className=t;
+  localStorage.theme=t;
+}
+if(localStorage.theme){
+  document.body.className=localStorage.theme;
+  themeSelect.value=localStorage.theme;
+}
+
+/* LANGUE */
+function changeLang(l){
+  localStorage.lang=l;
+  switch(l){
+    case "fr": break;
+    case "en": break;
+    case "es": break;
+    case "de": break;
+  }
+}
+if(localStorage.lang) langSelect.value=localStorage.lang;
+
+/* TASKS */
+let tasks=[];
+function addTask(){
+  if(!taskInput.value)return;
+  tasks.push({t:taskInput.value,d:false});
+  taskInput.value="";
+  renderTasks();
+}
+function renderTasks(){
+  taskList.innerHTML="";
+  tasks.forEach((x,i)=>{
+    let d=document.createElement("div");
+    d.className="task"+(x.d?" done":"");
+    d.innerHTML=`<span onclick="toggleDone(${i})">${x.t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`;
+    taskList.appendChild(d);
+  });
+}
+function toggleDone(i){tasks[i].d=!tasks[i].d;renderTasks();}
+function delTask(i){tasks.splice(i,1);renderTasks();}
+
 /* IA */
-let memory=JSON.parse(localStorage.chat||"[]")
-function renderChat(){
-  chat.innerHTML=""
-  memory.forEach(m=>{
-    let d=document.createElement("div")
-    d.className="msg "+m.who
-    d.textContent=m.text
-    chat.appendChild(d)
-  })
-  chat.scrollTop=chat.scrollHeight
+function askIA(){
+  const q=iaInput.value.trim();
+  if(!q)return;
+  iaText.textContent = q.toLowerCase().includes("salut")
+    ? "Salut 😄 Je suis là pour t’aider."
+    : "Je réfléchis 🤖";
+  iaInput.value="";
 }
-function sendMsg(){
-  const q=iaInput.value.trim()
-  if(!q)return
-  memory.push({who:"user",text:q})
-  memory.push({who:"bot",text:"D’accord 👍 je t’écoute."})
-  localStorage.chat=JSON.stringify(memory)
-  iaInput.value=""
-  renderChat()
+
+/* PROMO */
+const creatorCodes=["CRP2.0ROROOLNR"];
+const userCodes=["A4G7R2T9X1","M2Q8P5Z4R7","B9K1T7X2L5","F3V8P6Q1R9","G1X9M4T2V7","H7R2C9P1Q5","K4T1X7R3M9","L5Q2V9T6F1","N3P7K2X4B8","R2M9F4T1Q6"];
+function applyPromo(){
+  const c=promoInput.value.toUpperCase().trim();
+  promoStatus.innerHTML="";
+  if(creatorCodes.includes(c)){
+    promoStatus.innerHTML='<div class="badge creator">CODE CRÉATEUR ACTIF</div>';
+  } else if(userCodes.includes(c)){
+    promoStatus.innerHTML='<div class="badge user">CODE UTILISATEUR ACTIF</div>';
+  } else {
+    promoStatus.innerHTML='<div class="badge">Code invalide</div>';
+  }
 }
-function deleteLast(){
-  memory.pop()
-  localStorage.chat=JSON.stringify(memory)
-  renderChat()
-}
-renderChat()
 </script>
 
 </body>
-</html>
+  </html>
