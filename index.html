@@ -10,9 +10,17 @@
 body{
   margin:0;
   height:100vh;
-  background:#0f0f0f;
-  color:#e5e5e5;
+  background:var(--bg,#0f172a);
+  color:white;
   overflow:hidden;
+}
+
+/* THEMES */
+:root{
+  --green:linear-gradient(180deg,#064e3b,#042f2e);
+  --violet:linear-gradient(180deg,#4c1d95,#1e1b4b);
+  --orange:linear-gradient(180deg,#7c2d12,#431407);
+  --blue:linear-gradient(180deg,#1e3a8a,#020617);
 }
 
 /* HEADER */
@@ -20,10 +28,9 @@ header{
   display:flex;
   align-items:center;
   padding:14px;
-  background:#181818;
 }
-header h3{margin:0;font-size:18px}
-#time{margin-left:auto;font-size:14px;opacity:.7}
+header h3{margin:0}
+#time{margin-left:auto;font-size:14px;opacity:.8}
 .menuBtn{margin-left:12px;font-size:22px;cursor:pointer}
 
 /* TOP NAV */
@@ -31,70 +38,95 @@ header h3{margin:0;font-size:18px}
   display:flex;
   gap:10px;
   padding:10px;
-  background:#121212;
 }
 .navBox{
   flex:1;
-  padding:14px;
-  border-radius:14px;
-  background:#1e1e1e;
+  padding:16px;
+  border-radius:18px;
+  background:rgba(255,255,255,.2);
   text-align:center;
   cursor:pointer;
+  font-weight:700;
 }
-.navBox.active{background:#2a2a2a}
+.navBox.active{background:rgba(255,255,255,.35)}
 
-/* PAGES */
+/* PAGE */
 .page{
   display:none;
-  height:calc(100vh - 118px);
+  height:calc(100vh - 120px);
+  padding:14px;
+  overflow:hidden;
 }
-.page.active{display:flex}
+.page.active{display:block}
 
-/* IA CHAT */
-#ia{
+/* CARD */
+.card{
+  background:rgba(255,255,255,.2);
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:14px;
+}
+
+/* INPUT */
+select,input,button{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  font-size:15px;
+}
+button{
+  margin-top:10px;
+  background:#38bdf8;
+  font-weight:700;
+}
+
+/* TASKS */
+.task{
+  display:flex;
+  justify-content:space-between;
+  padding:12px;
+  background:rgba(255,255,255,.25);
+  border-radius:14px;
+  margin-top:8px;
+}
+.trash{cursor:pointer}
+
+/* CHAT */
+#chat{
+  height:100%;
+  display:flex;
   flex-direction:column;
 }
-#chat{
+#messages{
   flex:1;
-  padding:16px;
   overflow-y:auto;
 }
 .msg{
   max-width:80%;
   margin-bottom:10px;
-  padding:12px 14px;
+  padding:12px;
   border-radius:14px;
-  white-space:pre-line;
 }
-.user{background:#2a2a2a;margin-left:auto}
-.bot{background:#1e1e1e}
+.user{background:#2563eb;margin-left:auto}
+.bot{background:rgba(255,255,255,.25)}
 
-/* INPUT BAR – CHATGPT STYLE */
+/* INPUT CHAT */
 #inputBar{
   display:flex;
-  align-items:center;
   gap:10px;
-  padding:12px;
-  background:#181818;
+  margin-top:10px;
 }
 #chatInput{
   flex:1;
-  padding:12px 14px;
-  border-radius:14px;
-  border:none;
-  background:#2a2a2a;
+  background:rgba(255,255,255,.25);
   color:white;
-  font-size:15px;
 }
 #sendBtn{
-  width:38px;
-  height:38px;
+  width:44px;
   border-radius:50%;
-  border:none;
-  background:#2a2a2a;
-  color:white;
-  font-size:16px;
-  cursor:pointer;
+  background:#38bdf8;
+  font-size:18px;
 }
 
 /* SIDEBAR */
@@ -102,14 +134,14 @@ header h3{margin:0;font-size:18px}
   position:fixed;
   top:0;left:-220px;
   width:220px;height:100%;
-  background:#121212;
+  background:#020617;
   padding:16px;
   transition:.3s;
 }
 #sidebar.active{left:0}
 .sideItem{
   padding:14px;
-  border-bottom:1px solid #222;
+  border-bottom:1px solid #334;
   cursor:pointer;
 }
 </style>
@@ -130,19 +162,58 @@ header h3{margin:0;font-size:18px}
 <div id="topNav">
   <div class="navBox active" onclick="showPage('home')">Accueil</div>
   <div class="navBox" onclick="showPage('ia')">IA</div>
+  <div class="navBox" onclick="showPage('promo')">Code Promo</div>
 </div>
 
 <!-- ACCUEIL -->
-<div id="home" class="page active" style="padding:20px">
-  <p>Bienvenue sur Daily Life Ultra IA.</p>
+<div id="home" class="page active">
+
+  <div class="card">
+    <h3>🎨 Couleur</h3>
+    <select onchange="setTheme(this.value)">
+      <option value="green">Vert</option>
+      <option value="violet">Violet</option>
+      <option value="orange">Orange</option>
+      <option value="blue">Bleu</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <h3>🌍 Langue</h3>
+    <select onchange="saveLang(this.value)">
+      <option>Français</option>
+      <option>English</option>
+      <option>Español</option>
+      <option>Deutsch</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <h3>✅ Tâches</h3>
+    <input id="taskInput" placeholder="Nouvelle tâche">
+    <button onclick="addTask()">Ajouter</button>
+    <div id="taskList"></div>
+  </div>
+
 </div>
 
 <!-- IA -->
 <div id="ia" class="page">
-  <div id="chat"></div>
-  <div id="inputBar">
-    <input id="chatInput" placeholder="Écris un message…" />
-    <button id="sendBtn" onclick="send()">➤</button>
+  <div id="chat">
+    <div id="messages"></div>
+    <div id="inputBar">
+      <input id="chatInput" placeholder="Écris un message…">
+      <button id="sendBtn" onclick="send()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROMO -->
+<div id="promo" class="page">
+  <div class="card">
+    <h3>🏷️ Code Promo</h3>
+    <input placeholder="Entre ton code">
+    <button>Valider</button>
   </div>
 </div>
 
@@ -153,43 +224,76 @@ setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000)
 /* NAV */
 function toggleMenu(){sidebar.classList.toggle("active")}
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
-  document.querySelectorAll('.navBox').forEach(b=>b.classList.remove('active'))
-  document.getElementById(id).classList.add('active')
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
+  document.querySelectorAll(".navBox").forEach(b=>b.classList.remove("active"))
+  document.getElementById(id).classList.add("active")
+  event?.target?.classList.add("active")
   sidebar.classList.remove("active")
 }
 
-/* CHAT */
-const chat=document.getElementById("chat")
+/* THEME */
+function setTheme(t){
+  const map={green:'--green',violet:'--violet',orange:'--orange',blue:'--blue'}
+  document.body.style.background=getComputedStyle(document.documentElement).getPropertyValue(map[t])
+  localStorage.theme=t
+}
+if(localStorage.theme)setTheme(localStorage.theme)
+
+/* LANG */
+function saveLang(l){localStorage.lang=l}
+
+/* TASKS */
+let tasks=JSON.parse(localStorage.tasks||"[]")
+function addTask(){
+  if(!taskInput.value)return
+  tasks.push(taskInput.value)
+  taskInput.value=""
+  saveTasks()
+}
+function saveTasks(){
+  localStorage.tasks=JSON.stringify(tasks)
+  renderTasks()
+}
+function renderTasks(){
+  taskList.innerHTML=""
+  tasks.forEach((t,i)=>{
+    let d=document.createElement("div")
+    d.className="task"
+    d.innerHTML=`<span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`
+    taskList.appendChild(d)
+  })
+}
+function delTask(i){tasks.splice(i,1);saveTasks()}
+renderTasks()
+
+/* CHAT IA */
 function addMsg(text,type){
-  const d=document.createElement("div")
+  let d=document.createElement("div")
   d.className="msg "+type
   d.textContent=text
-  chat.appendChild(d)
-  chat.scrollTop=chat.scrollHeight
+  messages.appendChild(d)
+  messages.scrollTop=messages.scrollHeight
 }
-
-addMsg("Salut 👋 Je suis ton assistant IA. Dis-moi ce que tu veux faire.", "bot")
+addMsg("Salut 👋 Je peux t’aider pour des repas, idées ou organisation.","bot")
 
 function send(){
-  const q=chatInput.value.trim()
+  let q=chatInput.value.trim()
   if(!q)return
   addMsg(q,"user")
   chatInput.value=""
   setTimeout(()=>reply(q),500)
 }
-
 function reply(q){
   q=q.toLowerCase()
-  if(q.includes("salut")) return addMsg("Salut 😄 Je suis là pour t’aider.", "bot")
+  if(q.includes("salut")) return addMsg("Salut 😄 Que veux-tu faire ?","bot")
   if(q.includes("repas")){
     let n=q.includes("3")?3:q.includes("2")?2:1
     let meals=["Poulet riz légumes","Pâtes bolognaise","Saumon quinoa","Omelette salade"]
     let r=[]
-    for(let i=0;i<n;i++) r.push("🍽️ "+meals[Math.floor(Math.random()*meals.length)])
+    for(let i=0;i<n;i++)r.push("🍽️ "+meals[Math.floor(Math.random()*meals.length)])
     return addMsg(r.join("\n"),"bot")
   }
-  addMsg("Je peux t’aider pour des repas, idées ou organisation.", "bot")
+  addMsg("Je peux générer des repas, aider à t’organiser ou répondre à tes questions.","bot")
 }
 </script>
 
