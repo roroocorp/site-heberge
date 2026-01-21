@@ -6,7 +6,13 @@
 <title>Daily Life Ultra IA</title>
 <style>
 *{box-sizing:border-box;font-family:system-ui;margin:0;padding:0;}
-body{min-height:100vh;color:white;background:linear-gradient(180deg,#064e3b,#042f2e);transition:.3s;}
+body{min-height:100vh;color:white;transition:.3s;}
+body.green{background:linear-gradient(180deg,#064e3b,#042f2e);}
+body.red{background:linear-gradient(180deg,#7f1d1d,#450a0a);}
+body.blue{background:linear-gradient(180deg,#1e3a8a,#020617);}
+body.rose{background:linear-gradient(180deg,#f43f5e,#be185d);}
+body.violet{background:linear-gradient(180deg,#5b21b6,#2e1065);}
+body.orange{background:linear-gradient(180deg,#f97316,#b45309);}
 
 /* HEADER */
 header{display:flex;align-items:center;gap:12px;padding:14px;}
@@ -43,7 +49,7 @@ button:hover{opacity:.85;}
 .sideItem{padding:16px;border-bottom:1px solid #334;font-size:16px;cursor:pointer;}
 
 /* IA */
-#iaInput{margin-top:12px;}
+#iaInput{flex:1;padding:16px;border-radius:18px;border:none;font-size:16px;}
 #iaSend{width:50px;height:50px;border-radius:50%;background:#38bdf8;color:#000;font-weight:bold;border:none;cursor:pointer;margin-left:8px;}
 
 /* PROMO BADGE */
@@ -52,7 +58,7 @@ button:hover{opacity:.85;}
 .user{background:#38bdf8;color:#000;}
 </style>
 </head>
-<body>
+<body class="green">
 
 <!-- SIDEBAR -->
 <div id="sidebar">
@@ -76,7 +82,6 @@ button:hover{opacity:.85;}
 
 <!-- ACCUEIL -->
 <div id="home" class="page active">
-
   <div class="card">
     <h3>🎨 Thème</h3>
     <select id="themeSelect" onchange="changeTheme(this.value)">
@@ -84,6 +89,8 @@ button:hover{opacity:.85;}
       <option value="red">Rouge</option>
       <option value="blue">Bleu</option>
       <option value="rose">Rose</option>
+      <option value="violet">Violet</option>
+      <option value="orange">Orange</option>
     </select>
   </div>
 
@@ -140,31 +147,17 @@ function showPage(id){
 }
 
 /* THEME */
-function changeTheme(t){
-  document.body.className=t;
-  localStorage.theme=t;
-}
-if(localStorage.theme){
-  document.body.className=localStorage.theme;
-  themeSelect.value=localStorage.theme;
-}
+function changeTheme(t){document.body.className=t;localStorage.theme=t;}
+if(localStorage.theme){document.body.className=localStorage.theme;themeSelect.value=localStorage.theme;}
 
 /* LANGUE */
-function changeLang(l){
-  localStorage.lang=l;
-  switch(l){
-    case "fr": break;
-    case "en": break;
-    case "es": break;
-    case "de": break;
-  }
-}
+function changeLang(l){localStorage.lang=l;}
 if(localStorage.lang) langSelect.value=localStorage.lang;
 
 /* TASKS */
 let tasks=[];
 function addTask(){
-  if(!taskInput.value)return;
+  if(!taskInput.value) return;
   tasks.push({t:taskInput.value,d:false});
   taskInput.value="";
   renderTasks();
@@ -184,16 +177,16 @@ function delTask(i){tasks.splice(i,1);renderTasks();}
 /* IA */
 function askIA(){
   const q=iaInput.value.trim();
-  if(!q)return;
-  iaText.textContent = q.toLowerCase().includes("salut")
-    ? "Salut 😄 Je suis là pour t’aider."
+  if(!q) return;
+  iaText.textContent = q.toLowerCase().includes("salut") 
+    ? "Salut 😄 Je suis là pour t’aider." 
     : "Je réfléchis 🤖";
   iaInput.value="";
 }
 
 /* PROMO */
 const creatorCodes=["CRP2.0ROROOLNR"];
-const userCodes=["A4G7R2T9X1","M2Q8P5Z4R7","B9K1T7X2L5","F3V8P6Q1R9","G1X9M4T2V7","H7R2C9P1Q5","K4T1X7R3M9","L5Q2V9T6F1","N3P7K2X4B8","R2M9F4T1Q6"];
+const userCodes=["A4G7R2T9X1","M2Q8P5Z4R7","B9K1T7X2L5"];
 function applyPromo(){
   const c=promoInput.value.toUpperCase().trim();
   promoStatus.innerHTML="";
@@ -208,4 +201,4 @@ function applyPromo(){
 </script>
 
 </body>
-  </html>
+</html>
