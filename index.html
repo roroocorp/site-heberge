@@ -23,13 +23,8 @@ header{
   background:#181818;
 }
 header h3{margin:0;font-size:18px}
-#time{
-  margin-left:auto;
-  margin-right:12px;
-  font-size:14px;
-  opacity:.7
-}
-.menuBtn{font-size:22px;cursor:pointer}
+#time{margin-left:auto;font-size:14px;opacity:.7}
+.menuBtn{margin-left:12px;font-size:22px;cursor:pointer}
 
 /* TOP NAV */
 #topNav{
@@ -45,7 +40,6 @@ header h3{margin:0;font-size:18px}
   background:#1e1e1e;
   text-align:center;
   cursor:pointer;
-  font-weight:600;
 }
 .navBox.active{background:#2a2a2a}
 
@@ -56,19 +50,7 @@ header h3{margin:0;font-size:18px}
 }
 .page.active{display:flex}
 
-/* ACCUEIL */
-#home{
-  padding:20px;
-  flex-direction:column;
-  gap:16px;
-}
-.card{
-  background:#1e1e1e;
-  border-radius:16px;
-  padding:16px;
-}
-
-/* IA */
+/* IA CHAT */
 #ia{
   flex-direction:column;
 }
@@ -79,17 +61,18 @@ header h3{margin:0;font-size:18px}
 }
 .msg{
   max-width:80%;
-  margin-bottom:12px;
+  margin-bottom:10px;
   padding:12px 14px;
   border-radius:14px;
-  line-height:1.4;
+  white-space:pre-line;
 }
 .user{background:#2a2a2a;margin-left:auto}
 .bot{background:#1e1e1e}
 
-/* INPUT CHAT */
-#chatInputBar{
+/* INPUT BAR – CHATGPT STYLE */
+#inputBar{
   display:flex;
+  align-items:center;
   gap:10px;
   padding:12px;
   background:#181818;
@@ -97,36 +80,22 @@ header h3{margin:0;font-size:18px}
 #chatInput{
   flex:1;
   padding:12px 14px;
-  border-radius:12px;
+  border-radius:14px;
   border:none;
   background:#2a2a2a;
   color:white;
   font-size:15px;
 }
 #sendBtn{
-  width:42px;
-  height:42px;
+  width:38px;
+  height:38px;
   border-radius:50%;
   border:none;
   background:#2a2a2a;
   color:white;
-  font-size:18px;
+  font-size:16px;
   cursor:pointer;
 }
-
-/* PROMO */
-#promo{
-  padding:20px;
-}
-input,button{
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:none;
-  background:#2a2a2a;
-  color:white;
-}
-button{margin-top:10px;cursor:pointer}
 
 /* SIDEBAR */
 #sidebar{
@@ -161,36 +130,19 @@ button{margin-top:10px;cursor:pointer}
 <div id="topNav">
   <div class="navBox active" onclick="showPage('home')">Accueil</div>
   <div class="navBox" onclick="showPage('ia')">IA</div>
-  <div class="navBox" onclick="showPage('promo')">Code Promo</div>
 </div>
 
 <!-- ACCUEIL -->
-<div id="home" class="page active">
-  <div class="card">
-    <h3>Bienvenue 👋</h3>
-    <p>Connecte-toi chaque jour pour utiliser ton assistant IA personnel.</p>
-  </div>
-  <div class="card">
-    <h3>Objectif quotidien</h3>
-    <p>Organisation, repas, idées, aide rapide.</p>
-  </div>
+<div id="home" class="page active" style="padding:20px">
+  <p>Bienvenue sur Daily Life Ultra IA.</p>
 </div>
 
 <!-- IA -->
 <div id="ia" class="page">
   <div id="chat"></div>
-  <div id="chatInputBar">
+  <div id="inputBar">
     <input id="chatInput" placeholder="Écris un message…" />
     <button id="sendBtn" onclick="send()">➤</button>
-  </div>
-</div>
-
-<!-- PROMO -->
-<div id="promo" class="page">
-  <div class="card">
-    <h3>Code promo</h3>
-    <input placeholder="Entre ton code">
-    <button>Valider</button>
   </div>
 </div>
 
@@ -204,7 +156,6 @@ function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
   document.querySelectorAll('.navBox').forEach(b=>b.classList.remove('active'))
   document.getElementById(id).classList.add('active')
-  [...topNav.children].find(b=>b.textContent.toLowerCase().includes(id))?.classList.add('active')
   sidebar.classList.remove("active")
 }
 
@@ -218,29 +169,29 @@ function addMsg(text,type){
   chat.scrollTop=chat.scrollHeight
 }
 
-addMsg("Salut 👋 Je suis ton assistant IA. Je peux t’aider pour des repas, idées, organisation.", "bot")
+addMsg("Salut 👋 Je suis ton assistant IA. Dis-moi ce que tu veux faire.", "bot")
 
 function send(){
   const q=chatInput.value.trim()
   if(!q)return
   addMsg(q,"user")
   chatInput.value=""
-  setTimeout(()=>botReply(q),600)
+  setTimeout(()=>reply(q),500)
 }
 
-function botReply(q){
+function reply(q){
   q=q.toLowerCase()
-  if(q.includes("salut")) return addMsg("Salut 😄 Comment je peux t’aider ?", "bot")
+  if(q.includes("salut")) return addMsg("Salut 😄 Je suis là pour t’aider.", "bot")
   if(q.includes("repas")){
     let n=q.includes("3")?3:q.includes("2")?2:1
-    let meals=["Poulet riz légumes","Pâtes sauce tomate","Saumon quinoa","Omelette salade","Burger maison"]
+    let meals=["Poulet riz légumes","Pâtes bolognaise","Saumon quinoa","Omelette salade"]
     let r=[]
     for(let i=0;i<n;i++) r.push("🍽️ "+meals[Math.floor(Math.random()*meals.length)])
     return addMsg(r.join("\n"),"bot")
   }
-  addMsg("Je peux t’aider pour des repas, idées, tâches, ou organisation.", "bot")
+  addMsg("Je peux t’aider pour des repas, idées ou organisation.", "bot")
 }
 </script>
 
 </body>
-  </html>
+</html>
