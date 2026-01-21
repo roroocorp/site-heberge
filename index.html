@@ -69,40 +69,6 @@ select,input,button{
 }
 button{background:#38bdf8;font-weight:700}
 
-/* TASKS */
-.task{
-  display:flex;
-  justify-content:space-between;
-  padding:14px;
-  background:rgba(255,255,255,.25);
-  border-radius:16px;
-  margin-top:10px;
-}
-.trash{cursor:pointer}
-
-/* IA CHAT */
-.chat{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  max-height:55vh;
-  overflow-y:auto;
-}
-.msg{
-  padding:12px 16px;
-  border-radius:16px;
-  max-width:80%;
-}
-.user{align-self:flex-end;background:#38bdf8;color:black}
-.bot{align-self:flex-start;background:rgba(255,255,255,.25)}
-.chatInput{
-  display:flex;
-  gap:10px;
-  margin-top:14px;
-}
-.chatInput input{flex:1}
-.sendBtn{width:60px}
-
 /* SIDEBAR */
 #sidebar{
   position:fixed;
@@ -121,56 +87,89 @@ button{background:#38bdf8;font-weight:700}
   border-bottom:1px solid #334;
   cursor:pointer;
 }
+
+/* IA CHAT */
+.chat{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:55vh;
+  overflow-y:auto;
+}
+.msg{
+  padding:12px 16px;
+  border-radius:16px;
+  max-width:80%;
+}
+.user{align-self:flex-end;background:#38bdf8;color:black}
+.bot{align-self:flex-start;background:rgba(255,255,255,.25)}
+
+.chatBar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#042f2e;
+  padding:12px;
+  display:flex;
+  gap:10px;
+}
+.chatBar input{flex:1}
+.sendBtn{
+  width:52px;
+  border-radius:50%;
+  font-size:20px;
+}
+.delBtn{
+  width:52px;
+  border-radius:50%;
+  background:#ef4444;
+  font-size:18px;
+}
 </style>
 </head>
 
 <body>
 
+<!-- SIDEBAR -->
 <div id="sidebar">
-  <div class="sideItem" onclick="showPage('home')" id="sHome">Accueil</div>
-  <div class="sideItem" onclick="showPage('ia')" id="sIA">IA</div>
-  <div class="sideItem" onclick="showPage('promo')" id="sPromo">Code Promo</div>
+  <div class="sideItem" onclick="showPage('home')">Accueil</div>
+  <div class="sideItem">⚙️ Paramètres</div>
+  <div class="sideItem">📋 Tâches</div>
 </div>
 
 <header>
-  <h3 id="title">Daily Life Ultra IA</h3>
+  <h3>Daily Life Ultra IA</h3>
   <div id="time"></div>
   <div class="menuBtn" onclick="toggleMenu()">☰</div>
 </header>
 
 <div id="topNav">
-  <div class="navBox" onclick="showPage('home')" id="tHome">Accueil</div>
-  <div class="navBox" onclick="showPage('ia')" id="tIA">IA</div>
-  <div class="navBox" onclick="showPage('promo')" id="tPromo">Code Promo</div>
+  <div class="navBox" onclick="showPage('home')">Accueil</div>
+  <div class="navBox" onclick="showPage('ia')">IA</div>
+  <div class="navBox" onclick="showPage('promo')">Code Promo</div>
 </div>
 
 <!-- ACCUEIL -->
 <div id="home" class="page active">
   <div class="card">
-    <h3 id="themeTitle">🎨 Thème</h3>
-    <select id="themeSelect">
-      <option value="green">Vert</option>
-      <option value="red">Rouge</option>
-      <option value="blue">Bleu</option>
-      <option value="rose">Rose</option>
+    <h3>🎨 Thème</h3>
+    <select>
+      <option>Vert</option>
+      <option>Rouge</option>
+      <option>Bleu</option>
+      <option>Rose</option>
     </select>
   </div>
 
   <div class="card">
-    <h3 id="langTitle">🌍 Langue</h3>
-    <select id="langSelect">
-      <option value="fr">Français</option>
-      <option value="en">Anglais</option>
-      <option value="es">Espagnol</option>
-      <option value="de">Allemand</option>
+    <h3>🌍 Langue</h3>
+    <select>
+      <option>Français</option>
+      <option>Anglais</option>
+      <option>Espagnol</option>
+      <option>Allemand</option>
     </select>
-  </div>
-
-  <div class="card">
-    <h3 id="taskTitle">✅ Tâches</h3>
-    <input id="taskInput" placeholder="Nouvelle tâche">
-    <button onclick="addTask()" id="addTaskBtn">Ajouter</button>
-    <div id="taskList"></div>
   </div>
 </div>
 
@@ -178,19 +177,21 @@ button{background:#38bdf8;font-weight:700}
 <div id="ia" class="page">
   <div class="card">
     <div class="chat" id="chat"></div>
-    <div class="chatInput">
-      <input id="iaInput" placeholder="Écris un message">
-      <button class="sendBtn" onclick="sendMsg()">⬆️</button>
-    </div>
   </div>
+</div>
+
+<div class="chatBar">
+  <input id="iaInput" placeholder="Écrire un message…">
+  <button class="delBtn" onclick="deleteLast()">🗑️</button>
+  <button class="sendBtn" onclick="sendMsg()">⬆️</button>
 </div>
 
 <!-- PROMO -->
 <div id="promo" class="page">
   <div class="card">
     <h3>Code Promo</h3>
-    <input placeholder="Entre ton code">
-    <button>Valider</button>
+    <input placeholder="Entre ton code promo">
+    <button style="margin-top:12px">Valider</button>
   </div>
 </div>
 
@@ -205,31 +206,6 @@ function showPage(id){
   document.getElementById(id).classList.add("active")
   sidebar.classList.remove("active")
 }
-
-/* TASKS */
-let tasks=JSON.parse(localStorage.tasks||"[]")
-function addTask(){
-  if(!taskInput.value)return
-  tasks.push(taskInput.value)
-  localStorage.tasks=JSON.stringify(tasks)
-  taskInput.value=""
-  renderTasks()
-}
-function renderTasks(){
-  taskList.innerHTML=""
-  tasks.forEach((t,i)=>{
-    let d=document.createElement("div")
-    d.className="task"
-    d.innerHTML=`<span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`
-    taskList.appendChild(d)
-  })
-}
-function delTask(i){
-  tasks.splice(i,1)
-  localStorage.tasks=JSON.stringify(tasks)
-  renderTasks()
-}
-renderTasks()
 
 /* IA */
 let memory=JSON.parse(localStorage.chat||"[]")
@@ -247,37 +223,18 @@ function sendMsg(){
   const q=iaInput.value.trim()
   if(!q)return
   memory.push({who:"user",text:q})
-  let r=q.toLowerCase().includes("salut")
-    ?"Salut 😄 Je suis là pour t’aider. Que veux-tu faire ?"
-    :"D’accord 👍 explique-moi."
-  memory.push({who:"bot",text:r})
+  memory.push({who:"bot",text:"D’accord 👍 je t’écoute."})
   localStorage.chat=JSON.stringify(memory)
   iaInput.value=""
   renderChat()
 }
+function deleteLast(){
+  memory.pop()
+  localStorage.chat=JSON.stringify(memory)
+  renderChat()
+}
 renderChat()
-
-/* LANGUE */
-const T={
-fr:{home:"Accueil",ia:"IA",promo:"Code Promo",theme:"Thème",lang:"Langue",tasks:"Tâches",add:"Ajouter"},
-en:{home:"Home",ia:"AI",promo:"Promo Code",theme:"Theme",lang:"Language",tasks:"Tasks",add:"Add"},
-es:{home:"Inicio",ia:"IA",promo:"Código Promo",theme:"Tema",lang:"Idioma",tasks:"Tareas",add:"Añadir"},
-de:{home:"Start",ia:"KI",promo:"Code Promo",theme:"Thema",lang:"Sprache",tasks:"Aufgaben",add:"Hinzufügen"}
-}
-function applyLang(l){
-  const t=T[l]
-  tHome.textContent=sHome.textContent=t.home
-  tIA.textContent=sIA.textContent=t.ia
-  tPromo.textContent=sPromo.textContent=t.promo
-  themeTitle.textContent="🎨 "+t.theme
-  langTitle.textContent="🌍 "+t.lang
-  taskTitle.textContent="✅ "+t.tasks
-  addTaskBtn.textContent=t.add
-  localStorage.lang=l
-}
-langSelect.onchange=()=>applyLang(langSelect.value)
-applyLang(localStorage.lang||"fr")
 </script>
 
 </body>
-  </html>
+</html>
