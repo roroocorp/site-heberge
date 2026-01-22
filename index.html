@@ -4,154 +4,179 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
-
 <style>
-:root{
-  --bg1:#064e3b;
-  --bg2:#042f2e;
-  --card:rgba(255,255,255,.18);
-  --btn:#38bdf8;
+* {
+  box-sizing: border-box;
+  font-family: system-ui;
+  margin:0; padding:0;
 }
 
-body{
-  margin:0;
-  min-height:100vh;
-  font-family:system-ui;
-  color:white;
-  background:linear-gradient(180deg,var(--bg1),var(--bg2));
-  overflow:hidden;
+/* BODY */
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg,#064e3b,#042f2e);
+  color: white;
+  display: flex;
+  flex-direction: column;
 }
 
 /* HEADER */
-header{
-  display:flex;
-  align-items:center;
-  padding:14px;
-  gap:10px;
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(0,0,0,.3);
+  border-bottom: 1px solid rgba(255,255,255,.2);
 }
-header h3{margin:0;font-size:20px;}
-#time{
-  margin-left:auto;
-  background:rgba(0,0,0,.35);
-  padding:6px 14px;
-  border-radius:14px;
+header h3 {
+  font-size: 20px;
+}
+#time {
+  background: rgba(0,0,0,.35);
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 14px;
 }
 
 /* TOP NAV */
-#topNav{
-  display:flex;
-  gap:12px;
-  padding:14px;
+#topNav {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
 }
-.navBox{
+.navBox {
   flex:1;
+  padding: 16px 0;
+  border-radius: 20px;
   text-align:center;
-  padding:18px 0;
-  border-radius:22px;
-  background:rgba(255,255,255,.25);
-  font-weight:800;
+  font-weight: bold;
   cursor:pointer;
+  font-size: 16px;
+  background: rgba(255,255,255,.15);
+  transition: 0.3s;
+}
+.navBox:hover {
+  background: rgba(255,255,255,.25);
 }
 
 /* PAGES */
-.page{
-  display:none;
-  padding:16px;
-}
-.page.active{display:block;}
+.page { display:none; padding:16px; flex:1; overflow-y:auto; }
+.page.active { display:block; }
 
 /* CARD */
-.card{
-  background:var(--card);
-  border-radius:24px;
-  padding:20px;
-  margin-bottom:16px;
+.card {
+  background: rgba(255,255,255,.2);
+  padding: 16px;
+  border-radius: 20px;
+  margin-bottom: 12px;
 }
+.card h3 { margin-bottom: 10px; }
 
-/* INPUTS */
-select,input,button{
-  width:100%;
-  padding:14px;
-  border-radius:16px;
+/* SELECT/INPUT/BUTTON */
+select, input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
   border:none;
-  font-size:16px;
+  font-size: 14px;
 }
-button{
-  background:var(--btn);
-  font-weight:700;
+button {
+  margin-top: 10px;
+  padding: 12px;
+  width: 100%;
+  border:none;
+  border-radius: 12px;
+  background: #38bdf8;
+  font-weight: bold;
   cursor:pointer;
 }
 
 /* TASKS */
-.task{
-  background:rgba(255,255,255,.25);
-  padding:12px;
-  border-radius:14px;
-  margin-top:8px;
-}
+.task { padding: 10px; background: rgba(255,255,255,.25); border-radius:12px; margin-top:8px; }
 
-/* CHAT */
-#chat{
-  height:55vh;
-  overflow-y:auto;
-}
-.msg{
-  background:rgba(255,255,255,.22);
-  padding:12px;
-  border-radius:16px;
-  margin-bottom:10px;
-}
-
-/* CHAT INPUT */
-#chatBar{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
+/* IA CHAT */
+#iaChat {
   display:flex;
-  gap:10px;
-  padding:10px;
-  background:#022c22;
+  flex-direction:column;
+  height: 400px;
+  background: rgba(255,255,255,.1);
+  border-radius: 20px;
+  padding: 12px;
+  overflow-y:auto;
+  margin-bottom: 10px;
 }
-#chatInput{
+.message { margin-bottom: 10px; padding:8px; border-radius:12px; max-width:80%; }
+.user { background:#38bdf8; color:#000; align-self:flex-end; }
+.bot { background: rgba(255,255,255,.3); color:white; align-self:flex-start; }
+
+/* IA INPUT */
+#iaInputContainer {
+  display:flex;
+  gap:6px;
+}
+#iaInput {
   flex:1;
   border-radius:20px;
+  padding:12px;
+  border:none;
+  font-size:14px;
 }
-#sendBtn{
-  width:54px;
+#iaSendBtn {
+  border:none;
   border-radius:50%;
-  font-size:20px;
+  width:44px;
+  height:44px;
+  background:#38bdf8;
+  cursor:pointer;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
 /* LOGIN */
-#login{
+#login {
   position:fixed;
-  inset:0;
-  background:linear-gradient(180deg,#020617,#020617);
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,.8);
   display:flex;
-  align-items:center;
   justify-content:center;
-  z-index:999;
+  align-items:center;
 }
-#loginBox{
-  width:90%;
-  max-width:320px;
-  background:#1f2933;
-  padding:20px;
+#loginBox {
+  background: rgba(50,50,50,0.9);
+  padding:24px;
   border-radius:20px;
-  text-align:center;
+  width: 300px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+#loginBox input {
+  padding:10px;
+  border-radius:12px;
+  border:none;
+  font-size:14px;
+}
+#loginBox button {
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:#38bdf8;
+  font-weight:bold;
+  cursor:pointer;
 }
 </style>
 </head>
-
 <body>
 
 <!-- LOGIN -->
 <div id="login">
   <div id="loginBox">
-    <h2>Connexion</h2>
-    <input id="pseudo" placeholder="Ton pseudo">
-    <button onclick="login()">Entrer</button>
+    <h3>Connexion</h3>
+    <input type="text" id="pseudo" placeholder="Ton pseudo">
+    <button id="loginBtn">Entrer</button>
   </div>
 </div>
 
@@ -166,27 +191,30 @@ button{
   <div class="navBox" onclick="showPage('promo')">Code Promo</div>
 </div>
 
-<!-- HOME -->
+<!-- ACCUEIL -->
 <div id="home" class="page active">
   <div class="card">
-    🎨 Couleur
-    <select onchange="setColor(this.value)">
-      <option value="green">Vert</option>
-      <option value="orange">Orange</option>
-      <option value="violet">Violet</option>
+    <h3>🎨 Couleur</h3>
+    <select id="colorSelect">
+      <option>Vert</option>
+      <option>Rouge</option>
+      <option>Bleu</option>
+      <option>Rose</option>
+      <option>Violet</option>
+      <option>Orange</option>
     </select>
   </div>
-
   <div class="card">
-    🌍 Langue
-    <select onchange="setLang(this.value)">
-      <option value="fr">Français</option>
-      <option value="en">English</option>
+    <h3>🌍 Langue</h3>
+    <select id="langSelect">
+      <option>Français</option>
+      <option>Anglais</option>
+      <option>Espagnol</option>
+      <option>Allemand</option>
     </select>
   </div>
-
   <div class="card">
-    ✅ Tâches
+    <h3>✅ Tâches</h3>
     <input id="taskInput" placeholder="Nouvelle tâche">
     <button onclick="addTask()">Ajouter</button>
     <div id="taskList"></div>
@@ -195,79 +223,113 @@ button{
 
 <!-- IA -->
 <div id="ia" class="page">
-  <div id="chat">
-    <div class="msg">Salut 👋 Je peux t’aider pour des repas, idées ou organisation.</div>
+  <div class="card" id="iaChat"></div>
+  <div id="iaInputContainer">
+    <input id="iaInput" placeholder="Écris un message…">
+    <button id="iaSendBtn">➤</button>
   </div>
 </div>
 
-<!-- PROMO -->
+<!-- CODE PROMO -->
 <div id="promo" class="page">
   <div class="card">
-    Code promo
-    <input placeholder="Entre ton code">
-    <button onclick="alert('Code envoyé')">Valider</button>
+    <h3>Code Promo</h3>
+    <input id="promoInput" placeholder="Entre ton code">
+    <button id="promoBtn">Valider</button>
   </div>
-</div>
-
-<!-- CHAT BAR -->
-<div id="chatBar">
-  <input id="chatInput" placeholder="Écris un message…">
-  <button id="sendBtn" onclick="send()">➤</button>
 </div>
 
 <script>
 /* TIME */
-setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
+setInterval(()=>{ 
+  document.getElementById("time").textContent = new Date().toLocaleTimeString(); 
+},1000);
 
-/* LOGIN */
-function login(){
-  const p=pseudo.value.trim();
-  if(!p)return alert("Entre un pseudo");
-  localStorage.setItem("pseudo",p);
-  login.style.display="none";
-}
-if(localStorage.getItem("pseudo")) login.style.display="none";
-
-/* NAV */
+/* PAGES */
 function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
 
-/* COLORS */
-function setColor(c){
-  if(c==="orange"){bg1="#7c2d12";bg2="#431407";}
-  if(c==="violet"){bg1="#4c1d95";bg2="#2e1065";}
-  if(c==="green"){bg1="#064e3b";bg2="#042f2e";}
-  document.documentElement.style.setProperty("--bg1",bg1);
-  document.documentElement.style.setProperty("--bg2",bg2);
-}
-
 /* TASKS */
+let tasks = [];
 function addTask(){
-  if(!taskInput.value)return;
-  const d=document.createElement("div");
-  d.className="task";
-  d.textContent=taskInput.value;
-  taskList.appendChild(d);
-  taskInput.value="";
+  const t = document.getElementById("taskInput").value.trim();
+  if(!t) return;
+  tasks.push(t);
+  document.getElementById("taskInput").value="";
+  renderTasks();
+}
+function renderTasks(){
+  const list = document.getElementById("taskList");
+  list.innerHTML="";
+  tasks.forEach(t=>{
+    const d = document.createElement("div");
+    d.className="task";
+    d.textContent=t;
+    list.appendChild(d);
+  });
 }
 
-/* IA CHAT */
-function send(){
-  const q=chatInput.value.trim();
-  if(!q)return;
-  chat.innerHTML+=`<div class="msg">${q}</div>`;
-  let r="Je réfléchis 🤖";
-  if(q.toLowerCase().includes("repas")){
-    r="🍽️ Idée repas : pâtes, poulet, salade.";
-  }
-  setTimeout(()=>{
-    chat.innerHTML+=`<div class="msg">${r}</div>`;
-    chat.scrollTop=chat.scrollHeight;
-  },600);
-  chatInput.value="";
+/* IA */
+const iaChat = document.getElementById("iaChat");
+function addMessage(msg, sender){
+  const div = document.createElement("div");
+  div.className="message "+sender;
+  div.textContent=msg;
+  iaChat.appendChild(div);
+  iaChat.scrollTop = iaChat.scrollHeight;
 }
+
+function generateMeals(count){
+  const meals = ["Pâtes", "Pizza", "Salade", "Poulet", "Riz", "Sushi"];
+  let result = [];
+  for(let i=0;i<count;i++){
+    result.push(meals[Math.floor(Math.random()*meals.length)]);
+  }
+  return result.join(", ");
+}
+
+document.getElementById("iaSendBtn").addEventListener("click",()=>{
+  const input = document.getElementById("iaInput");
+  const val = input.value.trim();
+  if(!val) return;
+  addMessage(val,"user");
+  let response="";
+  if(val.toLowerCase().includes("salut")){
+    response="Salut 👋 Je peux t’aider pour des repas, idées ou organisation.";
+  } else if(val.toLowerCase().includes("repas")){
+    let num = 1;
+    const match = val.match(/\d+/);
+    if(match) num = parseInt(match[0]);
+    response="Voici ton repas : "+generateMeals(num);
+  } else {
+    response="🤖 Je réfléchis...";
+  }
+  addMessage(response,"bot");
+  input.value="";
+});
+
+/* PROMO */
+document.getElementById("promoBtn").addEventListener("click",()=>{
+  const val = document.getElementById("promoInput").value.trim();
+  if(!val) { alert("Entre un code"); return; }
+  alert("Code '"+val+"' validé !");
+});
+
+/* LOGIN */
+const loginBox = document.getElementById("login");
+const pseudoInput = document.getElementById("pseudo");
+const loginBtn = document.getElementById("loginBtn");
+function doLogin(){
+  const p = pseudoInput.value.trim();
+  if(p===""){ alert("Entre un pseudo"); return; }
+  localStorage.setItem("pseudo",p);
+  loginBox.style.display="none";
+}
+loginBtn.addEventListener("click", doLogin);
+pseudoInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter") doLogin(); });
+if(localStorage.getItem("pseudo")) loginBox.style.display="none";
 </script>
 
 </body>
