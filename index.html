@@ -9,9 +9,14 @@
 *{box-sizing:border-box;font-family:system-ui}
 body{
   margin:0;
-  background:linear-gradient(180deg,#064e3b,#042f2e);
-  color:white;
   min-height:100vh;
+  color:white;
+  background:var(--bg);
+}
+:root{
+  --bg:linear-gradient(180deg,#064e3b,#042f2e);
+  --card:rgba(255,255,255,.18);
+  --btn:#38bdf8;
 }
 
 /* HEADER */
@@ -30,7 +35,7 @@ header h3{margin:0;font-size:20px}
 }
 .menuBtn{margin-left:auto;font-size:26px;cursor:pointer}
 
-/* TOP NAV */
+/* NAV */
 #topNav{
   display:flex;
   gap:12px;
@@ -52,16 +57,19 @@ header h3{margin:0;font-size:20px}
 
 /* CARDS */
 .card{
-  background:rgba(255,255,255,.18);
+  background:var(--card);
   border-radius:22px;
   padding:18px;
   margin-bottom:16px;
 }
 
 /* TASKS */
-.task{
+.taskRow{
   display:flex;
-  justify-content:space-between;
+  gap:8px;
+}
+.taskRow input{flex:1}
+.task{
   background:rgba(255,255,255,.25);
   padding:12px;
   border-radius:14px;
@@ -69,9 +77,7 @@ header h3{margin:0;font-size:20px}
 }
 
 /* CHAT */
-#chat{
-  padding-bottom:90px;
-}
+#chat{padding-bottom:90px}
 .msg{
   max-width:80%;
   padding:12px 16px;
@@ -81,13 +87,13 @@ header h3{margin:0;font-size:20px}
 .user{background:#2563eb;margin-left:auto}
 .bot{background:rgba(255,255,255,.25)}
 
-/* INPUT BAR */
+/* CHAT INPUT (IA ONLY) */
 #chatInputBar{
   position:fixed;
   bottom:12px;
   left:12px;
   right:12px;
-  display:flex;
+  display:none;
   gap:10px;
 }
 #chatInput{
@@ -95,15 +101,13 @@ header h3{margin:0;font-size:20px}
   padding:16px;
   border-radius:20px;
   border:none;
-  font-size:16px;
 }
 #sendBtn{
-  width:56px;
+  width:54px;
   border-radius:50%;
   border:none;
-  background:#38bdf8;
-  font-size:20px;
-  cursor:pointer;
+  background:var(--btn);
+  font-size:18px;
 }
 
 /* SIDEBAR */
@@ -165,8 +169,10 @@ header h3{margin:0;font-size:20px}
 
   <div class="card">
     <h3>✅ Tâches</h3>
-    <input id="taskInput" placeholder="Nouvelle tâche">
-    <button onclick="addTask()">Ajouter</button>
+    <div class="taskRow">
+      <input id="taskInput" placeholder="Nouvelle tâche">
+      <button onclick="addTask()">Ajouter</button>
+    </div>
     <div id="taskList"></div>
   </div>
 </div>
@@ -185,11 +191,12 @@ header h3{margin:0;font-size:20px}
   <div class="card">
     <h3>🎟 Code Promo</h3>
     <input id="promoInput" placeholder="Entre ton code">
-    <button onclick="alert('Code envoyé ✔️')">Valider</button>
+    <button onclick="sendPromo()">Valider</button>
+    <p id="promoMsg"></p>
   </div>
 </div>
 
-<!-- INPUT CHAT -->
+<!-- CHAT INPUT -->
 <div id="chatInputBar">
   <input id="chatInput" placeholder="Écris un message…">
   <button id="sendBtn" onclick="send()">➤</button>
@@ -203,23 +210,27 @@ setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
 function show(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  chatInputBar.style.display = id==="ia" ? "flex" : "none";
 }
 
 /* TASKS */
-let tasks=[];
+let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
+function renderTasks(){
+  taskList.innerHTML="";
+  tasks.forEach(t=>taskList.innerHTML+=`<div class="task">${t}</div>`);
+}
+renderTasks();
 function addTask(){
   if(!taskInput.value)return;
   tasks.push(taskInput.value);
+  localStorage.setItem("tasks",JSON.stringify(tasks));
   taskInput.value="";
-  taskList.innerHTML="";
-  tasks.forEach(t=>{
-    taskList.innerHTML+=`<div class="task">${t}</div>`;
-  });
+  renderTasks();
 }
 
 /* CHAT */
-function addMsg(txt,cls){
-  chat.innerHTML+=`<div class="msg ${cls}">${txt}</div>`;
+function addMsg(t,c){
+  chat.innerHTML+=`<div class="msg ${c}">${t}</div>`;
   chat.scrollTop=chat.scrollHeight;
 }
 function send(){
@@ -227,20 +238,34 @@ function send(){
   if(!v)return;
   addMsg(v,"user");
   chatInput.value="";
-  respond(v);
+  setTimeout(()=>{
+    if(v.toLowerCase().includes("repas")){
+      addMsg("🍽 Idées repas :<br>1️⃣ Poulet & riz<br>2️⃣ Pâtes saumon<br>3️⃣ Salade complète","bot");
+    }else{
+      addMsg("Je suis là pour t’aider 🙂","bot");
+    }
+  },600);
 }
-chatInput.addEventListener("keydown",e=>{
-  if(e.key==="Enter")send();
-});
+chatInput.addEventListener("keydown",e=>{if(e.key==="Enter")send()});
 
-function respond(q){
-  let r="Je suis là pour t’aider 🙂";
-  if(q.toLowerCase().includes("repas")){
-    r="🍽 Idées repas :<br>1️⃣ Poulet & riz<br>2️⃣ Pâtes saumon<br>3️⃣ Salade complète";
-  }
-  setTimeout(()=>addMsg(r,"bot"),600);
+/* PROMO */
+function sendPromo(){
+  promoMsg.textContent="Code envoyé ✔️";
+}
+
+/* SETTINGS SAVE */
+colorSel.value=localStorage.color||"green";
+langSel.value=localStorage.lang||"fr";
+applyColor();
+colorSel.onchange=()=>{localStorage.color=colorSel.value;applyColor()}
+langSel.onchange=()=>localStorage.lang=langSel.value;
+
+function applyColor(){
+  if(colorSel.value==="violet")document.body.style.background="linear-gradient(180deg,#4c1d95,#1e1b4b)";
+  if(colorSel.value==="orange")document.body.style.background="linear-gradient(180deg,#7c2d12,#431407)";
+  if(colorSel.value==="green")document.body.style.background="linear-gradient(180deg,#064e3b,#042f2e)";
 }
 </script>
 
 </body>
-</html>
+        </html>
