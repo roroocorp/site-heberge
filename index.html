@@ -5,119 +5,107 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
 <style>
-/* ===== Reset et Style Global ===== */
-* { box-sizing: border-box; margin:0; padding:0; font-family: 'Segoe UI', sans-serif; }
-body { background: linear-gradient(180deg,#1b1b2f,#1b2b4f); color:white; padding:15px; transition: background 0.5s; }
+* { box-sizing:border-box; margin:0; padding:0; font-family:system-ui; }
+body { min-height:100vh; background: linear-gradient(180deg,#064e3b,#042f2e); color:white; padding:15px; transition:0.5s; }
 
-/* ===== Header ===== */
-header { display:flex; justify-content: space-between; align-items:center; margin-bottom:20px; }
-header h1 { font-size:1.5em; }
-header .time { background: rgba(0,0,0,0.3); padding:5px 10px; border-radius:10px; font-size:14px; }
+/* ===== HEADER ===== */
+header { display:flex; align-items:center; gap:12px; padding:14px; }
+header h3 { margin:0; font-size:20px; }
+#time { background:rgba(0,0,0,.35); padding:8px 16px; border-radius:16px; font-size:14px; margin-left:auto; }
 
-/* ===== Menu ===== */
+/* ===== MENU ===== */
 nav { display:flex; gap:10px; margin-bottom:20px; }
-nav button { flex:1; padding:10px; border:none; border-radius:10px; cursor:pointer; font-weight:bold; transition:0.3s; background: rgba(255,255,255,0.2); color:#fff; }
-nav button.active, nav button:hover { background: #00aaff; }
+nav button { flex:1; padding:12px; border:none; border-radius:12px; cursor:pointer; font-weight:700; background:rgba(255,255,255,0.2); transition:0.3s; }
+nav button.active, nav button:hover { background:#38bdf8; }
 
-/* ===== Sections ===== */
-section { display:none; padding:15px; background: rgba(255,255,255,0.1); border-radius:15px; margin-bottom:20px; transition:0.3s; }
+/* ===== SECTIONS ===== */
+section { display:none; padding:16px; background: rgba(255,255,255,0.1); border-radius:20px; margin-bottom:20px; transition:0.3s; }
 section.active { display:block; }
 
-/* ===== Inputs ===== */
-input, select, textarea { width:100%; padding:10px; border-radius:10px; border:none; margin-bottom:10px; font-size:1em; background: rgba(255,255,255,0.2); color:#fff; }
+/* ===== INPUTS ===== */
+input, select, textarea { width:100%; padding:10px; border-radius:10px; border:none; margin-bottom:10px; font-size:16px; background: rgba(255,255,255,0.2); color:white; }
 input::placeholder, textarea::placeholder { color:#ddd; }
 
-/* ===== Buttons ===== */
-.btn { background:#00aaff; color:#fff; font-weight:bold; cursor:pointer; border-radius:10px; padding:8px 10px; transition:0.3s; }
+/* ===== BUTTONS ===== */
+.btn { background:#38bdf8; color:white; border:none; border-radius:12px; padding:8px; cursor:pointer; font-weight:700; transition:0.3s; }
 .btn:hover { opacity:0.8; }
 
-/* ===== Tâches ===== */
-.task { display:flex; justify-content:space-between; align-items:center; background: rgba(255,255,255,0.2); padding:8px; border-radius:10px; margin-bottom:5px; transition:0.3s; }
+/* ===== TÂCHES ===== */
+.task { display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,.25); padding:8px; border-radius:12px; margin-bottom:5px; }
 .task button { background:red; border:none; border-radius:5px; color:white; cursor:pointer; }
 
-/* ===== Bloc-notes ===== */
-#note { height:100px; background: rgba(255,255,255,0.2); resize:none; }
-
-/* ===== Chat IA ===== */
-#chat { height:200px; overflow-y:auto; background: rgba(255,255,255,0.1); border-radius:10px; padding:10px; margin-bottom:10px; transition:0.3s; }
+/* ===== IA ===== */
+#chat { height:200px; overflow-y:auto; background: rgba(255,255,255,0.1); border-radius:12px; padding:10px; margin-bottom:10px; }
 #chat p { margin-bottom:5px; }
+#sendChat { border-radius:50%; width:40px; height:40px; font-size:1em; }
 
-/* ===== Code Promo ===== */
+/* ===== CODE PROMO ===== */
 #promo input { width:75%; display:inline-block; margin-right:5%; }
 #promo button { width:20%; display:inline-block; }
 
-/* ===== Animation IA message ===== */
-@keyframes pop { from { transform: translateY(20px); opacity:0;} to { transform: translateY(0); opacity:1;} }
-.message { animation: pop 0.3s ease forwards; }
-
-/* ===== Couleur sélectionné pour menu ===== */
-.color-option { display:inline-block; width:20px; height:20px; border-radius:50%; margin:2px; cursor:pointer; border:2px solid #fff; transition:0.3s; }
-.color-option:hover { transform: scale(1.2); }
-
-/* ===== Flèche envoyer ===== */
-#sendChat { border-radius:50%; width:40px; height:40px; padding:0; font-size:1em; }
+/* ===== COPYRIGHT ===== */
+footer { text-align:center; margin-top:20px; font-size:14px; opacity:0.6; }
 </style>
 </head>
 <body>
 
 <header>
-    <h1>Daily Life Ultra IA</h1>
-    <div class="time" id="time"></div>
+  <h3>Daily Life Ultra IA</h3>
+  <div id="time"></div>
 </header>
 
 <nav>
-    <button class="active" data-target="accueil">🏠 Accueil</button>
-    <button data-target="ia">🤖 IA</button>
-    <button data-target="promo">🎁 Code Promo</button>
+  <button class="active" data-target="accueil">🏠 Accueil</button>
+  <button data-target="ia">🤖 IA</button>
+  <button data-target="promo">🎁 Code Promo</button>
 </nav>
 
 <!-- ===== ACCUEIL ===== -->
 <section id="accueil" class="active">
-    <div>
-        <label>🎨 Couleur</label>
-        <select id="colorSelect">
-            <option value="#1b1b2f">Bleu Nuit</option>
-            <option value="#2b1b1b">Rouge Sombre</option>
-            <option value="#1b2b1b">Vert Sombre</option>
-            <option value="#4b2b1b">Orange</option>
-            <option value="#4b1b4b">Violet</option>
-        </select>
-    </div>
-    <div>
-        <label>🌍 Langue</label>
-        <select id="langSelect">
-            <option value="fr">Français</option>
-            <option value="en">English</option>
-            <option value="es">Español</option>
-        </select>
-    </div>
-    <div>
-        <label>✅ Tâches</label>
-        <input type="text" id="taskInput" placeholder="Nouvelle tâche">
-        <button class="btn" id="addTask">Ajouter</button>
-        <div id="tasks"></div>
-    </div>
-    <div>
-        <label>📝 Bloc-notes</label>
-        <textarea id="note" placeholder="Écris ici..."></textarea>
-    </div>
+  <div>
+    <label>🎨 Couleur</label>
+    <select id="colorSelect">
+      <option value="#064e3b">Vert</option>
+      <option value="#b91c1c">Rouge</option>
+      <option value="#1e3a8a">Bleu</option>
+      <option value="#f97316">Orange</option>
+      <option value="#7c3aed">Violet</option>
+    </select>
+  </div>
+  <div>
+    <label>🌍 Langue</label>
+    <select id="langSelect">
+      <option value="fr">Français</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="de">Deutsch</option>
+    </select>
+  </div>
+  <div>
+    <label>✅ Tâches</label>
+    <input type="text" id="taskInput" placeholder="Nouvelle tâche">
+    <button class="btn" id="addTask">Ajouter</button>
+    <div id="tasks"></div>
+  </div>
 </section>
 
 <!-- ===== IA ===== -->
 <section id="ia">
-    <div id="chat"></div>
-    <div style="display:flex; gap:10px;">
-        <input type="text" id="chatInput" placeholder="Écris un message">
-        <button class="btn" id="sendChat">➡️</button>
-    </div>
+  <div id="chat"></div>
+  <div style="display:flex; gap:10px;">
+    <input type="text" id="chatInput" placeholder="Écris un message">
+    <button class="btn" id="sendChat">➡️</button>
+  </div>
 </section>
 
 <!-- ===== CODE PROMO ===== -->
 <section id="promo">
-    <label>🎁 Code Promo</label>
-    <input type="text" id="promoInput" placeholder="Entre un code">
-    <button class="btn" id="promoBtn">Valider</button>
+  <label>🎁 Code Promo</label>
+  <input type="text" id="promoInput" placeholder="Entre un code">
+  <button class="btn" id="promoBtn">Valider</button>
 </section>
+
+<footer>© 2026 Daily Life Ultra IA ⚡</footer>
 
 <script>
 /* ===== Heure ===== */
@@ -125,31 +113,28 @@ setInterval(()=>{ document.getElementById('time').innerText = new Date().toLocal
 
 /* ===== Menu ===== */
 document.querySelectorAll('nav button').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-        document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('section').forEach(sec=>sec.classList.remove('active'));
-        document.getElementById(btn.dataset.target).classList.add('active');
-    });
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('section').forEach(sec=>sec.classList.remove('active'));
+    document.getElementById(btn.dataset.target).classList.add('active');
+  });
 });
 
 /* ===== Couleurs & Langue ===== */
 const colorSelect = document.getElementById('colorSelect');
 const langSelect = document.getElementById('langSelect');
 
-// Charger sauvegarde
-if(localStorage.getItem('color')) document.body.style.background = localStorage.getItem('color');
-if(localStorage.getItem('color')) colorSelect.value = localStorage.getItem('color');
+if(localStorage.getItem('color')) { document.body.style.background = localStorage.getItem('color'); colorSelect.value = localStorage.getItem('color'); }
 if(localStorage.getItem('lang')) langSelect.value = localStorage.getItem('lang');
 
 colorSelect.addEventListener('change', ()=>{
-    document.body.style.background = colorSelect.value;
-    localStorage.setItem('color', colorSelect.value);
+  document.body.style.background = colorSelect.value;
+  localStorage.setItem('color', colorSelect.value);
 });
-
 langSelect.addEventListener('change', ()=>{
-    localStorage.setItem('lang', langSelect.value);
-    alert('Langue changée en: ' + langSelect.value);
+  localStorage.setItem('lang', langSelect.value);
+  alert('Langue changée en: '+langSelect.value);
 });
 
 /* ===== Tâches ===== */
@@ -158,77 +143,68 @@ const addTask = document.getElementById('addTask');
 const tasksDiv = document.getElementById('tasks');
 
 function renderTasks() {
-    tasksDiv.innerHTML = '';
-    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    tasks.forEach((t,i)=>{
-        const div = document.createElement('div');
-        div.classList.add('task');
-        div.innerHTML = `<span>${t}</span><button onclick="deleteTask(${i})">🗑️</button>`;
-        tasksDiv.appendChild(div);
-    });
+  tasksDiv.innerHTML='';
+  const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+  tasks.forEach((t,i)=>{
+    const div = document.createElement('div');
+    div.classList.add('task');
+    div.innerHTML=`<span>${t}</span><button onclick="deleteTask(${i})">🗑️</button>`;
+    tasksDiv.appendChild(div);
+  });
 }
 
 function deleteTask(i){
-    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    tasks.splice(i,1);
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    renderTasks();
+  const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+  tasks.splice(i,1);
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  renderTasks();
 }
 
 addTask.addEventListener('click', ()=>{
-    const val = taskInput.value.trim();
-    if(!val) return;
-    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    tasks.push(val);
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    taskInput.value='';
-    renderTasks();
+  const val = taskInput.value.trim();
+  if(!val) return;
+  const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+  tasks.push(val);
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+  taskInput.value='';
+  renderTasks();
 });
 
 renderTasks();
 
-/* ===== Bloc-notes ===== */
-const note = document.getElementById('note');
-note.value = localStorage.getItem('note') || '';
-note.addEventListener('input', ()=>{ localStorage.setItem('note', note.value); });
-
-/* ===== IA locale ===== */
+/* ===== IA ===== */
 const chatInput = document.getElementById('chatInput');
 const chatDiv = document.getElementById('chat');
 document.getElementById('sendChat').addEventListener('click', ()=>{
-    const val = chatInput.value.trim();
-    if(!val) return;
-    const pUser = document.createElement('p');
-    pUser.innerText = 'Vous: ' + val;
-    pUser.classList.add('message');
-    chatDiv.appendChild(pUser);
+  const val = chatInput.value.trim();
+  if(!val) return;
+  const pUser = document.createElement('p');
+  pUser.innerText = 'Vous: '+val;
+  chatDiv.appendChild(pUser);
 
-    // IA réponse simple
-    let response = 'Je réfléchis... 🤖';
-    if(val.toLowerCase().includes('salut')) response = 'Salut 😄 Je suis là pour t’aider!';
-    if(val.toLowerCase().includes('repas')){
-        const n = val.match(/\d+/);
-        const nb = n ? Math.min(n[0], 5) : 1;
-        response = 'Voici ' + nb + ' idée(s) de repas: ' + Array(nb).fill(0).map((_,i)=>`Repas ${i+1}`).join(', ');
-    }
+  let response = 'Je réfléchis... 🤖';
+  if(val.toLowerCase().includes('salut')) response = 'Salut 😄 Je suis là pour t’aider!';
+  if(val.toLowerCase().includes('repas')){
+    const n = val.match(/\d+/); 
+    const nb = n ? Math.min(n[0],5) : 1;
+    response = 'Voici '+nb+' idée(s) de repas: '+Array(nb).fill(0).map((_,i)=>`Repas ${i+1}`).join(', ');
+  }
 
-    const pIA = document.createElement('p');
-    pIA.innerText = 'IA: ' + response;
-    pIA.classList.add('message');
-    chatDiv.appendChild(pIA);
-
-    chatInput.value='';
-    chatDiv.scrollTop = chatDiv.scrollHeight;
+  const pIA = document.createElement('p');
+  pIA.innerText = 'IA: '+response;
+  chatDiv.appendChild(pIA);
+  chatInput.value='';
+  chatDiv.scrollTop = chatDiv.scrollHeight;
 });
 
 /* ===== Code Promo ===== */
 document.getElementById('promoBtn').addEventListener('click', ()=>{
-    const code = document.getElementById('promoInput').value.trim();
-    if(code==='BONUS10') alert('Code valide ! 🎉');
-    else alert('Code invalide ❌');
-    document.getElementById('promoInput').value='';
+  const code = document.getElementById('promoInput').value.trim();
+  if(code==='BONUS10') alert('Code valide 🎉'); 
+  else alert('Code invalide ❌');
+  document.getElementById('promoInput').value='';
 });
 </script>
 
 </body>
-  </html>
+</html>
