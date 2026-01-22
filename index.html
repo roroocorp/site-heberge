@@ -4,210 +4,216 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
+
 <style>
-  /* --- Styles généraux --- */
-  body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #1d3a2d; /* Fond principal */
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-  }
+:root{
+  --bg:#0f3d2e;
+  --panel:#1f5c47;
+  --user:#2fa4ff;
+  --bot:#3bd16f;
+  --text:#ffffff;
+}
 
-  .container {
-    width: 100%;
-    max-width: 450px;
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-  }
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 
-  /* --- Navigation --- */
-  .nav {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-  }
-  .nav button {
-    flex: 1;
-    margin: 0 5px;
-    padding: 10px;
-    background-color: #4a7a60;
-    border: none;
-    border-radius: 12px;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  .nav button.active {
-    background-color: #71c785;
-  }
-  .nav button:hover {
-    background-color: #5fae70;
-  }
+body{
+  margin:0;
+  background:linear-gradient(180deg,#0f3d2e,#0b2c22);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
 
-  /* --- Chat Box --- */
-  .chat-container {
-    background-color: #2a5542;
-    border-radius: 15px;
-    padding: 10px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: 500px;
-    overflow: hidden;
-  }
+/* NAV */
+nav{
+  display:flex;
+  gap:10px;
+  padding:10px;
+  justify-content:center;
+}
+nav button{
+  background:#4f7f6a;
+  border:none;
+  color:white;
+  padding:12px 20px;
+  border-radius:20px;
+  font-size:16px;
+}
 
-  .messages {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 5px;
-    margin-bottom: 10px;
-  }
+/* CONTAINER */
+.container{
+  flex:1;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+}
 
-  .message {
-    max-width: 80%;
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 15px;
-    clear: both;
-    word-wrap: break-word;
-    animation: fadeIn 0.3s ease-in;
-  }
+/* CHAT */
+.chat-box{
+  background:var(--panel);
+  border-radius:20px;
+  padding:15px;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
 
-  .message.user {
-    background-color: #4aa3ff;
-    align-self: flex-end;
-    border-bottom-right-radius: 0;
-  }
+.messages{
+  flex:1;
+  overflow-y:auto;
+  padding-right:5px;
+}
 
-  .message.bot {
-    background-color: #4cd964;
-    align-self: flex-start;
-    border-bottom-left-radius: 0;
-  }
+.msg{
+  max-width:80%;
+  padding:12px 16px;
+  margin:8px 0;
+  border-radius:18px;
+  word-wrap:break-word;
+  animation:fade .3s ease;
+}
 
-  @keyframes fadeIn {
-    from {opacity: 0; transform: translateY(10px);}
-    to {opacity: 1; transform: translateY(0);}
-  }
+.user{background:var(--user);margin-left:auto}
+.bot{background:var(--bot);margin-right:auto}
 
-  /* --- Input box --- */
-  .input-container {
-    display: flex;
-    gap: 5px;
-  }
+@keyframes fade{
+  from{opacity:0;transform:translateY(5px)}
+  to{opacity:1;transform:translateY(0)}
+}
 
-  .input-container input {
-    flex: 1;
-    padding: 12px;
-    border-radius: 20px;
-    border: none;
-    outline: none;
-    font-size: 14px;
-  }
+/* INPUT */
+.input-zone{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
 
-  .input-container button {
-    background-color: #4aa3ff;
-    border: none;
-    border-radius: 50%;
-    padding: 10px 14px;
-    cursor: pointer;
-    transition: background 0.3s;
-    font-weight: bold;
-    font-size: 16px;
-  }
+.input-zone input{
+  flex:1;
+  border-radius:30px;
+  border:none;
+  padding:14px 18px;
+  font-size:16px;
+  outline:none;
+}
 
-  .input-container button:hover {
-    background-color: #3788d8;
-  }
+.input-zone button{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  border:none;
+  background:#2fa4ff;
+  color:white;
+  font-size:20px;
+}
 
-  /* --- Footer --- */
-  footer {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 12px;
-    color: #b0b0b0;
-  }
-
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:10px;
+  opacity:.7;
+  font-size:14px;
+}
 </style>
 </head>
+
 <body>
 
+<nav>
+  <button>Accueil</button>
+  <button>IA</button>
+  <button>Code Promo</button>
+</nav>
+
 <div class="container">
-  <!-- Navigation -->
-  <div class="nav">
-    <button class="active">Accueil</button>
-    <button>IA</button>
-    <button>Code Promo</button>
-  </div>
 
-  <!-- Chat -->
-  <div class="chat-container">
+  <div class="chat-box">
     <div class="messages" id="messages">
-      <div class="message bot">Salut 😄 Je suis là pour t’aider.</div>
+      <div class="msg bot">Salut 😄 Je suis ton IA locale. Pose-moi une question.</div>
     </div>
-    <div class="input-container">
-      <input type="text" id="userInput" placeholder="Écris ici">
-      <button id="sendBtn">➤</button>
+
+    <div class="input-zone">
+      <input id="input" placeholder="Écris ton message…">
+      <button onclick="send()">➤</button>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer>© 2026 Daily Life Ultra IA ⚡</footer>
 </div>
 
+<footer>© 2026 Daily Life Ultra IA ⚡</footer>
+
 <script>
-  const messages = document.getElementById('messages');
-  const userInput = document.getElementById('userInput');
-  const sendBtn = document.getElementById('sendBtn');
+const messages = document.getElementById("messages");
+const input = document.getElementById("input");
 
-  function addMessage(text, sender='user') {
-    const msgDiv = document.createElement('div');
-    msgDiv.classList.add('message', sender);
-    msgDiv.textContent = text;
-    messages.appendChild(msgDiv);
-    messages.scrollTop = messages.scrollHeight;
+let history = [];
+
+function addMessage(text, type){
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+  div.innerText = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function send(){
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = "";
+  addMessage(text,"user");
+  history.push({role:"user",text});
+
+  setTimeout(()=>botThinking(text),600);
+}
+
+function botThinking(userText){
+  addMessage("Je réfléchis 🤖…","bot");
+
+  setTimeout(()=>{
+    // enlever "je réfléchis"
+    messages.removeChild(messages.lastChild);
+    const reply = localIA(userText);
+    addMessage(reply,"bot");
+    history.push({role:"bot",reply});
+  },1000);
+}
+
+/* IA LOCALE */
+function localIA(text){
+  const t = text.toLowerCase();
+
+  if(t.includes("repas")){
+    const meals=[
+      "🍝 Pâtes à la crème et poulet",
+      "🍔 Burger maison",
+      "🥗 Salade complète",
+      "🍕 Pizza maison",
+      "🍛 Riz + sauce"
+    ];
+    return meals[Math.floor(Math.random()*meals.length)];
   }
 
-  function botReply(userText) {
-    const thinking = document.createElement('div');
-    thinking.classList.add('message', 'bot');
-    thinking.textContent = 'Je réfléchis 🤖';
-    messages.appendChild(thinking);
-    messages.scrollTop = messages.scrollHeight;
-
-    setTimeout(() => {
-      messages.removeChild(thinking);
-
-      // Réponse simple simulée
-      let reply = '';
-      if(userText.toLowerCase().includes('repas')) {
-        reply = '🍽 Idée de repas : Pizza Margherita';
-      } else {
-        reply = '✅ Reçu : ' + userText;
-      }
-
-      addMessage(reply, 'bot');
-    }, 1000);
+  if(t.includes("aide")){
+    return "Je peux t’aider pour des idées, discuter, organiser, tester ton site ou réfléchir avec toi 😉";
   }
 
-  function sendMessage() {
-    const text = userInput.value.trim();
-    if(text === '') return;
-    addMessage(text, 'user');
-    userInput.value = '';
-    botReply(text);
+  if(t.includes("bonjour") || t.includes("salut")){
+    return "Salut 😄 Content de te reparler !";
   }
 
-  sendBtn.addEventListener('click', sendMessage);
-  userInput.addEventListener('keypress', function(e) {
-    if(e.key === 'Enter') sendMessage();
-  });
+  if(t.includes("qui es tu")){
+    return "Je suis une IA locale intégrée à ton site. Pas d’internet, mais intelligente 😎";
+  }
+
+  return "Intéressant 🤔 Explique-moi un peu plus.";
+}
+
+/* ENVOI AVEC ENTRÉE */
+input.addEventListener("keydown",e=>{
+  if(e.key==="Enter") send();
+});
 </script>
 
 </body>
