@@ -9,7 +9,7 @@
 :root{
   --bg1:#064e3b;
   --bg2:#042f2e;
-  --card:rgba(255,255,255,.15);
+  --card:rgba(255,255,255,.18);
   --btn:#38bdf8;
 }
 
@@ -26,110 +26,121 @@ body{
 header{
   display:flex;
   align-items:center;
+  padding:14px;
   gap:10px;
-  padding:12px;
 }
+header h3{margin:0;font-size:20px;}
 #time{
   margin-left:auto;
-  background:rgba(0,0,0,.4);
+  background:rgba(0,0,0,.35);
   padding:6px 14px;
   border-radius:14px;
-  font-size:14px;
 }
-.menu{
-  font-size:26px;
+
+/* TOP NAV */
+#topNav{
+  display:flex;
+  gap:12px;
+  padding:14px;
+}
+.navBox{
+  flex:1;
+  text-align:center;
+  padding:18px 0;
+  border-radius:22px;
+  background:rgba(255,255,255,.25);
+  font-weight:800;
   cursor:pointer;
 }
 
-/* NAV */
-#topNav{
-  display:flex;
-  gap:10px;
-  padding:10px;
-}
-.nav{
-  flex:1;
-  background:rgba(255,255,255,.25);
-  border-radius:20px;
+/* PAGES */
+.page{
+  display:none;
   padding:16px;
-  text-align:center;
-  font-weight:700;
 }
-
-/* PAGE */
-.page{display:none;padding:12px;height:calc(100vh - 170px);overflow:hidden;}
 .page.active{display:block;}
 
 /* CARD */
 .card{
   background:var(--card);
-  border-radius:22px;
-  padding:18px;
-  margin-bottom:14px;
+  border-radius:24px;
+  padding:20px;
+  margin-bottom:16px;
 }
 
-/* INPUT */
-input,select,button{
+/* INPUTS */
+select,input,button{
   width:100%;
   padding:14px;
+  border-radius:16px;
   border:none;
-  border-radius:14px;
   font-size:16px;
 }
 button{
   background:var(--btn);
   font-weight:700;
-  margin-top:8px;
+  cursor:pointer;
 }
 
-/* TASK */
+/* TASKS */
 .task{
-  background:rgba(255,255,255,.2);
+  background:rgba(255,255,255,.25);
   padding:12px;
   border-radius:14px;
   margin-top:8px;
 }
 
 /* CHAT */
-#chatBox{
-  height:100%;
-  display:flex;
-  flex-direction:column;
-}
-#messages{
-  flex:1;
-  overflow:hidden;
+#chat{
+  height:55vh;
+  overflow-y:auto;
 }
 .msg{
-  background:rgba(255,255,255,.2);
+  background:rgba(255,255,255,.22);
   padding:12px;
   border-radius:16px;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
-.me{background:#0ea5e9}
 
-/* INPUT BAR */
-#chatInputBar{
+/* CHAT INPUT */
+#chatBar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
   display:flex;
   gap:10px;
+  padding:10px;
+  background:#022c22;
 }
-#chatInputBar input{flex:1;}
+#chatInput{
+  flex:1;
+  border-radius:20px;
+}
 #sendBtn{
-  width:56px;
+  width:54px;
   border-radius:50%;
+  font-size:20px;
 }
 
 /* LOGIN */
 #login{
   position:fixed;
   inset:0;
-  background:#020617;
+  background:linear-gradient(180deg,#020617,#020617);
   display:flex;
   align-items:center;
   justify-content:center;
   z-index:999;
 }
-#login .card{width:90%;max-width:320px;text-align:center}
+#loginBox{
+  width:90%;
+  max-width:320px;
+  background:#1f2933;
+  padding:20px;
+  border-radius:20px;
+  text-align:center;
+}
 </style>
 </head>
 
@@ -137,9 +148,9 @@ button{
 
 <!-- LOGIN -->
 <div id="login">
-  <div class="card">
+  <div id="loginBox">
     <h2>Connexion</h2>
-    <input id="username" placeholder="Ton pseudo">
+    <input id="pseudo" placeholder="Ton pseudo">
     <button onclick="login()">Entrer</button>
   </div>
 </div>
@@ -147,31 +158,30 @@ button{
 <header>
   <h3>Daily Life Ultra IA</h3>
   <div id="time"></div>
-  <div class="menu">☰</div>
 </header>
 
 <div id="topNav">
-  <div class="nav" onclick="show('home')">Accueil</div>
-  <div class="nav" onclick="show('ia')">IA</div>
-  <div class="nav" onclick="show('promo')">Code Promo</div>
+  <div class="navBox" onclick="showPage('home')">Accueil</div>
+  <div class="navBox" onclick="showPage('ia')">IA</div>
+  <div class="navBox" onclick="showPage('promo')">Code Promo</div>
 </div>
 
-<!-- ACCUEIL -->
+<!-- HOME -->
 <div id="home" class="page active">
   <div class="card">
     🎨 Couleur
-    <select onchange="setTheme(this.value)">
-      <option>Vert</option>
-      <option>Orange</option>
-      <option>Violet</option>
+    <select onchange="setColor(this.value)">
+      <option value="green">Vert</option>
+      <option value="orange">Orange</option>
+      <option value="violet">Violet</option>
     </select>
   </div>
 
   <div class="card">
     🌍 Langue
     <select onchange="setLang(this.value)">
-      <option>Français</option>
-      <option>English</option>
+      <option value="fr">Français</option>
+      <option value="en">English</option>
     </select>
   </div>
 
@@ -179,29 +189,30 @@ button{
     ✅ Tâches
     <input id="taskInput" placeholder="Nouvelle tâche">
     <button onclick="addTask()">Ajouter</button>
-    <div id="tasks"></div>
+    <div id="taskList"></div>
   </div>
 </div>
 
 <!-- IA -->
 <div id="ia" class="page">
-  <div id="chatBox">
-    <div id="messages"></div>
-    <div id="chatInputBar">
-      <input id="chatInput" placeholder="Écris un message...">
-      <button id="sendBtn" onclick="send()">➤</button>
-    </div>
+  <div id="chat">
+    <div class="msg">Salut 👋 Je peux t’aider pour des repas, idées ou organisation.</div>
   </div>
 </div>
 
 <!-- PROMO -->
 <div id="promo" class="page">
   <div class="card">
-    🎟️ Code Promo
-    <input id="promoInput" placeholder="Entre ton code">
-    <button onclick="promo()">Valider</button>
-    <p id="promoMsg"></p>
+    Code promo
+    <input placeholder="Entre ton code">
+    <button onclick="alert('Code envoyé')">Valider</button>
   </div>
+</div>
+
+<!-- CHAT BAR -->
+<div id="chatBar">
+  <input id="chatInput" placeholder="Écris un message…">
+  <button id="sendBtn" onclick="send()">➤</button>
 </div>
 
 <script>
@@ -210,75 +221,54 @@ setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
 
 /* LOGIN */
 function login(){
-  const u=username.value.trim();
-  if(!u)return;
-  localStorage.user=u;
+  const p=pseudo.value.trim();
+  if(!p)return alert("Entre un pseudo");
+  localStorage.setItem("pseudo",p);
   login.style.display="none";
-  addBot("Salut "+u+" 👋 Je peux t’aider pour des repas, idées ou organisation.");
 }
-if(localStorage.user) login.style.display="none";
+if(localStorage.getItem("pseudo")) login.style.display="none";
 
 /* NAV */
-function show(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-/* THEME */
-function setTheme(c){
-  if(c==="Orange"){bg1="#7c2d12";bg2="#431407"}
-  if(c==="Violet"){bg1="#4c1d95";bg2="#2e1065"}
-  if(c==="Vert"){bg1="#064e3b";bg2="#042f2e"}
-  document.documentElement.style.setProperty('--bg1',bg1);
-  document.documentElement.style.setProperty('--bg2',bg2);
-  localStorage.theme=c;
+/* COLORS */
+function setColor(c){
+  if(c==="orange"){bg1="#7c2d12";bg2="#431407";}
+  if(c==="violet"){bg1="#4c1d95";bg2="#2e1065";}
+  if(c==="green"){bg1="#064e3b";bg2="#042f2e";}
+  document.documentElement.style.setProperty("--bg1",bg1);
+  document.documentElement.style.setProperty("--bg2",bg2);
 }
-if(localStorage.theme)setTheme(localStorage.theme);
 
-/* LANG */
-function setLang(l){localStorage.lang=l;}
-
-/* TASK */
+/* TASKS */
 function addTask(){
   if(!taskInput.value)return;
   const d=document.createElement("div");
   d.className="task";
   d.textContent=taskInput.value;
-  tasks.appendChild(d);
+  taskList.appendChild(d);
   taskInput.value="";
 }
 
-/* CHAT */
-function addBot(t){
-  const d=document.createElement("div");
-  d.className="msg";
-  d.textContent=t;
-  messages.appendChild(d);
-}
-function addMe(t){
-  const d=document.createElement("div");
-  d.className="msg me";
-  d.textContent=t;
-  messages.appendChild(d);
-}
+/* IA CHAT */
 function send(){
   const q=chatInput.value.trim();
   if(!q)return;
-  addMe(q);
-  chatInput.value="";
+  chat.innerHTML+=`<div class="msg">${q}</div>`;
+  let r="Je réfléchis 🤖";
+  if(q.toLowerCase().includes("repas")){
+    r="🍽️ Idée repas : pâtes, poulet, salade.";
+  }
   setTimeout(()=>{
-    if(q.toLowerCase().includes("repas")){
-      addBot("🍽️ Idée repas : poulet + riz + légumes");
-    }else{
-      addBot("Je suis là pour t’aider 👍");
-    }
+    chat.innerHTML+=`<div class="msg">${r}</div>`;
+    chat.scrollTop=chat.scrollHeight;
   },600);
-}
-
-/* PROMO */
-function promo(){
-  promoMsg.textContent="Code reçu ✔️";
+  chatInput.value="";
 }
 </script>
+
 </body>
-</html>
+  </html>
