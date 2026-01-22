@@ -5,184 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
 <style>
-* {
-  box-sizing: border-box;
-  font-family: system-ui;
-  margin:0; padding:0;
-}
-
-/* BODY */
-body {
-  min-height: 100vh;
-  background: linear-gradient(180deg,#064e3b,#042f2e);
-  color: white;
-  display: flex;
-  flex-direction: column;
-}
-
-/* HEADER */
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  background: rgba(0,0,0,.3);
-  border-bottom: 1px solid rgba(255,255,255,.2);
-}
-header h3 {
-  font-size: 20px;
-}
-#time {
-  background: rgba(0,0,0,.35);
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 14px;
-}
-
-/* TOP NAV */
-#topNav {
-  display: flex;
-  gap: 10px;
-  padding: 10px;
-}
-.navBox {
-  flex:1;
-  padding: 16px 0;
-  border-radius: 20px;
-  text-align:center;
-  font-weight: bold;
-  cursor:pointer;
-  font-size: 16px;
-  background: rgba(255,255,255,.15);
-  transition: 0.3s;
-}
-.navBox:hover {
-  background: rgba(255,255,255,.25);
-}
-
-/* PAGES */
-.page { display:none; padding:16px; flex:1; overflow-y:auto; }
-.page.active { display:block; }
-
-/* CARD */
-.card {
-  background: rgba(255,255,255,.2);
-  padding: 16px;
-  border-radius: 20px;
-  margin-bottom: 12px;
-}
-.card h3 { margin-bottom: 10px; }
-
-/* SELECT/INPUT/BUTTON */
-select, input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border:none;
-  font-size: 14px;
-}
-button {
-  margin-top: 10px;
-  padding: 12px;
-  width: 100%;
-  border:none;
-  border-radius: 12px;
-  background: #38bdf8;
-  font-weight: bold;
-  cursor:pointer;
-}
-
-/* TASKS */
-.task { padding: 10px; background: rgba(255,255,255,.25); border-radius:12px; margin-top:8px; }
-
-/* IA CHAT */
-#iaChat {
-  display:flex;
-  flex-direction:column;
-  height: 400px;
-  background: rgba(255,255,255,.1);
-  border-radius: 20px;
-  padding: 12px;
-  overflow-y:auto;
-  margin-bottom: 10px;
-}
-.message { margin-bottom: 10px; padding:8px; border-radius:12px; max-width:80%; }
-.user { background:#38bdf8; color:#000; align-self:flex-end; }
-.bot { background: rgba(255,255,255,.3); color:white; align-self:flex-start; }
-
-/* IA INPUT */
-#iaInputContainer {
-  display:flex;
-  gap:6px;
-}
-#iaInput {
-  flex:1;
-  border-radius:20px;
-  padding:12px;
-  border:none;
-  font-size:14px;
-}
-#iaSendBtn {
-  border:none;
-  border-radius:50%;
-  width:44px;
-  height:44px;
-  background:#38bdf8;
-  cursor:pointer;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-/* LOGIN */
-#login {
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background: rgba(0,0,0,.8);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-#loginBox {
-  background: rgba(50,50,50,0.9);
-  padding:24px;
-  border-radius:20px;
-  width: 300px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-#loginBox input {
-  padding:10px;
-  border-radius:12px;
-  border:none;
-  font-size:14px;
-}
-#loginBox button {
-  padding:12px;
-  border:none;
-  border-radius:12px;
-  background:#38bdf8;
-  font-weight:bold;
-  cursor:pointer;
-}
+*{box-sizing:border-box;font-family:system-ui;}
+body{margin:0;min-height:100vh;color:white;background:linear-gradient(180deg,#064e3b,#042f2e);}
+header{display:flex;align-items:center;gap:12px;padding:14px;}
+header h3{margin:0;font-size:20px;}
+#time{background:rgba(0,0,0,.35);padding:8px 16px;border-radius:16px;font-size:14px;}
+.menuBtn{margin-left:auto;font-size:26px;cursor:pointer;}
+#topNav{display:flex;gap:14px;padding:16px;}
+.navBox{flex:1;background:rgba(255,255,255,.25);border-radius:22px;padding:22px 0;text-align:center;font-weight:800;cursor:pointer;font-size:18px;}
+.page{display:none;padding:16px;}
+.page.active{display:block;}
+.card{background:rgba(255,255,255,.2);border-radius:24px;padding:22px;margin-bottom:18px;}
+.card h3{margin-top:0;margin-bottom:14px;font-size:18px;}
+select,input,button{width:100%;padding:18px;border-radius:18px;border:none;font-size:16px;}
+button{margin-top:12px;background:#38bdf8;font-weight:700;cursor:pointer;}
+.task{display:flex;justify-content:space-between;align-items:center;padding:14px;background:rgba(255,255,255,.25);border-radius:16px;margin-top:10px;}
+.trash{cursor:pointer;color:red;}
+#sidebar{position:fixed;top:0;left:-260px;width:260px;height:100%;background:#020617;padding:16px;transition:.3s;z-index:100;}
+#sidebar.active{left:0;}
+.sideItem{padding:16px;border-bottom:1px solid #334;font-size:16px;cursor:pointer;}
+#chatInputContainer{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;width:90%;gap:8px;}
+#chatInput{flex:1;padding:14px;border-radius:50px;border:none;font-size:16px;}
+#chatSend{background:#38bdf8;border:none;padding:0 20px;border-radius:50px;font-size:20px;cursor:pointer;}
+#chatBox{margin-bottom:80px;}
+.message{padding:10px 16px;background:rgba(255,255,255,.2);border-radius:16px;margin-bottom:8px;word-break:break-word;}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login">
-  <div id="loginBox">
-    <h3>Connexion</h3>
-    <input type="text" id="pseudo" placeholder="Ton pseudo">
-    <button id="loginBtn">Entrer</button>
-  </div>
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sideItem" onclick="showPage('home')">Accueil</div>
 </div>
 
 <header>
   <h3>Daily Life Ultra IA</h3>
   <div id="time"></div>
+  <div class="menuBtn" onclick="toggleMenu()">☰</div>
 </header>
 
 <div id="topNav">
@@ -196,23 +55,25 @@ button {
   <div class="card">
     <h3>🎨 Couleur</h3>
     <select id="colorSelect">
-      <option>Vert</option>
-      <option>Rouge</option>
-      <option>Bleu</option>
-      <option>Rose</option>
-      <option>Violet</option>
-      <option>Orange</option>
+      <option value="Vert">Vert</option>
+      <option value="Rouge">Rouge</option>
+      <option value="Bleu">Bleu</option>
+      <option value="Rose">Rose</option>
+      <option value="Violet">Violet</option>
+      <option value="Orange">Orange</option>
     </select>
   </div>
+
   <div class="card">
     <h3>🌍 Langue</h3>
     <select id="langSelect">
-      <option>Français</option>
-      <option>Anglais</option>
-      <option>Espagnol</option>
-      <option>Allemand</option>
+      <option value="Français">Français</option>
+      <option value="Anglais">Anglais</option>
+      <option value="Espagnol">Espagnol</option>
+      <option value="Allemand">Allemand</option>
     </select>
   </div>
+
   <div class="card">
     <h3>✅ Tâches</h3>
     <input id="taskInput" placeholder="Nouvelle tâche">
@@ -223,10 +84,10 @@ button {
 
 <!-- IA -->
 <div id="ia" class="page">
-  <div class="card" id="iaChat"></div>
-  <div id="iaInputContainer">
-    <input id="iaInput" placeholder="Écris un message…">
-    <button id="iaSendBtn">➤</button>
+  <div class="card" id="chatBox"></div>
+  <div id="chatInputContainer">
+    <input id="chatInput" placeholder="Écris un message...">
+    <button id="chatSend">➡️</button>
   </div>
 </div>
 
@@ -235,101 +96,101 @@ button {
   <div class="card">
     <h3>Code Promo</h3>
     <input id="promoInput" placeholder="Entre ton code">
-    <button id="promoBtn">Valider</button>
+    <button onclick="validerPromo()">Valider</button>
   </div>
 </div>
 
 <script>
 /* TIME */
-setInterval(()=>{ 
-  document.getElementById("time").textContent = new Date().toLocaleTimeString(); 
+setInterval(()=>{
+  time.textContent=new Date().toLocaleTimeString();
 },1000);
 
-/* PAGES */
+/* MENU */
+function toggleMenu(){
+  sidebar.classList.toggle("active");
+}
 function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
+  sidebar.classList.remove("active");
 }
+
+/* SAUVEGARDE COULEUR ET LANGUE */
+const colorSelect=document.getElementById('colorSelect');
+const langSelect=document.getElementById('langSelect');
+
+if(localStorage.getItem('color')) colorSelect.value=localStorage.getItem('color');
+if(localStorage.getItem('lang')) langSelect.value=localStorage.getItem('lang');
+
+colorSelect.onchange=()=>{localStorage.setItem('color',colorSelect.value);}
+langSelect.onchange=()=>{localStorage.setItem('lang',langSelect.value);}
 
 /* TASKS */
-let tasks = [];
-function addTask(){
-  const t = document.getElementById("taskInput").value.trim();
-  if(!t) return;
-  tasks.push(t);
-  document.getElementById("taskInput").value="";
-  renderTasks();
-}
+let tasks=JSON.parse(localStorage.getItem('tasks')||"[]");
 function renderTasks(){
-  const list = document.getElementById("taskList");
-  list.innerHTML="";
-  tasks.forEach(t=>{
-    const d = document.createElement("div");
+  taskList.innerHTML="";
+  tasks.forEach((t,i)=>{
+    let d=document.createElement("div");
     d.className="task";
-    d.textContent=t;
-    list.appendChild(d);
+    d.innerHTML=`<span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`;
+    taskList.appendChild(d);
   });
 }
+function addTask(){
+  if(!taskInput.value) return;
+  tasks.push(taskInput.value);
+  taskInput.value="";
+  localStorage.setItem('tasks',JSON.stringify(tasks));
+  renderTasks();
+}
+function delTask(i){
+  tasks.splice(i,1);
+  localStorage.setItem('tasks',JSON.stringify(tasks));
+  renderTasks();
+}
+renderTasks();
 
-/* IA */
-const iaChat = document.getElementById("iaChat");
-function addMessage(msg, sender){
-  const div = document.createElement("div");
-  div.className="message "+sender;
+/* IA SIMPLE */
+const chatBox=document.getElementById('chatBox');
+const chatInput=document.getElementById('chatInput');
+const chatSend=document.getElementById('chatSend');
+
+function addMessage(msg,isUser){
+  const div=document.createElement('div');
+  div.className='message';
+  div.style.background=isUser?'rgba(56,189,248,.4)':'rgba(255,255,255,.2)';
   div.textContent=msg;
-  iaChat.appendChild(div);
-  iaChat.scrollTop = iaChat.scrollHeight;
+  chatBox.appendChild(div);
+  chatBox.scrollTop=chatBox.scrollHeight;
 }
 
-function generateMeals(count){
-  const meals = ["Pâtes", "Pizza", "Salade", "Poulet", "Riz", "Sushi"];
-  let result = [];
-  for(let i=0;i<count;i++){
-    result.push(meals[Math.floor(Math.random()*meals.length)]);
+chatSend.onclick=()=>{
+  const text=chatInput.value.trim();
+  if(!text) return;
+  addMessage(text,true);
+  chatInput.value="";
+  // IA répond
+  let resp="Je réfléchis...";
+  if(text.toLowerCase().includes("salut")) resp="Salut 👋 Je peux t’aider pour des repas, idées ou organisation.";
+  else if(text.toLowerCase().includes("repas")){
+    const n=text.match(/\d+/)?.[0]||1;
+    const plats=["Pizza","Salade","Pâtes","Omelette","Burger","Sushi"];
+    let r=[];
+    for(let i=0;i<n;i++){
+      r.push(plats[Math.floor(Math.random()*plats.length)]);
+    }
+    resp="Voici ton repas : "+r.join(", ");
   }
-  return result.join(", ");
+  setTimeout(()=>{addMessage(resp,false)},500);
 }
 
-document.getElementById("iaSendBtn").addEventListener("click",()=>{
-  const input = document.getElementById("iaInput");
-  const val = input.value.trim();
-  if(!val) return;
-  addMessage(val,"user");
-  let response="";
-  if(val.toLowerCase().includes("salut")){
-    response="Salut 👋 Je peux t’aider pour des repas, idées ou organisation.";
-  } else if(val.toLowerCase().includes("repas")){
-    let num = 1;
-    const match = val.match(/\d+/);
-    if(match) num = parseInt(match[0]);
-    response="Voici ton repas : "+generateMeals(num);
-  } else {
-    response="🤖 Je réfléchis...";
-  }
-  addMessage(response,"bot");
-  input.value="";
-});
-
-/* PROMO */
-document.getElementById("promoBtn").addEventListener("click",()=>{
-  const val = document.getElementById("promoInput").value.trim();
-  if(!val) { alert("Entre un code"); return; }
-  alert("Code '"+val+"' validé !");
-});
-
-/* LOGIN */
-const loginBox = document.getElementById("login");
-const pseudoInput = document.getElementById("pseudo");
-const loginBtn = document.getElementById("loginBtn");
-function doLogin(){
-  const p = pseudoInput.value.trim();
-  if(p===""){ alert("Entre un pseudo"); return; }
-  localStorage.setItem("pseudo",p);
-  loginBox.style.display="none";
+/* CODE PROMO */
+function validerPromo(){
+  if(!promoInput.value) return alert("Entrez un code !");
+  alert("Code "+promoInput.value+" validé !");
+  promoInput.value="";
 }
-loginBtn.addEventListener("click", doLogin);
-pseudoInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter") doLogin(); });
-if(localStorage.getItem("pseudo")) loginBox.style.display="none";
 </script>
 
 </body>
