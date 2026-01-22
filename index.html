@@ -6,200 +6,127 @@
 <title>Daily Life Ultra IA</title>
 
 <style>
-*{box-sizing:border-box;font-family:system-ui;}
+:root{
+  --bg1:#064e3b;
+  --bg2:#042f2e;
+  --card:rgba(255,255,255,.2);
+  --btn:#38bdf8;
+}
 body{
   margin:0;
-  background:linear-gradient(180deg,#064e3b,#042f2e);
+  font-family:system-ui;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2));
   color:white;
   min-height:100vh;
 }
-
-/* HEADER */
 header{
   display:flex;
   align-items:center;
   gap:12px;
   padding:14px;
 }
-header h3{margin:0;}
 #time{
   background:rgba(0,0,0,.35);
   padding:6px 14px;
   border-radius:16px;
-  font-size:14px;
 }
-.menuBtn{
-  margin-left:auto;
-  font-size:26px;
-  cursor:pointer;
-}
-
-/* NAV */
-#topNav{
+nav{
   display:flex;
-  gap:12px;
-  padding:12px;
+  gap:10px;
+  padding:10px;
 }
-.navBox{
+.nav{
   flex:1;
   background:rgba(255,255,255,.25);
+  padding:16px;
   border-radius:22px;
-  padding:18px 0;
   text-align:center;
   font-weight:700;
   cursor:pointer;
 }
-
-/* PAGES */
 .page{display:none;padding:16px;}
 .page.active{display:block;}
-
-/* CARDS */
 .card{
-  background:rgba(255,255,255,.2);
-  border-radius:24px;
-  padding:22px;
-  margin-bottom:18px;
+  background:var(--card);
+  padding:20px;
+  border-radius:22px;
+  margin-bottom:16px;
 }
 select,input,button{
   width:100%;
-  padding:16px;
+  padding:14px;
   border-radius:18px;
   border:none;
   font-size:16px;
 }
 button{
-  background:#38bdf8;
+  background:var(--btn);
   font-weight:700;
-  cursor:pointer;
   margin-top:10px;
 }
-
-/* TASKS */
 .task{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  padding:14px;
   background:rgba(255,255,255,.25);
-  border-radius:16px;
-  margin-top:10px;
+  padding:12px;
+  border-radius:14px;
+  margin-top:8px;
 }
 .trash{cursor:pointer;color:red}
-
-/* CHAT GPT STYLE */
-#chatContainer{
-  position:fixed;
-  top:120px;
-  bottom:80px;
-  left:0;
-  right:0;
-  padding:16px;
-  overflow-y:auto;
-}
-.msg{
-  max-width:75%;
-  padding:12px 16px;
-  border-radius:18px;
-  margin-bottom:10px;
-  word-break:break-word;
-}
-.user{
-  background:#38bdf8;
-  color:black;
-  margin-left:auto;
-}
-.ia{
-  background:rgba(255,255,255,.25);
-}
-
-/* INPUT CHAT */
-#chatInputBar{
-  position:fixed;
-  bottom:12px;
-  left:50%;
-  transform:translateX(-50%);
-  width:92%;
-  display:flex;
-  gap:8px;
-}
-#chatInput{
-  flex:1;
-  padding:14px;
-  border-radius:50px;
-  border:none;
-}
-#chatSend{
-  background:#38bdf8;
-  border:none;
-  padding:0 22px;
-  border-radius:50px;
-  font-size:22px;
-  cursor:pointer;
-}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h3>Daily Life Ultra IA</h3>
+  <h3 id="title">Daily Life Ultra IA</h3>
   <div id="time"></div>
-  <div class="menuBtn">☰</div>
 </header>
 
-<div id="topNav">
-  <div class="navBox" onclick="showPage('home')">Accueil</div>
-  <div class="navBox" onclick="showPage('ia')">IA</div>
-  <div class="navBox" onclick="showPage('promo')">Code Promo</div>
-</div>
+<nav>
+  <div class="nav" onclick="show('home')" id="navHome">Accueil</div>
+  <div class="nav" onclick="show('ia')" id="navIA">IA</div>
+  <div class="nav" onclick="show('promo')" id="navPromo">Code Promo</div>
+</nav>
 
-<!-- ACCUEIL -->
 <div id="home" class="page active">
   <div class="card">
-    <h3>🎨 Couleur</h3>
-    <select id="colorSelect">
-      <option>Vert</option>
-      <option>Rouge</option>
-      <option>Bleu</option>
-      <option>Orange</option>
-      <option>Violet</option>
+    <h3 id="colorTitle">🎨 Couleur</h3>
+    <select id="color">
+      <option value="green">Vert</option>
+      <option value="blue">Bleu</option>
+      <option value="orange">Orange</option>
+      <option value="red">Rouge</option>
+      <option value="purple">Violet</option>
+      <option value="dark">Noir</option>
     </select>
   </div>
 
   <div class="card">
-    <h3>🌍 Langue</h3>
-    <select id="langSelect">
-      <option>Français</option>
-      <option>English</option>
-      <option>Español</option>
+    <h3 id="langTitle">🌍 Langue</h3>
+    <select id="lang">
+      <option value="fr">Français</option>
+      <option value="en">English</option>
     </select>
   </div>
 
   <div class="card">
-    <h3>✅ Tâches</h3>
+    <h3 id="taskTitle">✅ Tâches</h3>
     <input id="taskInput" placeholder="Nouvelle tâche">
-    <button onclick="addTask()">Ajouter</button>
-    <div id="taskList"></div>
+    <button onclick="addTask()" id="addBtn">Ajouter</button>
+    <div id="tasks"></div>
   </div>
 </div>
 
-<!-- IA -->
 <div id="ia" class="page">
-  <div id="chatContainer"></div>
-
-  <div id="chatInputBar">
-    <input id="chatInput" placeholder="Écris un message…">
-    <button id="chatSend">➤</button>
-  </div>
+  <div class="card">💬 IA locale (sans API)</div>
 </div>
 
-<!-- CODE PROMO -->
 <div id="promo" class="page">
   <div class="card">
     <h3>Code Promo</h3>
-    <input id="promoInput" placeholder="Entre ton code">
-    <button onclick="alert('Code validé')">Valider</button>
+    <input placeholder="Entre ton code">
+    <button>Valider</button>
   </div>
 </div>
 
@@ -208,68 +135,81 @@ button{
 setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
 
 /* NAV */
-function showPage(p){
+function show(p){
   document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
   document.getElementById(p).classList.add('active');
 }
 
-/* SAVE COLOR / LANG */
-const c=colorSelect,l=langSelect;
-c.value=localStorage.color||c.value;
-l.value=localStorage.lang||l.value;
-c.onchange=()=>localStorage.color=c.value;
-l.onchange=()=>localStorage.lang=l.value;
+/* COLORS */
+const themes={
+  green:["#064e3b","#042f2e"],
+  blue:["#1e3a8a","#020617"],
+  orange:["#9a3412","#431407"],
+  red:["#7f1d1d","#450a0a"],
+  purple:["#581c87","#2e1065"],
+  dark:["#020617","#020617"]
+};
+function applyColor(c){
+  document.documentElement.style.setProperty("--bg1",themes[c][0]);
+  document.documentElement.style.setProperty("--bg2",themes[c][1]);
+  localStorage.color=c;
+}
+color.value=localStorage.color||"green";
+applyColor(color.value);
+color.onchange=()=>applyColor(color.value);
+
+/* LANGUAGES */
+const txt={
+  fr:{
+    Accueil:"Accueil",IA:"IA",Promo:"Code Promo",
+    Couleur:"🎨 Couleur",Langue:"🌍 Langue",Taches:"✅ Tâches",
+    Ajouter:"Ajouter",TaskPH:"Nouvelle tâche"
+  },
+  en:{
+    Accueil:"Home",IA:"AI",Promo:"Promo Code",
+    Couleur:"🎨 Color",Langue:"🌍 Language",Taches:"✅ Tasks",
+    Ajouter:"Add",TaskPH:"New task"
+  }
+};
+function applyLang(l){
+  navHome.textContent=txt[l].Accueil;
+  navIA.textContent=txt[l].IA;
+  navPromo.textContent=txt[l].Promo;
+  colorTitle.textContent=txt[l].Couleur;
+  langTitle.textContent=txt[l].Langue;
+  taskTitle.textContent=txt[l].Taches;
+  addBtn.textContent=txt[l].Ajouter;
+  taskInput.placeholder=txt[l].TaskPH;
+  localStorage.lang=l;
+}
+lang.value=localStorage.lang||"fr";
+applyLang(lang.value);
+lang.onchange=()=>applyLang(lang.value);
 
 /* TASKS */
-let tasks=JSON.parse(localStorage.tasks||"[]");
-function renderTasks(){
-  taskList.innerHTML="";
-  tasks.forEach((t,i)=>{
-    taskList.innerHTML+=`
-      <div class="task">
-        ${t}
-        <span class="trash" onclick="delTask(${i})">🗑️</span>
-      </div>`;
+let list=JSON.parse(localStorage.tasks||"[]");
+function render(){
+  tasks.innerHTML="";
+  list.forEach((t,i)=>{
+    tasks.innerHTML+=`
+    <div class="task">${t}
+    <span class="trash" onclick="del(${i})">🗑️</span></div>`;
   });
 }
 function addTask(){
   if(!taskInput.value)return;
-  tasks.push(taskInput.value);
+  list.push(taskInput.value);
+  localStorage.tasks=JSON.stringify(list);
   taskInput.value="";
-  localStorage.tasks=JSON.stringify(tasks);
-  renderTasks();
+  render();
 }
-function delTask(i){
-  tasks.splice(i,1);
-  localStorage.tasks=JSON.stringify(tasks);
-  renderTasks();
+function del(i){
+  list.splice(i,1);
+  localStorage.tasks=JSON.stringify(list);
+  render();
 }
-renderTasks();
-
-/* CHAT IA */
-const box=document.getElementById('chatContainer');
-chatSend.onclick=()=>{
-  let txt=chatInput.value.trim();
-  if(!txt)return;
-  addMsg(txt,'user');
-  chatInput.value="";
-  setTimeout(()=>replyIA(txt),500);
-}
-function addMsg(t,type){
-  let d=document.createElement('div');
-  d.className='msg '+type;
-  d.textContent=t;
-  box.appendChild(d);
-  box.scrollTop=box.scrollHeight;
-}
-function replyIA(t){
-  let r="Je peux générer des repas, t’aider à organiser ta journée.";
-  if(t.toLowerCase().includes("repas")){
-    r="Voici un repas : 🍝 Pâtes + 🥗 Salade + 🍎 Fruit";
-  }
-  addMsg(r,'ia');
-}
+render();
 </script>
 
 </body>
-</html>
+  </html>
