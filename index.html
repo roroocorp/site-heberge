@@ -5,100 +5,103 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-body { background: linear-gradient(to bottom, #1a3a2d, #13402c); color: #fff; display: flex; justify-content: center; padding: 20px; min-height: 100vh; }
-.container { width: 100%; max-width: 420px; }
+* { box-sizing: border-box; margin:0; padding:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+body { background: linear-gradient(to bottom, #1a3a2d, #13402c); color:#fff; display:flex; justify-content:center; padding:20px; min-height:100vh;}
+.container { width:100%; max-width:420px; }
 
-nav { display: flex; justify-content: space-between; margin-bottom: 25px; }
-nav button { flex: 1; margin: 0 5px; padding: 12px; border: none; border-radius: 15px; background: #4d8068; color: #fff; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 3px 6px rgba(0,0,0,0.3);}
-nav button.active, nav button:hover { background: #6bbf8f; transform: translateY(-2px); box-shadow: 0 5px 8px rgba(0,0,0,0.4); }
+nav { display:flex; justify-content:space-between; margin-bottom:25px;}
+nav button { flex:1; margin:0 5px; padding:12px; border:none; border-radius:15px; background:#4d8068; color:#fff; font-weight:bold; cursor:pointer; transition:all 0.3s; box-shadow:0 3px 6px rgba(0,0,0,0.3);}
+nav button.active, nav button:hover { background:#6bbf8f; transform:translateY(-2px); box-shadow:0 5px 8px rgba(0,0,0,0.4); }
 
-.bloc { background: rgba(62,108,82,0.9); padding: 18px; border-radius: 20px; margin-bottom: 18px; transition: all 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.2);}
-.bloc label { display: block; font-weight: bold; margin-bottom: 7px; }
-.bloc select, .bloc input { width: 100%; padding: 12px; border-radius: 12px; border: none; margin-bottom: 10px; font-size: 15px; }
-.bloc button { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #4fc3f7; color: #000; font-weight: bold; cursor: pointer; transition: 0.3s; }
-.bloc button:hover { background: #29b6f6; transform: translateY(-2px); }
+.bloc { background: rgba(62,108,82,0.9); padding:18px; border-radius:20px; margin-bottom:18px; transition:all 0.3s; box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+.bloc label { display:block; font-weight:bold; margin-bottom:7px;}
+.bloc select, .bloc input { width:100%; padding:12px; border-radius:12px; border:none; margin-bottom:10px; font-size:15px;}
+.bloc button { width:100%; padding:12px; border-radius:12px; border:none; background:#4fc3f7; color:#000; font-weight:bold; cursor:pointer; transition:0.3s;}
+.bloc button:hover { background:#29b6f6; transform:translateY(-2px); }
 
-#tasksList { list-style: none; margin-top: 10px; max-height: 150px; overflow-y: auto; }
-#tasksList li { background: #5a8b70; padding: 10px; border-radius: 10px; margin-bottom: 7px; display: flex; justify-content: space-between; align-items: center; font-size: 14px;}
-#tasksList li button { background: #f44336; color: #fff; border: none; border-radius: 6px; cursor: pointer; padding: 2px 6px; font-size: 13px; }
+#tasksList { list-style:none; margin-top:10px; max-height:150px; overflow-y:auto;}
+#tasksList li { background:#5a8b70; padding:10px; border-radius:10px; margin-bottom:7px; display:flex; justify-content:space-between; align-items:center; font-size:14px;}
+#tasksList li button { background:none; border:none; cursor:pointer; font-size:18px; color:#fff; }
 
-#iaContainer { display: flex; flex-direction: column; max-height: 300px; overflow-y: auto; margin-bottom:10px; }
-#iaHistory { list-style: none; padding-left: 0; }
+#iaContainer { display:flex; flex-direction:column; max-height:300px; overflow-y:auto; margin-bottom:10px; }
+#iaHistory { list-style:none; padding-left:0; }
+#iaHistory li { padding:10px; margin-bottom:8px; border-radius:10px; font-size:14px; opacity:0; transition:opacity 0.4s; word-wrap:break-word; max-width:80%;}
+.iaUser { background:#4fc3f7; color:#000; align-self:flex-end; margin-left:20%;}
+.iaBot { background:#6bbf8f; color:#000; align-self:flex-start; margin-right:20%;}
 
-#iaHistory li { padding: 10px; margin-bottom: 8px; border-radius: 10px; font-size: 14px; opacity: 0; transition: opacity 0.4s; word-wrap: break-word; max-width: 80%; }
-.iaUser { background: #4fc3f7; color: #000; align-self: flex-end; margin-left: 20%; }
-.iaBot { background: #6bbf8f; color: #000; align-self: flex-start; margin-right: 20%; }
+footer { text-align:right; font-size:12px; margin-top:20px; color:#ccc;}
 
-footer { text-align: right; font-size: 12px; margin-top: 20px; color: #ccc; }
-
-input:focus, select:focus { outline: none; box-shadow: 0 0 5px #4fc3f7; }
-@media(max-width: 450px){ .bloc { padding: 15px; } nav button { padding: 10px; } }
+input:focus, select:focus { outline:none; box-shadow:0 0 5px #4fc3f7;}
+@media(max-width:450px){ .bloc{padding:15px;} nav button{padding:10px;} }
 </style>
 </head>
 <body>
 <div class="container">
-    <nav>
-        <button id="menuHome" class="active">Accueil</button>
-        <button id="menuIA">IA</button>
-        <button id="menuPromo">Code Promo</button>
-    </nav>
+<nav>
+<button id="menuHome" class="active">Accueil</button>
+<button id="menuIA">IA</button>
+<button id="menuPromo">Code Promo</button>
+</nav>
 
-    <!-- Accueil -->
-    <div id="home">
-        <div class="bloc">
-            <label>Couleur</label>
-            <select id="colorSelect">
-                <option value="Vert">Vert</option>
-                <option value="Bleu">Bleu</option>
-                <option value="Orange">Orange</option>
-                <option value="Rouge">Rouge</option>
-            </select>
-        </div>
-        <div class="bloc">
-            <label>Langue</label>
-            <select id="langSelect">
-                <option value="Français">Français</option>
-                <option value="Anglais">Anglais</option>
-                <option value="Espagnol">Espagnol</option>
-            </select>
-        </div>
-        <div class="bloc">
-            <label>Tâches</label>
-            <input type="text" id="taskInput" placeholder="Nouvelle tâche">
-            <button id="addTaskBtn">Ajouter</button>
-            <ul id="tasksList"></ul>
-        </div>
-    </div>
+<!-- Accueil -->
+<div id="home">
+<div class="bloc">
+<label id="labelColor">Couleur</label>
+<select id="colorSelect">
+<option value="Vert">Vert</option>
+<option value="Bleu">Bleu</option>
+<option value="Orange">Orange</option>
+<option value="Rouge">Rouge</option>
+<option value="Rose">Rose</option>
+<option value="Violet">Violet</option>
+<option value="Jaune">Jaune</option>
+</select>
+</div>
+<div class="bloc">
+<label id="labelLang">Langue</label>
+<select id="langSelect">
+<option value="Français">Français</option>
+<option value="Anglais">Anglais</option>
+<option value="Espagnol">Espagnol</option>
+<option value="Allemand">Allemand</option>
+</select>
+</div>
+<div class="bloc">
+<label id="labelTasks">Tâches</label>
+<input type="text" id="taskInput" placeholder="Nouvelle tâche">
+<button id="addTaskBtn">Ajouter</button>
+<ul id="tasksList"></ul>
+</div>
+</div>
 
-    <!-- IA -->
-    <div id="ia" style="display:none;" class="bloc">
-        <div id="iaContainer">
-            <ul id="iaHistory"></ul>
-        </div>
-        <input type="text" id="iaInput" placeholder="Écris ici...">
-        <button id="iaSend">➡️</button>
-    </div>
+<!-- IA -->
+<div id="ia" style="display:none;" class="bloc">
+<div id="iaContainer">
+<ul id="iaHistory"></ul>
+</div>
+<input type="text" id="iaInput" placeholder="Écris ici...">
+<button id="iaSend">➡️</button>
+</div>
 
-    <!-- Code Promo -->
-    <div id="promo" style="display:none;" class="bloc">
-        <label>Code Promo</label>
-        <input type="text" id="promoInput" placeholder="Entre ton code">
-        <button id="promoBtn">Valider</button>
-        <div id="promoMsg"></div>
-    </div>
+<!-- Code Promo -->
+<div id="promo" style="display:none;" class="bloc">
+<label>Code Promo</label>
+<input type="text" id="promoInput" placeholder="Entre ton code">
+<button id="promoBtn">Valider</button>
+<div id="promoMsg"></div>
+</div>
 
-    <footer>© 2026 Daily Life Ultra IA ⚡</footer>
+<footer>© 2026 Daily Life Ultra IA ⚡</footer>
 </div>
 
 <script>
+// Menu
 const homeBtn = document.getElementById('menuHome');
 const iaBtn = document.getElementById('menuIA');
 const promoBtn = document.getElementById('menuPromo');
 const homeDiv = document.getElementById('home');
 const iaDiv = document.getElementById('ia');
 const promoDiv = document.getElementById('promo');
-
 function showSection(section){
     homeDiv.style.display='none'; iaDiv.style.display='none'; promoDiv.style.display='none';
     homeBtn.classList.remove('active'); iaBtn.classList.remove('active'); promoBtn.classList.remove('active');
@@ -110,31 +113,48 @@ homeBtn.addEventListener('click',()=>showSection('home'));
 iaBtn.addEventListener('click',()=>showSection('ia'));
 promoBtn.addEventListener('click',()=>showSection('promo'));
 
-// Couleur & Langue
+// Couleurs & langues
 const colorSelect = document.getElementById('colorSelect');
 const langSelect = document.getElementById('langSelect');
-colorSelect.value = localStorage.getItem('color') || 'Vert';
-langSelect.value = localStorage.getItem('lang') || 'Français';
-colorSelect.addEventListener('change', ()=> localStorage.setItem('color', colorSelect.value));
-langSelect.addEventListener('change', ()=> localStorage.setItem('lang', langSelect.value));
+colorSelect.value = localStorage.getItem('color')||'Vert';
+langSelect.value = localStorage.getItem('lang')||'Français';
+colorSelect.addEventListener('change',()=>localStorage.setItem('color',colorSelect.value));
+langSelect.addEventListener('change',()=>{ 
+    localStorage.setItem('lang',langSelect.value); 
+    updateLanguage(langSelect.value);
+});
+function updateLanguage(lang){
+    const labels = {
+        "Français": {color:"Couleur",lang:"Langue",tasks:"Tâches",taskInput:"Nouvelle tâche",addBtn:"Ajouter"},
+        "Anglais": {color:"Color",lang:"Language",tasks:"Tasks",taskInput:"New task",addBtn:"Add"},
+        "Espagnol": {color:"Color",lang:"Idioma",tasks:"Tareas",taskInput:"Nueva tarea",addBtn:"Añadir"},
+        "Allemand": {color:"Farbe",lang:"Sprache",tasks:"Aufgaben",taskInput:"Neue Aufgabe",addBtn:"Hinzufügen"}
+    };
+    const l=labels[lang]||labels["Français"];
+    document.getElementById('labelColor').textContent=l.color;
+    document.getElementById('labelLang').textContent=l.lang;
+    document.getElementById('labelTasks').textContent=l.tasks;
+    document.getElementById('taskInput').placeholder=l.taskInput;
+    document.getElementById('addTaskBtn').textContent=l.addBtn;
+}
 
 // Tâches
-const taskInput = document.getElementById('taskInput');
-const addTaskBtn = document.getElementById('addTaskBtn');
-const tasksList = document.getElementById('tasksList');
-
+const taskInput=document.getElementById('taskInput');
+const addTaskBtn=document.getElementById('addTaskBtn');
+const tasksList=document.getElementById('tasksList');
 function renderTasks(){
     tasksList.innerHTML='';
-    let tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
+    let tasks=JSON.parse(localStorage.getItem('tasks')||'[]');
     tasks.forEach((t,i)=>{
-        const li=document.createElement('li'); li.textContent=t;
-        const del=document.createElement('button'); del.textContent='✖';
-        del.onclick=()=>{ tasks.splice(i,1); localStorage.setItem('tasks',JSON.stringify(tasks)); renderTasks(); }
+        const li=document.createElement('li');
+        li.textContent=t;
+        const del=document.createElement('button');
+        del.innerHTML='🗑️';
+        del.onclick=()=>{ tasks.splice(i,1); localStorage.setItem('tasks',JSON.stringify(tasks)); renderTasks(); };
         li.appendChild(del);
         tasksList.appendChild(li);
     });
 }
-
 addTaskBtn.addEventListener('click',()=>{
     if(taskInput.value.trim()!==''){
         let tasks=JSON.parse(localStorage.getItem('tasks')||'[]');
@@ -145,37 +165,31 @@ addTaskBtn.addEventListener('click',()=>{
 });
 renderTasks();
 
-// IA améliorée
-const iaInput = document.getElementById('iaInput');
-const iaSend = document.getElementById('iaSend');
-const iaHistory = document.getElementById('iaHistory');
-const iaContainer = document.getElementById('iaContainer');
-
-function addMessage(content, from){
+// IA
+const iaInput=document.getElementById('iaInput');
+const iaSend=document.getElementById('iaSend');
+const iaHistory=document.getElementById('iaHistory');
+const iaContainer=document.getElementById('iaContainer');
+function addMessage(content,from){
     const li=document.createElement('li');
-    li.className = from==='user'?'iaUser':'iaBot';
-    li.textContent = content;
+    li.className=from==='user'?'iaUser':'iaBot';
+    li.textContent=content;
     iaHistory.appendChild(li);
-    setTimeout(()=>{ li.style.opacity=1; },50);
+    setTimeout(()=>{li.style.opacity=1;},50);
     iaContainer.scrollTop = iaContainer.scrollHeight;
 }
-
 iaSend.addEventListener('click',()=>{ sendIA(); });
 iaInput.addEventListener('keypress',e=>{ if(e.key==='Enter') sendIA(); });
-
 function sendIA(){
     if(iaInput.value.trim()==='') return;
-    const msg = iaInput.value.trim(); addMessage(msg,'user'); iaInput.value='';
+    const msg=iaInput.value.trim(); addMessage(msg,'user'); iaInput.value='';
     setTimeout(()=>{
         let response="Désolé, je n'ai pas compris.";
         const lower=msg.toLowerCase();
         if(lower.includes('repas')){
-            // Gérer plusieurs repas : "1,2,3"
-            let count=1; 
-            const match=lower.match(/\d+/);
+            let count=1; const match=lower.match(/\d+/);
             if(match) count=Math.min(parseInt(match[0]),5);
-            let meals=[];
-            for(let i=1;i<=count;i++){ meals.push(`🍽️ Idée ${i} : Salade César`); }
+            let meals=[]; for(let i=1;i<=count;i++){ meals.push(`🍽️ Idée ${i} : Salade César`); }
             response=meals.join('\n');
         } else if(lower.includes('bonjour')||lower.includes('salut')) response="Salut ! 😄 Je suis là pour t'aider.";
         else if(lower.includes('aide')) response="Bien sûr ! Pose-moi une question et je vais répondre.";
@@ -184,14 +198,13 @@ function sendIA(){
 }
 
 // Promo
-const promoInput = document.getElementById('promoInput');
-const promoMsg = document.getElementById('promoMsg');
-const promoBtnEl = document.getElementById('promoBtn');
-promoBtnEl.addEventListener('click', ()=>{
-    if(promoInput.value.trim()==='PROMO2026'){
-        promoMsg.textContent='Code valide ! 🎉'; promoMsg.style.color='lightgreen';
-    } else { promoMsg.textContent='Code invalide ❌'; promoMsg.style.color='red'; }
+const promoInput=document.getElementById('promoInput');
+const promoMsg=document.getElementById('promoMsg');
+const promoBtnEl=document.getElementById('promoBtn');
+promoBtnEl.addEventListener('click',()=>{
+    if(promoInput.value.trim()==='PROMO2026'){ promoMsg.textContent='Code valide ! 🎉'; promoMsg.style.color='lightgreen'; }
+    else{ promoMsg.textContent='Code invalide ❌'; promoMsg.style.color='red'; }
 });
 </script>
 </body>
-  </html>
+</html>
