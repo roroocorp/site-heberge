@@ -88,10 +88,11 @@ footer { padding:8px 16px; font-size:12px; text-align:right; color: rgba(255,255
     <h3>🎨 Thème</h3>
     <select id="colorSelect">
       <option value="#064e3b">Vert</option>
-      <option value="#ef4444">Rouge</option>
       <option value="#3b82f6">Bleu</option>
+      <option value="#ef4444">Rouge</option>
       <option value="#f97316">Orange</option>
       <option value="#a855f7">Violet</option>
+      <option value="#ec4899">Rose</option>
     </select>
   </div>
 
@@ -177,14 +178,16 @@ function renderTasks(){
   tasks.forEach((t,i)=>{
     const d = document.createElement("div");
     d.className = "task";
-    d.innerHTML = `<span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`;
+    const span = document.createElement("span");
+    span.textContent = t;
+    const del = document.createElement("span");
+    del.className="trash";
+    del.textContent='🗑️';
+    del.onclick = ()=>{ tasks.splice(i,1); localStorage.setItem("tasks", JSON.stringify(tasks)); renderTasks(); }
+    d.appendChild(span);
+    d.appendChild(del);
     taskList.appendChild(d);
   });
-}
-function delTask(i){
-  tasks.splice(i,1);
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-  renderTasks();
 }
 renderTasks();
 
@@ -223,4 +226,4 @@ function validatePromo(){
 }
 </script>
 </body>
-</html>
+  </html>
