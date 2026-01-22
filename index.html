@@ -4,255 +4,231 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
-
 <style>
-:root{
-  --bg1:#1e3a8a;
-  --bg2:#020617;
-}
-body{
-  margin:0;
-  font-family:system-ui;
-  background:linear-gradient(180deg,var(--bg1),var(--bg2));
-  color:white;
-  min-height:100vh;
-}
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:14px;
-}
-#time{
-  background:rgba(0,0,0,.35);
-  padding:8px 16px;
-  border-radius:18px;
-}
-nav{
-  display:flex;
-  gap:10px;
-  padding:10px;
-}
-.nav{
-  flex:1;
-  background:rgba(255,255,255,.25);
-  padding:18px;
-  border-radius:20px;
-  text-align:center;
-  font-weight:700;
-  cursor:pointer;
-}
-.section{display:none;padding:16px}
-.section.active{display:block}
+/* ===== Reset et Style Global ===== */
+* { box-sizing: border-box; margin:0; padding:0; font-family: 'Segoe UI', sans-serif; }
+body { background: linear-gradient(180deg,#1b1b2f,#1b2b4f); color:white; padding:15px; transition: background 0.5s; }
 
-.card{
-  background:rgba(255,255,255,.22);
-  padding:18px;
-  border-radius:22px;
-  margin-bottom:18px;
-}
+/* ===== Header ===== */
+header { display:flex; justify-content: space-between; align-items:center; margin-bottom:20px; }
+header h1 { font-size:1.5em; }
+header .time { background: rgba(0,0,0,0.3); padding:5px 10px; border-radius:10px; font-size:14px; }
 
-/* header des modules */
-.card-header{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:14px;
-  font-size:18px;
-  font-weight:700;
-}
+/* ===== Menu ===== */
+nav { display:flex; gap:10px; margin-bottom:20px; }
+nav button { flex:1; padding:10px; border:none; border-radius:10px; cursor:pointer; font-weight:bold; transition:0.3s; background: rgba(255,255,255,0.2); color:#fff; }
+nav button.active, nav button:hover { background: #00aaff; }
 
-input,select{
-  width:100%;
-  height:48px;              /* TAILLE UNIFIÉE */
-  padding:0 14px;
-  border-radius:16px;
-  border:none;
-  font-size:16px;
-}
+/* ===== Sections ===== */
+section { display:none; padding:15px; background: rgba(255,255,255,0.1); border-radius:15px; margin-bottom:20px; transition:0.3s; }
+section.active { display:block; }
 
-/* flèche plus à gauche */
-select{
-  padding-right:36px;
-}
+/* ===== Inputs ===== */
+input, select, textarea { width:100%; padding:10px; border-radius:10px; border:none; margin-bottom:10px; font-size:1em; background: rgba(255,255,255,0.2); color:#fff; }
+input::placeholder, textarea::placeholder { color:#ddd; }
 
-button{
-  width:100%;
-  margin-top:14px;
-  padding:14px;
-  border-radius:20px;
-  background:#38bdf8;
-  border:none;
-  font-weight:700;
-  font-size:16px;
-}
+/* ===== Buttons ===== */
+.btn { background:#00aaff; color:#fff; font-weight:bold; cursor:pointer; border-radius:10px; padding:8px 10px; transition:0.3s; }
+.btn:hover { opacity:0.8; }
 
-.task{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:rgba(255,255,255,.3);
-  padding:10px 14px;
-  border-radius:14px;
-  margin-top:10px;
-}
-.trash{cursor:pointer;font-size:18px}
+/* ===== Tâches ===== */
+.task { display:flex; justify-content:space-between; align-items:center; background: rgba(255,255,255,0.2); padding:8px; border-radius:10px; margin-bottom:5px; transition:0.3s; }
+.task button { background:red; border:none; border-radius:5px; color:white; cursor:pointer; }
 
-/* IA */
-.chat{
-  display:flex;
-  flex-direction:column;
-  height:65vh;
-}
-.messages{
-  flex:1;
-  overflow:auto;
-  margin-bottom:12px;
-}
-.msg{
-  background:rgba(0,0,0,.35);
-  padding:10px 14px;
-  border-radius:14px;
-  margin:6px 0;
-}
-.inputBar{
-  display:flex;
-  gap:10px;
-  background:white;
-  border-radius:22px;
-  padding:8px;
-}
-.inputBar input{
-  flex:1;
-  height:44px;
-  border:none;
-  border-radius:16px;
-}
-.send{
-  width:44px;
-  height:44px;
-  background:#38bdf8;
-  border-radius:16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  font-size:20px;
-}
+/* ===== Bloc-notes ===== */
+#note { height:100px; background: rgba(255,255,255,0.2); resize:none; }
+
+/* ===== Chat IA ===== */
+#chat { height:200px; overflow-y:auto; background: rgba(255,255,255,0.1); border-radius:10px; padding:10px; margin-bottom:10px; transition:0.3s; }
+#chat p { margin-bottom:5px; }
+
+/* ===== Code Promo ===== */
+#promo input { width:75%; display:inline-block; margin-right:5%; }
+#promo button { width:20%; display:inline-block; }
+
+/* ===== Animation IA message ===== */
+@keyframes pop { from { transform: translateY(20px); opacity:0;} to { transform: translateY(0); opacity:1;} }
+.message { animation: pop 0.3s ease forwards; }
+
+/* ===== Couleur sélectionné pour menu ===== */
+.color-option { display:inline-block; width:20px; height:20px; border-radius:50%; margin:2px; cursor:pointer; border:2px solid #fff; transition:0.3s; }
+.color-option:hover { transform: scale(1.2); }
+
+/* ===== Flèche envoyer ===== */
+#sendChat { border-radius:50%; width:40px; height:40px; padding:0; font-size:1em; }
 </style>
 </head>
-
 <body>
 
 <header>
-  <b>Daily Life Ultra IA</b>
-  <div id="time"></div>
+    <h1>Daily Life Ultra IA</h1>
+    <div class="time" id="time"></div>
 </header>
 
 <nav>
-  <div class="nav" onclick="show('home')">Accueil</div>
-  <div class="nav" onclick="show('ia')">IA</div>
-  <div class="nav" onclick="show('promo')">Code Promo</div>
+    <button class="active" data-target="accueil">🏠 Accueil</button>
+    <button data-target="ia">🤖 IA</button>
+    <button data-target="promo">🎁 Code Promo</button>
 </nav>
 
-<div id="home" class="section active">
+<!-- ===== ACCUEIL ===== -->
+<section id="accueil" class="active">
+    <div>
+        <label>🎨 Couleur</label>
+        <select id="colorSelect">
+            <option value="#1b1b2f">Bleu Nuit</option>
+            <option value="#2b1b1b">Rouge Sombre</option>
+            <option value="#1b2b1b">Vert Sombre</option>
+            <option value="#4b2b1b">Orange</option>
+            <option value="#4b1b4b">Violet</option>
+        </select>
+    </div>
+    <div>
+        <label>🌍 Langue</label>
+        <select id="langSelect">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+        </select>
+    </div>
+    <div>
+        <label>✅ Tâches</label>
+        <input type="text" id="taskInput" placeholder="Nouvelle tâche">
+        <button class="btn" id="addTask">Ajouter</button>
+        <div id="tasks"></div>
+    </div>
+    <div>
+        <label>📝 Bloc-notes</label>
+        <textarea id="note" placeholder="Écris ici..."></textarea>
+    </div>
+</section>
 
-<div class="card">
-  <div class="card-header">🎨 <span>Couleur</span></div>
-  <select id="colorSel">
-    <option value="blue">Bleu</option>
-    <option value="green">Vert</option>
-    <option value="orange">Orange</option>
-  </select>
-</div>
+<!-- ===== IA ===== -->
+<section id="ia">
+    <div id="chat"></div>
+    <div style="display:flex; gap:10px;">
+        <input type="text" id="chatInput" placeholder="Écris un message">
+        <button class="btn" id="sendChat">➡️</button>
+    </div>
+</section>
 
-<div class="card">
-  <div class="card-header">🌍 <span>Langue</span></div>
-  <select id="langSel">
-    <option value="fr">Français</option>
-    <option value="en">English</option>
-  </select>
-</div>
-
-<div class="card">
-  <div class="card-header">✅ <span>Tâches</span></div>
-  <input id="taskInput" placeholder="Nouvelle tâche">
-  <button onclick="addTask()">Ajouter</button>
-  <div id="tasks"></div>
-</div>
-
-</div>
-
-<div id="ia" class="section">
-<div class="card chat">
-<div class="messages" id="chat"></div>
-<div class="inputBar">
-<input id="chatInput" placeholder="Écris un message...">
-<div class="send" onclick="send()">➤</div>
-</div>
-</div>
-</div>
-
-<div id="promo" class="section">
-<div class="card">
-  <div class="card-header">🎟️ <span>Code Promo</span></div>
-  <input placeholder="Entre ton code">
-  <button>Valider</button>
-</div>
-</div>
+<!-- ===== CODE PROMO ===== -->
+<section id="promo">
+    <label>🎁 Code Promo</label>
+    <input type="text" id="promoInput" placeholder="Entre un code">
+    <button class="btn" id="promoBtn">Valider</button>
+</section>
 
 <script>
-setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
+/* ===== Heure ===== */
+setInterval(()=>{ document.getElementById('time').innerText = new Date().toLocaleTimeString(); },1000);
 
-function show(id){
-document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-}
-
-const themes={
-blue:['#1e3a8a','#020617'],
-green:['#064e3b','#022c22'],
-orange:['#7c2d12','#431407']
-};
-function applyColor(c){
-document.documentElement.style.setProperty('--bg1',themes[c][0]);
-document.documentElement.style.setProperty('--bg2',themes[c][1]);
-localStorage.color=c;
-}
-colorSel.onchange=()=>applyColor(colorSel.value);
-applyColor(localStorage.color||'blue');
-colorSel.value=localStorage.color||'blue';
-
-let list=JSON.parse(localStorage.tasks||"[]");
-function render(){
-tasks.innerHTML="";
-list.forEach((t,i)=>{
-tasks.innerHTML+=`<div class="task">${t}<span class="trash" onclick="del(${i})">🗑️</span></div>`;
+/* ===== Menu ===== */
+document.querySelectorAll('nav button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+        document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('section').forEach(sec=>sec.classList.remove('active'));
+        document.getElementById(btn.dataset.target).classList.add('active');
+    });
 });
-}
-function addTask(){
-if(!taskInput.value)return;
-list.push(taskInput.value);
-localStorage.tasks=JSON.stringify(list);
-taskInput.value="";
-render();
-}
-function del(i){
-list.splice(i,1);
-localStorage.tasks=JSON.stringify(list);
-render();
-}
-render();
 
-function send(){
-const v=chatInput.value.trim();
-if(!v)return;
-chat.innerHTML+=`<div class="msg">👤 ${v}</div>`;
-chat.innerHTML+=`<div class="msg">🤖 Je suis là pour t’aider.</div>`;
-chatInput.value="";
-chat.scrollTop=9999;
+/* ===== Couleurs & Langue ===== */
+const colorSelect = document.getElementById('colorSelect');
+const langSelect = document.getElementById('langSelect');
+
+// Charger sauvegarde
+if(localStorage.getItem('color')) document.body.style.background = localStorage.getItem('color');
+if(localStorage.getItem('color')) colorSelect.value = localStorage.getItem('color');
+if(localStorage.getItem('lang')) langSelect.value = localStorage.getItem('lang');
+
+colorSelect.addEventListener('change', ()=>{
+    document.body.style.background = colorSelect.value;
+    localStorage.setItem('color', colorSelect.value);
+});
+
+langSelect.addEventListener('change', ()=>{
+    localStorage.setItem('lang', langSelect.value);
+    alert('Langue changée en: ' + langSelect.value);
+});
+
+/* ===== Tâches ===== */
+const taskInput = document.getElementById('taskInput');
+const addTask = document.getElementById('addTask');
+const tasksDiv = document.getElementById('tasks');
+
+function renderTasks() {
+    tasksDiv.innerHTML = '';
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    tasks.forEach((t,i)=>{
+        const div = document.createElement('div');
+        div.classList.add('task');
+        div.innerHTML = `<span>${t}</span><button onclick="deleteTask(${i})">🗑️</button>`;
+        tasksDiv.appendChild(div);
+    });
 }
+
+function deleteTask(i){
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    tasks.splice(i,1);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    renderTasks();
+}
+
+addTask.addEventListener('click', ()=>{
+    const val = taskInput.value.trim();
+    if(!val) return;
+    const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    tasks.push(val);
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    taskInput.value='';
+    renderTasks();
+});
+
+renderTasks();
+
+/* ===== Bloc-notes ===== */
+const note = document.getElementById('note');
+note.value = localStorage.getItem('note') || '';
+note.addEventListener('input', ()=>{ localStorage.setItem('note', note.value); });
+
+/* ===== IA locale ===== */
+const chatInput = document.getElementById('chatInput');
+const chatDiv = document.getElementById('chat');
+document.getElementById('sendChat').addEventListener('click', ()=>{
+    const val = chatInput.value.trim();
+    if(!val) return;
+    const pUser = document.createElement('p');
+    pUser.innerText = 'Vous: ' + val;
+    pUser.classList.add('message');
+    chatDiv.appendChild(pUser);
+
+    // IA réponse simple
+    let response = 'Je réfléchis... 🤖';
+    if(val.toLowerCase().includes('salut')) response = 'Salut 😄 Je suis là pour t’aider!';
+    if(val.toLowerCase().includes('repas')){
+        const n = val.match(/\d+/);
+        const nb = n ? Math.min(n[0], 5) : 1;
+        response = 'Voici ' + nb + ' idée(s) de repas: ' + Array(nb).fill(0).map((_,i)=>`Repas ${i+1}`).join(', ');
+    }
+
+    const pIA = document.createElement('p');
+    pIA.innerText = 'IA: ' + response;
+    pIA.classList.add('message');
+    chatDiv.appendChild(pIA);
+
+    chatInput.value='';
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+});
+
+/* ===== Code Promo ===== */
+document.getElementById('promoBtn').addEventListener('click', ()=>{
+    const code = document.getElementById('promoInput').value.trim();
+    if(code==='BONUS10') alert('Code valide ! 🎉');
+    else alert('Code invalide ❌');
+    document.getElementById('promoInput').value='';
+});
 </script>
 
 </body>
-    </html>
+  </html>
