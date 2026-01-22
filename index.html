@@ -7,8 +7,8 @@
 
 <style>
 :root{
-  --bg1:#064e3b;
-  --bg2:#022c22;
+  --bg1:#1e3a8a;
+  --bg2:#020617;
 }
 body{
   margin:0;
@@ -24,9 +24,9 @@ header{
   padding:14px;
 }
 #time{
-  background:rgba(0,0,0,.3);
-  padding:6px 14px;
-  border-radius:16px;
+  background:rgba(0,0,0,.35);
+  padding:8px 16px;
+  border-radius:18px;
 }
 nav{
   display:flex;
@@ -36,44 +36,60 @@ nav{
 .nav{
   flex:1;
   background:rgba(255,255,255,.25);
-  padding:16px;
-  border-radius:18px;
+  padding:18px;
+  border-radius:20px;
   text-align:center;
   font-weight:700;
   cursor:pointer;
 }
 .section{display:none;padding:16px}
 .section.active{display:block}
+
 .card{
-  background:rgba(255,255,255,.2);
-  padding:16px;
-  border-radius:16px;
-  margin-bottom:16px;
+  background:rgba(255,255,255,.22);
+  padding:20px;
+  border-radius:22px;
+  margin-bottom:18px;
 }
+
+.card b{
+  display:block;
+  margin-bottom:14px;
+  font-size:18px;
+}
+
 input,select{
   width:100%;
-  padding:10px;
-  border-radius:12px;
+  height:52px;
+  padding:0 16px;
+  margin-top:8px;
+  border-radius:18px;
   border:none;
+  font-size:16px;
 }
+
 button{
   width:100%;
-  margin-top:10px;
-  padding:12px;
-  border-radius:14px;
+  margin-top:14px;
+  padding:14px;
+  border-radius:20px;
   background:#38bdf8;
   border:none;
   font-weight:700;
+  font-size:16px;
 }
+
 .task{
   display:flex;
   justify-content:space-between;
+  align-items:center;
   background:rgba(255,255,255,.3);
-  padding:10px;
-  border-radius:10px;
-  margin-top:8px;
+  padding:12px 16px;
+  border-radius:16px;
+  margin-top:10px;
 }
-.trash{cursor:pointer}
+.trash{cursor:pointer;font-size:18px}
+
 .chat{
   display:flex;
   flex-direction:column;
@@ -82,29 +98,38 @@ button{
 .messages{
   flex:1;
   overflow:auto;
+  margin-bottom:12px;
 }
 .msg{
-  background:rgba(0,0,0,.3);
-  padding:8px;
-  border-radius:10px;
+  background:rgba(0,0,0,.35);
+  padding:10px 14px;
+  border-radius:14px;
   margin:6px 0;
 }
+
 .inputBar{
   display:flex;
+  gap:10px;
   background:white;
-  border-radius:14px;
-  padding:6px;
+  border-radius:22px;
+  padding:8px;
 }
-.inputBar input{flex:1;border:none}
+.inputBar input{
+  flex:1;
+  height:44px;
+  border:none;
+  border-radius:16px;
+}
 .send{
-  width:42px;
-  height:42px;
+  width:44px;
+  height:44px;
   background:#38bdf8;
-  border-radius:10px;
+  border-radius:16px;
   display:flex;
   align-items:center;
   justify-content:center;
   cursor:pointer;
+  font-size:20px;
 }
 </style>
 </head>
@@ -112,7 +137,7 @@ button{
 <body>
 
 <header>
-  <b id="title">Daily Life Ultra IA</b>
+  <b>Daily Life Ultra IA</b>
   <div id="time"></div>
 </header>
 
@@ -122,20 +147,19 @@ button{
   <div class="nav" onclick="show('promo')">Code Promo</div>
 </nav>
 
-<!-- ACCUEIL -->
 <div id="home" class="section active">
 
 <div class="card">
-🎨 <b id="colorTxt">Couleur</b>
+🎨 <b>Couleur</b>
 <select id="colorSel">
-<option value="green">Vert</option>
 <option value="blue">Bleu</option>
+<option value="green">Vert</option>
 <option value="orange">Orange</option>
 </select>
 </div>
 
 <div class="card">
-🌍 <b id="langTxt">Langue</b>
+🌍 <b>Langue</b>
 <select id="langSel">
 <option value="fr">Français</option>
 <option value="en">English</option>
@@ -143,15 +167,14 @@ button{
 </div>
 
 <div class="card">
-✅ <b id="taskTxt">Tâches</b>
+✅ <b>Tâches</b>
 <input id="taskInput" placeholder="Nouvelle tâche">
-<button onclick="addTask()" id="addBtn">Ajouter</button>
+<button onclick="addTask()">Ajouter</button>
 <div id="tasks"></div>
 </div>
 
 </div>
 
-<!-- IA -->
 <div id="ia" class="section">
 <div class="card chat">
 <div class="messages" id="chat"></div>
@@ -162,12 +185,11 @@ button{
 </div>
 </div>
 
-<!-- CODE PROMO -->
 <div id="promo" class="section">
 <div class="card">
 🎟️ <b>Code Promo</b>
-<input id="promo">
-<button onclick="alert('Code enregistré')">Valider</button>
+<input placeholder="Entre ton code">
+<button>Valider</button>
 </div>
 </div>
 
@@ -179,10 +201,9 @@ document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
 document.getElementById(id).classList.add('active');
 }
 
-/* COULEURS */
 const themes={
-green:['#064e3b','#022c22'],
 blue:['#1e3a8a','#020617'],
+green:['#064e3b','#022c22'],
 orange:['#7c2d12','#431407']
 };
 function applyColor(c){
@@ -191,25 +212,9 @@ document.documentElement.style.setProperty('--bg2',themes[c][1]);
 localStorage.color=c;
 }
 colorSel.onchange=()=>applyColor(colorSel.value);
-if(localStorage.color){colorSel.value=localStorage.color;applyColor(localStorage.color);}
+applyColor(localStorage.color||'blue');
+colorSel.value=localStorage.color||'blue';
 
-/* LANGUE */
-const txt={
-fr:{color:"Couleur",lang:"Langue",task:"Tâches",add:"Ajouter"},
-en:{color:"Color",lang:"Language",task:"Tasks",add:"Add"}
-};
-function applyLang(l){
-colorTxt.textContent=txt[l].color;
-langTxt.textContent=txt[l].lang;
-taskTxt.textContent=txt[l].task;
-addBtn.textContent=txt[l].add;
-localStorage.lang=l;
-}
-langSel.onchange=()=>applyLang(langSel.value);
-applyLang(localStorage.lang||"fr");
-langSel.value=localStorage.lang||"fr";
-
-/* TASKS */
 let list=JSON.parse(localStorage.tasks||"[]");
 function render(){
 tasks.innerHTML="";
@@ -231,23 +236,17 @@ render();
 }
 render();
 
-/* IA */
 function send(){
 const v=chatInput.value.trim();
 if(!v)return;
 chat.innerHTML+=`<div class="msg">👤 ${v}</div>`;
-let r="🤖 Je peux aider.";
-if(v.toLowerCase().includes("salut"))r="🤖 Salut 👋 je peux t’aider.";
-if(v.includes("repas")){
-let n=parseInt(v)||1;
-r="🍽️ "+Array.from({length:n},(_,i)=>`Repas ${i+1}`).join(" • ");
-}
+let r="🤖 Je suis là pour t’aider.";
+if(v.toLowerCase().includes("repas"))r="🍽️ Repas : Poulet / Riz / Légumes";
 chat.innerHTML+=`<div class="msg">${r}</div>`;
 chatInput.value="";
 chat.scrollTop=9999;
 }
-chatInput.addEventListener("keydown",e=>{if(e.key==="Enter")send();});
 </script>
 
 </body>
-  </html>
+</html>
