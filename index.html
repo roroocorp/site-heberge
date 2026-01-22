@@ -9,131 +9,108 @@
 *{box-sizing:border-box;font-family:system-ui}
 body{
   margin:0;
-  height:100vh;
-  background:var(--bg,#0f172a);
+  background:linear-gradient(180deg,#064e3b,#042f2e);
   color:white;
-  overflow:hidden;
-}
-
-/* THEMES */
-:root{
-  --green:linear-gradient(180deg,#064e3b,#042f2e);
-  --violet:linear-gradient(180deg,#4c1d95,#1e1b4b);
-  --orange:linear-gradient(180deg,#7c2d12,#431407);
-  --blue:linear-gradient(180deg,#1e3a8a,#020617);
+  min-height:100vh;
 }
 
 /* HEADER */
 header{
   display:flex;
   align-items:center;
+  gap:12px;
   padding:14px;
 }
-header h3{margin:0}
-#time{margin-left:auto;font-size:14px;opacity:.8}
-.menuBtn{margin-left:12px;font-size:22px;cursor:pointer}
+header h3{margin:0;font-size:20px}
+#time{
+  background:rgba(0,0,0,.35);
+  padding:6px 14px;
+  border-radius:14px;
+  font-size:14px;
+}
+.menuBtn{margin-left:auto;font-size:26px;cursor:pointer}
 
 /* TOP NAV */
 #topNav{
   display:flex;
-  gap:10px;
-  padding:10px;
+  gap:12px;
+  padding:12px;
 }
 .navBox{
   flex:1;
-  padding:16px;
-  border-radius:18px;
-  background:rgba(255,255,255,.2);
+  background:rgba(255,255,255,.25);
+  border-radius:20px;
+  padding:18px 0;
   text-align:center;
-  cursor:pointer;
   font-weight:700;
+  cursor:pointer;
 }
-.navBox.active{background:rgba(255,255,255,.35)}
 
-/* PAGE */
-.page{
-  display:none;
-  height:calc(100vh - 120px);
-  padding:14px;
-  overflow:hidden;
-}
+/* PAGES */
+.page{display:none;padding:16px}
 .page.active{display:block}
 
-/* CARD */
+/* CARDS */
 .card{
-  background:rgba(255,255,255,.2);
+  background:rgba(255,255,255,.18);
   border-radius:22px;
   padding:18px;
-  margin-bottom:14px;
-}
-
-/* INPUT */
-select,input,button{
-  width:100%;
-  padding:14px;
-  border-radius:14px;
-  border:none;
-  font-size:15px;
-}
-button{
-  margin-top:10px;
-  background:#38bdf8;
-  font-weight:700;
+  margin-bottom:16px;
 }
 
 /* TASKS */
 .task{
   display:flex;
   justify-content:space-between;
-  padding:12px;
   background:rgba(255,255,255,.25);
+  padding:12px;
   border-radius:14px;
   margin-top:8px;
 }
-.trash{cursor:pointer}
 
 /* CHAT */
 #chat{
-  height:100%;
-  display:flex;
-  flex-direction:column;
-}
-#messages{
-  flex:1;
-  overflow-y:auto;
+  padding-bottom:90px;
 }
 .msg{
   max-width:80%;
+  padding:12px 16px;
+  border-radius:16px;
   margin-bottom:10px;
-  padding:12px;
-  border-radius:14px;
 }
 .user{background:#2563eb;margin-left:auto}
 .bot{background:rgba(255,255,255,.25)}
 
-/* INPUT CHAT */
-#inputBar{
+/* INPUT BAR */
+#chatInputBar{
+  position:fixed;
+  bottom:12px;
+  left:12px;
+  right:12px;
   display:flex;
   gap:10px;
-  margin-top:10px;
 }
 #chatInput{
   flex:1;
-  background:rgba(255,255,255,.25);
-  color:white;
+  padding:16px;
+  border-radius:20px;
+  border:none;
+  font-size:16px;
 }
 #sendBtn{
-  width:44px;
+  width:56px;
   border-radius:50%;
+  border:none;
   background:#38bdf8;
-  font-size:18px;
+  font-size:20px;
+  cursor:pointer;
 }
 
 /* SIDEBAR */
 #sidebar{
   position:fixed;
-  top:0;left:-220px;
-  width:220px;height:100%;
+  top:0;left:-260px;
+  width:260px;height:100%;
   background:#020617;
   padding:16px;
   transition:.3s;
@@ -142,49 +119,47 @@ button{
 .sideItem{
   padding:14px;
   border-bottom:1px solid #334;
-  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
+<!-- SIDEBAR -->
 <div id="sidebar">
-  <div class="sideItem" onclick="showPage('home')">🏠 Accueil</div>
+  <div class="sideItem">🏠 Accueil</div>
+  <div class="sideItem">📜 Historique</div>
+  <div class="sideItem">⚙️ Paramètres</div>
 </div>
 
 <header>
   <h3>Daily Life Ultra IA</h3>
   <div id="time"></div>
-  <div class="menuBtn" onclick="toggleMenu()">☰</div>
+  <div class="menuBtn" onclick="sidebar.classList.toggle('active')">☰</div>
 </header>
 
 <div id="topNav">
-  <div class="navBox active" onclick="showPage('home')">Accueil</div>
-  <div class="navBox" onclick="showPage('ia')">IA</div>
-  <div class="navBox" onclick="showPage('promo')">Code Promo</div>
+  <div class="navBox" onclick="show('home')">Accueil</div>
+  <div class="navBox" onclick="show('ia')">IA</div>
+  <div class="navBox" onclick="show('promo')">Code Promo</div>
 </div>
 
-<!-- ACCUEIL -->
+<!-- HOME -->
 <div id="home" class="page active">
-
   <div class="card">
     <h3>🎨 Couleur</h3>
-    <select onchange="setTheme(this.value)">
+    <select id="colorSel">
       <option value="green">Vert</option>
       <option value="violet">Violet</option>
       <option value="orange">Orange</option>
-      <option value="blue">Bleu</option>
     </select>
   </div>
 
   <div class="card">
     <h3>🌍 Langue</h3>
-    <select onchange="saveLang(this.value)">
-      <option>Français</option>
-      <option>English</option>
-      <option>Español</option>
-      <option>Deutsch</option>
+    <select id="langSel">
+      <option value="fr">Français</option>
+      <option value="en">English</option>
     </select>
   </div>
 
@@ -194,16 +169,13 @@ button{
     <button onclick="addTask()">Ajouter</button>
     <div id="taskList"></div>
   </div>
-
 </div>
 
 <!-- IA -->
 <div id="ia" class="page">
   <div id="chat">
-    <div id="messages"></div>
-    <div id="inputBar">
-      <input id="chatInput" placeholder="Écris un message…">
-      <button id="sendBtn" onclick="send()">➤</button>
+    <div class="msg bot">
+      Salut 👋 Je peux t’aider pour des repas, idées ou organisation.
     </div>
   </div>
 </div>
@@ -211,89 +183,62 @@ button{
 <!-- PROMO -->
 <div id="promo" class="page">
   <div class="card">
-    <h3>🏷️ Code Promo</h3>
-    <input placeholder="Entre ton code">
-    <button>Valider</button>
+    <h3>🎟 Code Promo</h3>
+    <input id="promoInput" placeholder="Entre ton code">
+    <button onclick="alert('Code envoyé ✔️')">Valider</button>
   </div>
+</div>
+
+<!-- INPUT CHAT -->
+<div id="chatInputBar">
+  <input id="chatInput" placeholder="Écris un message…">
+  <button id="sendBtn" onclick="send()">➤</button>
 </div>
 
 <script>
 /* TIME */
-setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000)
+setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
 
 /* NAV */
-function toggleMenu(){sidebar.classList.toggle("active")}
-function showPage(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"))
-  document.querySelectorAll(".navBox").forEach(b=>b.classList.remove("active"))
-  document.getElementById(id).classList.add("active")
-  event?.target?.classList.add("active")
-  sidebar.classList.remove("active")
+function show(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
-
-/* THEME */
-function setTheme(t){
-  const map={green:'--green',violet:'--violet',orange:'--orange',blue:'--blue'}
-  document.body.style.background=getComputedStyle(document.documentElement).getPropertyValue(map[t])
-  localStorage.theme=t
-}
-if(localStorage.theme)setTheme(localStorage.theme)
-
-/* LANG */
-function saveLang(l){localStorage.lang=l}
 
 /* TASKS */
-let tasks=JSON.parse(localStorage.tasks||"[]")
+let tasks=[];
 function addTask(){
-  if(!taskInput.value)return
-  tasks.push(taskInput.value)
-  taskInput.value=""
-  saveTasks()
+  if(!taskInput.value)return;
+  tasks.push(taskInput.value);
+  taskInput.value="";
+  taskList.innerHTML="";
+  tasks.forEach(t=>{
+    taskList.innerHTML+=`<div class="task">${t}</div>`;
+  });
 }
-function saveTasks(){
-  localStorage.tasks=JSON.stringify(tasks)
-  renderTasks()
-}
-function renderTasks(){
-  taskList.innerHTML=""
-  tasks.forEach((t,i)=>{
-    let d=document.createElement("div")
-    d.className="task"
-    d.innerHTML=`<span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`
-    taskList.appendChild(d)
-  })
-}
-function delTask(i){tasks.splice(i,1);saveTasks()}
-renderTasks()
 
-/* CHAT IA */
-function addMsg(text,type){
-  let d=document.createElement("div")
-  d.className="msg "+type
-  d.textContent=text
-  messages.appendChild(d)
-  messages.scrollTop=messages.scrollHeight
+/* CHAT */
+function addMsg(txt,cls){
+  chat.innerHTML+=`<div class="msg ${cls}">${txt}</div>`;
+  chat.scrollTop=chat.scrollHeight;
 }
-addMsg("Salut 👋 Je peux t’aider pour des repas, idées ou organisation.","bot")
-
 function send(){
-  let q=chatInput.value.trim()
-  if(!q)return
-  addMsg(q,"user")
-  chatInput.value=""
-  setTimeout(()=>reply(q),500)
+  let v=chatInput.value.trim();
+  if(!v)return;
+  addMsg(v,"user");
+  chatInput.value="";
+  respond(v);
 }
-function reply(q){
-  q=q.toLowerCase()
-  if(q.includes("salut")) return addMsg("Salut 😄 Que veux-tu faire ?","bot")
-  if(q.includes("repas")){
-    let n=q.includes("3")?3:q.includes("2")?2:1
-    let meals=["Poulet riz légumes","Pâtes bolognaise","Saumon quinoa","Omelette salade"]
-    let r=[]
-    for(let i=0;i<n;i++)r.push("🍽️ "+meals[Math.floor(Math.random()*meals.length)])
-    return addMsg(r.join("\n"),"bot")
+chatInput.addEventListener("keydown",e=>{
+  if(e.key==="Enter")send();
+});
+
+function respond(q){
+  let r="Je suis là pour t’aider 🙂";
+  if(q.toLowerCase().includes("repas")){
+    r="🍽 Idées repas :<br>1️⃣ Poulet & riz<br>2️⃣ Pâtes saumon<br>3️⃣ Salade complète";
   }
-  addMsg("Je peux générer des repas, aider à t’organiser ou répondre à tes questions.","bot")
+  setTimeout(()=>addMsg(r,"bot"),600);
 }
 </script>
 
