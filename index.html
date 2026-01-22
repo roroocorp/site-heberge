@@ -5,73 +5,69 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
 <style>
-    /* === Reset & base === */
-    * { box-sizing: border-box; margin:0; padding:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background: linear-gradient(to bottom, #1a3a2d, #13402c); color:#fff; display:flex; justify-content:center; padding:20px; min-height:100vh;}
-    .container { width:100%; max-width:420px;}
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: #13402c; color: #fff; display: flex; justify-content: center; padding: 20px; min-height: 100vh; }
+    .container { width: 100%; max-width: 420px; }
 
     /* === Menu === */
-    nav { display:flex; justify-content:space-between; margin-bottom:25px; }
-    nav button { flex:1; margin:0 5px; padding:12px; border:none; border-radius:15px; background:#4d8068; color:#fff; font-weight:bold; cursor:pointer; transition:all 0.3s; box-shadow:0 3px 6px rgba(0,0,0,0.3);}
-    nav button.active, nav button:hover { background:#6bbf8f; transform:translateY(-2px); box-shadow:0 5px 8px rgba(0,0,0,0.4); }
+    nav { display: flex; justify-content: space-between; margin-bottom: 25px; }
+    nav button { flex: 1; margin: 0 5px; padding: 12px; border: none; border-radius: 15px; background: #4d8068; color: #fff; font-weight: bold; cursor: pointer; transition: all 0.3s; box-shadow: 0 3px 6px rgba(0,0,0,0.3);}
+    nav button.active, nav button:hover { background: #6bbf8f; transform: translateY(-2px); box-shadow: 0 5px 8px rgba(0,0,0,0.4); }
 
     /* === Blocs === */
-    .bloc { background: rgba(62,108,82,0.9); padding:18px; border-radius:20px; margin-bottom:18px; transition:all 0.3s; box-shadow:0 4px 8px rgba(0,0,0,0.2);}
-    .bloc label { display:block; font-weight:bold; margin-bottom:7px; }
-    .bloc select, .bloc input { width:100%; padding:12px; border-radius:12px; border:none; margin-bottom:10px; font-size:15px; }
-    .bloc button { width:100%; padding:12px; border-radius:12px; border:none; background:#4fc3f7; color:#000; font-weight:bold; cursor:pointer; transition:0.3s;}
-    .bloc button:hover { background:#29b6f6; transform:translateY(-2px); }
+    .bloc { background: rgba(62,108,82,0.9); padding: 18px; border-radius: 20px; margin-bottom: 18px; transition: all 0.3s; box-shadow: 0 4px 8px rgba(0,0,0,0.2);}
+    .bloc label { display: block; font-weight: bold; margin-bottom: 7px; }
+    .bloc select, .bloc input { width: 100%; padding: 12px; border-radius: 12px; border: none; margin-bottom: 10px; font-size: 15px; }
+    .bloc button { width: 100%; padding: 12px; border-radius: 12px; border: none; background: #4fc3f7; color: #000; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    .bloc button:hover { background: #29b6f6; transform: translateY(-2px); }
 
     /* === Tâches === */
-    #tasksList { list-style:none; margin-top:10px; max-height:150px; overflow-y:auto; }
-    #tasksList li { background:#5a8b70; padding:10px; border-radius:10px; margin-bottom:7px; display:flex; justify-content:space-between; align-items:center; font-size:14px;}
-    #tasksList li button { background:#f44336; color:#fff; border:none; border-radius:6px; cursor:pointer; padding:2px 6px; font-size:13px; }
+    #tasksList { list-style: none; margin-top: 10px; max-height: 150px; overflow-y: auto; }
+    #tasksList li { background: #5a8b70; padding: 10px; border-radius: 10px; margin-bottom: 7px; display: flex; justify-content: space-between; align-items: center; font-size: 14px;}
+    #tasksList li button { background: #f44336; color: #fff; border: none; border-radius: 6px; cursor: pointer; padding: 2px 6px; font-size: 13px; }
 
     /* === IA === */
-    #iaHistory { list-style:none; max-height:250px; overflow-y:auto; padding-left:0; display:flex; flex-direction:column; gap:5px;}
-    #iaHistory li { padding:10px; border-radius:10px; font-size:14px; word-wrap:break-word; max-width:80%; }
-    .iaUser { background:#4fc3f7; color:#000; align-self:flex-end; margin-left:20%; }
-    .iaBot { background:#6bbf8f; color:#000; align-self:flex-start; margin-right:20%; }
+    #iaHistory { list-style: none; max-height: 300px; overflow-y: auto; margin-top: 10px; padding-left: 0; }
+    #iaHistory li { background: #498066; padding: 10px; margin-bottom: 8px; border-radius: 10px; font-size: 14px; }
+
+    #iaInputWrapper { display: flex; margin-top: 10px; }
+    #iaInput { flex: 1; padding: 12px; border-radius: 12px 0 0 12px; border: none; font-size: 14px; }
+    #iaSend { padding: 12px; border-radius: 0 12px 12px 0; border: none; background: #4fc3f7; cursor: pointer; font-size: 18px; color: #000; }
 
     /* === Footer === */
-    footer { text-align:right; font-size:12px; margin-top:20px; color:#ccc; }
+    footer { text-align: right; font-size: 12px; margin-top: 20px; color: #ccc; }
 
-    /* === Input focus & responsive === */
-    input:focus, select:focus { outline:none; box-shadow:0 0 5px #4fc3f7;}
-    @media(max-width:450px){ .bloc { padding:15px; } nav button { padding:10px; } }
+    input:focus, select:focus { outline: none; box-shadow: 0 0 5px #4fc3f7; }
+    @media(max-width: 450px){ .bloc { padding: 15px; } nav button { padding: 10px; } }
 </style>
 </head>
 <body>
 <div class="container">
-    <!-- Menu -->
     <nav>
         <button id="menuHome" class="active">Accueil</button>
         <button id="menuIA">IA</button>
         <button id="menuPromo">Code Promo</button>
     </nav>
 
-    <!-- Accueil -->
     <div id="home">
         <div class="bloc">
             <label>Couleur</label>
             <select id="colorSelect">
-                <option>Vert</option>
-                <option>Bleu</option>
-                <option>Rouge</option>
-                <option>Orange</option>
-                <option>Violet</option>
-                <option>Rose</option>
-                <option>Jaune</option>
-                <option>Gris</option>
+                <option value="Vert">Vert</option>
+                <option value="Bleu">Bleu</option>
+                <option value="Orange">Orange</option>
+                <option value="Rouge">Rouge</option>
+                <option value="Rose">Rose</option>
+                <option value="Violet">Violet</option>
             </select>
         </div>
         <div class="bloc">
             <label>Langue</label>
             <select id="langSelect">
-                <option>Français</option>
-                <option>Anglais</option>
-                <option>Allemand</option>
-                <option>Espagnol</option>
+                <option value="Français">Français</option>
+                <option value="Anglais">Anglais</option>
+                <option value="Espagnol">Espagnol</option>
+                <option value="Allemand">Allemand</option>
             </select>
         </div>
         <div class="bloc">
@@ -82,16 +78,14 @@
         </div>
     </div>
 
-    <!-- IA -->
     <div id="ia" style="display:none;" class="bloc">
         <ul id="iaHistory"></ul>
-        <div style="display:flex; margin-top:10px;">
-            <input type="text" id="iaInput" placeholder="Écris ici..." style="flex:1; padding:12px; border-radius:12px 0 0 12px; border:none; font-size:15px;">
-            <button id="iaSend" style="padding:0 15px; border:none; border-radius:0 12px 12px 0; background:#4fc3f7; cursor:pointer;">➡️</button>
+        <div id="iaInputWrapper">
+            <input type="text" id="iaInput" placeholder="Écris ici...">
+            <button id="iaSend">➤</button>
         </div>
     </div>
 
-    <!-- Code Promo -->
     <div id="promo" style="display:none;" class="bloc">
         <label>Code Promo</label>
         <input type="text" id="promoInput" placeholder="Entre ton code">
@@ -99,12 +93,10 @@
         <div id="promoMsg"></div>
     </div>
 
-    <!-- Footer -->
     <footer>© 2026 Daily Life Ultra IA ⚡</footer>
 </div>
 
 <script>
-    // === Menu ===
     const homeBtn = document.getElementById('menuHome');
     const iaBtn = document.getElementById('menuIA');
     const promoBtn = document.getElementById('menuPromo');
@@ -112,7 +104,7 @@
     const iaDiv = document.getElementById('ia');
     const promoDiv = document.getElementById('promo');
 
-    function showSection(section) {
+    function showSection(section){
         homeDiv.style.display='none';
         iaDiv.style.display='none';
         promoDiv.style.display='none';
@@ -129,37 +121,55 @@
     iaBtn.addEventListener('click',()=>showSection('ia'));
     promoBtn.addEventListener('click',()=>showSection('promo'));
 
-    // === Couleurs & Langues ===
+    // Couleurs
     const colorSelect = document.getElementById('colorSelect');
-    const langSelect = document.getElementById('langSelect');
     colorSelect.value = localStorage.getItem('color') || 'Vert';
+    function applyColor(color){
+        let bg='';
+        switch(color){
+            case 'Vert': bg='#13402c'; break;
+            case 'Bleu': bg='#1a2f4c'; break;
+            case 'Orange': bg='#4c2f1a'; break;
+            case 'Rouge': bg='#4c1a1a'; break;
+            case 'Rose': bg='#4c1a3c'; break;
+            case 'Violet': bg='#2f1a4c'; break;
+            default: bg='#13402c';
+        }
+        document.body.style.background=bg;
+    }
+    applyColor(colorSelect.value);
+    colorSelect.addEventListener('change',()=>{
+        localStorage.setItem('color', colorSelect.value);
+        applyColor(colorSelect.value);
+    });
+
+    // Langues
+    const langSelect = document.getElementById('langSelect');
     langSelect.value = localStorage.getItem('lang') || 'Français';
+    langSelect.addEventListener('change',()=> localStorage.setItem('lang', langSelect.value));
 
-    colorSelect.addEventListener('change', ()=> localStorage.setItem('color', colorSelect.value));
-    langSelect.addEventListener('change', ()=> localStorage.setItem('lang', langSelect.value));
-
-    // === Tâches ===
+    // Tâches
     const taskInput = document.getElementById('taskInput');
     const addTaskBtn = document.getElementById('addTaskBtn');
     const tasksList = document.getElementById('tasksList');
 
-    function renderTasks() {
-        tasksList.innerHTML = '';
-        let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    function renderTasks(){
+        tasksList.innerHTML='';
+        let tasks=JSON.parse(localStorage.getItem('tasks')||'[]');
         tasks.forEach((t,i)=>{
-            const li = document.createElement('li');
-            li.textContent = t;
-            const del = document.createElement('button');
+            const li=document.createElement('li');
+            li.textContent=t;
+            const del=document.createElement('button');
             del.textContent='🗑️';
-            del.onclick = ()=>{ tasks.splice(i,1); localStorage.setItem('tasks',JSON.stringify(tasks)); renderTasks(); }
+            del.onclick=()=>{ tasks.splice(i,1); localStorage.setItem('tasks',JSON.stringify(tasks)); renderTasks(); }
             li.appendChild(del);
             tasksList.appendChild(li);
         });
     }
 
-    addTaskBtn.addEventListener('click', ()=>{
+    addTaskBtn.addEventListener('click',()=>{
         if(taskInput.value.trim()!==''){
-            let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+            let tasks=JSON.parse(localStorage.getItem('tasks')||'[]');
             tasks.push(taskInput.value.trim());
             localStorage.setItem('tasks',JSON.stringify(tasks));
             taskInput.value='';
@@ -168,33 +178,26 @@
     });
     renderTasks();
 
-    // === IA ===
-    const iaInput = document.getElementById('iaInput');
-    const iaSend = document.getElementById('iaSend');
-    const iaHistory = document.getElementById('iaHistory');
+    // IA
+    const iaInput=document.getElementById('iaInput');
+    const iaSend=document.getElementById('iaSend');
+    const iaHistory=document.getElementById('iaHistory');
 
-    function addMessage(content, from){
-        const li = document.createElement('li');
-        li.className = from==='user'?'iaUser':'iaBot';
-        li.textContent = content;
-        iaHistory.appendChild(li);
-        iaHistory.scrollTop = iaHistory.scrollHeight;
-    }
-
-    iaSend.addEventListener('click', ()=>{
+    iaSend.addEventListener('click',()=>{
         if(iaInput.value.trim()!==''){
-            addMessage(iaInput.value.trim(), 'user');
+            const li=document.createElement('li');
+            li.textContent=iaInput.value.trim();
+            iaHistory.appendChild(li);
             iaInput.value='';
-            // IA simple de test (tu peux remplacer par ton IA locale)
-            setTimeout(()=> addMessage("Voici ta réponse !", 'bot'), 500);
+            iaHistory.scrollTop=iaHistory.scrollHeight;
         }
     });
 
-    // === Promo ===
-    const promoInput = document.getElementById('promoInput');
-    const promoMsg = document.getElementById('promoMsg');
-    const promoBtnEl = document.getElementById('promoBtn');
-    promoBtnEl.addEventListener('click', ()=>{
+    // Promo
+    const promoInput=document.getElementById('promoInput');
+    const promoMsg=document.getElementById('promoMsg');
+    const promoBtnEl=document.getElementById('promoBtn');
+    promoBtnEl.addEventListener('click',()=>{
         if(promoInput.value.trim()==='PROMO2026'){
             promoMsg.textContent='Code valide ! 🎉';
             promoMsg.style.color='lightgreen';
