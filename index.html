@@ -95,10 +95,7 @@ button:hover{background:#0ea5e9}
   border-radius:14px;
   margin-top:8px;
 }
-.trash{
-  cursor:pointer;
-  font-size:18px;
-}
+.trash{cursor:pointer;font-size:18px;}
 
 /* IA CHAT */
 #chatContainer{
@@ -113,7 +110,7 @@ button:hover{background:#0ea5e9}
   padding:10px 14px;
   border-radius:18px;
   margin:6px 0;
-  word-wrap:break-word;
+  white-space:pre-line;
 }
 .userMsg{
   background:#38bdf8;
@@ -137,14 +134,7 @@ button:hover{background:#0ea5e9}
   height:50px;
   border-radius:50%;
   font-size:20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#38bdf8;
-  cursor:pointer;
-  transition:.2s;
 }
-.sendBtn:hover{background:#0ea5e9; transform:scale(1.1);}
 
 /* FOOTER */
 footer{
@@ -186,11 +176,11 @@ footer{
 
   <div class="card">
     <h3>🌍 Langue</h3>
-    <select id="langSelect">
-      <option value="fr">Français</option>
-      <option value="en">Anglais</option>
-      <option value="es">Espagnol</option>
-      <option value="de">Allemand</option>
+    <select>
+      <option>Français</option>
+      <option>Anglais</option>
+      <option>Espagnol</option>
+      <option>Allemand</option>
     </select>
   </div>
 
@@ -206,7 +196,7 @@ footer{
 <div id="ia" class="page">
   <div id="chatContainer"></div>
   <div id="iaInputArea">
-    <input id="iaInput" placeholder="Écris ici">
+    <input id="iaInput" placeholder="Demande un repas, cuisson, four…">
     <button class="sendBtn" onclick="askIA()">⬆️</button>
   </div>
 </div>
@@ -239,26 +229,24 @@ function showPage(id,el){
 const colorSelect=document.getElementById("colorSelect");
 colorSelect.value=localStorage.getItem("color")||"#064e3b";
 applyColor();
-colorSelect.onchange=()=>{localStorage.setItem("color",colorSelect.value);applyColor();}
+colorSelect.onchange=()=>{
+  localStorage.setItem("color",colorSelect.value);
+  applyColor();
+}
 function applyColor(){
   document.body.style.background=`linear-gradient(180deg,${colorSelect.value},#042f2e)`;
 }
 
-// LANGUE
-const langSelect=document.getElementById("langSelect");
-langSelect.value=localStorage.getItem("lang")||"fr";
-langSelect.onchange=()=>{localStorage.setItem("lang",langSelect.value);}
-
 // TASKS
 let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
-const taskList=document.getElementById("taskList");
 function renderTasks(){
   taskList.innerHTML="";
   tasks.forEach((t,i)=>{
-    const d=document.createElement("div");
-    d.className="task";
-    d.innerHTML=`<span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`;
-    taskList.appendChild(d);
+    taskList.innerHTML+=
+      `<div class="task">
+        <span>${t}</span>
+        <span class="trash" onclick="delTask(${i})">🗑️</span>
+      </div>`;
   });
 }
 function addTask(){
@@ -275,42 +263,53 @@ function delTask(i){
 }
 renderTasks();
 
-// IA AMÉLIORÉE
-const chatContainer=document.getElementById("chatContainer");
+// IA + SAVE CHAT
+let chatHistory=JSON.parse(localStorage.getItem("chatHistory")||"[]");
+
+function renderChat(){
+  chatContainer.innerHTML="";
+  chatHistory.forEach(m=>{
+    chatContainer.innerHTML+=
+      `<div class="message ${m.type}">${m.text}</div>`;
+  });
+  chatContainer.scrollTop=chatContainer.scrollHeight;
+}
+
 function askIA(){
   const q=iaInput.value.trim();
   if(!q)return;
 
-  chatContainer.innerHTML+=`<div class="message userMsg">${q}</div>`;
-
+  chatHistory.push({type:"userMsg",text:q});
   const t=q.toLowerCase();
-  let r="🤔 Dis-m'en plus.";
+  let r="🤔 Dis-moi un plat (pâtes, pizza, pain, poulet…)";
 
-  if(t.includes("salut") || t.includes("bonjour")) r="Salut 😄 Je suis là pour t’aider.";
-  else if(t.includes("aide") || t.includes("que faire")) r="Explique-moi ce que tu veux faire, je t’accompagne.";
-  else if(t.includes("repas")){
-    const match = q.match(/\d+/);
-    const n = match ? parseInt(match[0]) : 1;
-    r="";
-    for(let i=1;i<=n;i++) r+=`🍽️ Idée de repas ${i}: Pâtes, burger, salade ou pizza\n`;
-  }
-  else if(t.includes("carbonara")) r="Voici une recette simple de carbonara : 1️⃣ Cuire les pâtes. 2️⃣ Mélanger œufs, parmesan et poivre. 3️⃣ Ajouter les lardons. 4️⃣ Mélanger avec les pâtes chaudes. Bon appétit ! 😋";
-  else if(t.includes("blague")) r="😂 Pourquoi les programmeurs confondent Halloween et Noël ? Parce que OCT 31 = DEC 25 !";
-  else if(t.includes("ennuie")) r="😄 Ajoute une tâche ou parle-moi de ce que tu veux.";
-  else if(t.includes("quoi de neuf") || t.includes("quoi de beau")) r="Tout va bien ici ! Et toi ?";
-  else r="🤔 Intéressant... peux-tu m’en dire plus ?";
+  if(t.includes("pâtes")||t.includes("pates"))
+    r="🍝 Pâtes\n⏱️ 15 min\n🔥 Cuisson 10 min\n❌ Pas de four";
+  else if(t.includes("pizza"))
+    r="🍕 Pizza\n🔥 Four 220°C\n⏱️ 12 min";
+  else if(t.includes("pain"))
+    r="🥖 Pain\n🔥 Four 180°C – 6 à 8 min\n💡 Humidifier avant";
+  else if(t.includes("burger"))
+    r="🍔 Burger\n🔥 Steak 4 min/face\n🔥 Pain 3 min four";
+  else if(t.includes("salut"))
+    r="Salut 😄 Je peux t’aider pour cuisiner.";
 
-  chatContainer.innerHTML+=`<div class="message iaMsg">${r}</div>`;
-  chatContainer.scrollTop=chatContainer.scrollHeight;
+  chatHistory.push({type:"iaMsg",text:r});
+  localStorage.setItem("chatHistory",JSON.stringify(chatHistory));
+  renderChat();
   iaInput.value="";
 }
 
+renderChat();
+
 // PROMO
 function validatePromo(){
-  const v=promoInput.value.trim();
-  promoResult.textContent=
-    v==="PROMO2026" ? "✅ Code valide — accès activé" : "❌ Code invalide";
+  promoResult.textContent =
+    promoInput.value==="PROMO2026"
+    ? "✅ Code valide"
+    : "❌ Code invalide";
 }
 </script>
+
 </body>
-      </html>
+                  </html>
