@@ -6,149 +6,128 @@
 <title>Daily Life Ultra IA</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
 body{
-  min-height:100vh;
-  background:linear-gradient(180deg,#064e3b,#042f2e);
-  color:white;
-  display:flex;
-  flex-direction:column;
-  transition:background .4s;
+height:100vh;
+background:linear-gradient(180deg,#2563eb,#0f172a);
+color:white;
+display:flex;
+flex-direction:column;
+overflow:hidden;
 }
 
 /* HEADER */
 header{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:14px 18px;
-  background:rgba(0,0,0,.3);
+display:flex;
+align-items:center;
+padding:14px 18px;
+background:rgba(0,0,0,.3);
 }
-header h3{font-size:18px;}
+header h2{font-size:20px}
 #time{
-  margin-left:auto;
-  background:rgba(0,0,0,.35);
-  padding:6px 14px;
-  border-radius:14px;
-  font-size:13px;
+margin-left:auto;
+background:rgba(0,0,0,.35);
+padding:6px 14px;
+border-radius:14px;
+font-size:14px;
 }
 
 /* NAV */
-#topNav{
-  display:flex;
-  gap:12px;
-  padding:14px;
+#nav{
+display:flex;
+gap:10px;
+padding:14px;
 }
-.navBox{
-  flex:1;
-  padding:18px 0;
-  background:rgba(255,255,255,.25);
-  border-radius:22px;
-  text-align:center;
-  font-weight:800;
-  cursor:pointer;
-  transition:.3s;
+.navBtn{
+flex:1;
+background:rgba(255,255,255,.25);
+padding:18px 0;
+border-radius:20px;
+text-align:center;
+font-weight:700;
+cursor:pointer;
 }
-.navBox.active,
-.navBox:hover{background:rgba(255,255,255,.45);}
+.navBtn:hover{background:rgba(255,255,255,.35)}
 
 /* PAGES */
 .page{
-  display:none;
-  flex-direction:column;
-  padding:14px;
+flex:1;
+display:none;
+padding:14px;
+overflow:hidden;
 }
-.page.active{display:flex;}
+.page.active{display:flex;flex-direction:column}
+
+/* CHAT */
+#chatBox{
+flex:1;
+background:rgba(255,255,255,.12);
+border-radius:20px;
+padding:12px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:10px;
+scroll-behavior:smooth;
+}
+
+.msg{
+max-width:75%;
+padding:10px 14px;
+border-radius:18px;
+font-size:15px;
+}
+.user{align-self:flex-end;background:#38bdf8;color:black}
+.ia{align-self:flex-start;background:#22c55e;color:black}
+
+/* INPUT */
+#inputBar{
+display:flex;
+gap:10px;
+padding-top:10px;
+}
+#iaInput{
+flex:1;
+padding:14px;
+border-radius:18px;
+border:none;
+font-size:16px;
+}
+#sendBtn{
+width:54px;
+border-radius:50%;
+border:none;
+background:#38bdf8;
+font-size:22px;
+cursor:pointer;
+}
+#sendBtn:hover{background:#0ea5e9}
 
 /* CARD */
 .card{
-  background:rgba(255,255,255,.2);
-  border-radius:22px;
-  padding:20px;
-  margin-bottom:16px;
+background:rgba(255,255,255,.2);
+border-radius:22px;
+padding:20px;
 }
-.card h3{margin-bottom:12px;}
 
-/* INPUT */
-input,select,button{
-  width:100%;
-  padding:14px;
-  border-radius:16px;
-  border:none;
-  font-size:15px;
-}
+/* BUTTON */
 button{
-  background:#38bdf8;
-  font-weight:700;
-  margin-top:10px;
-  cursor:pointer;
+margin-top:10px;
+padding:14px;
+border:none;
+border-radius:18px;
+font-weight:700;
+cursor:pointer;
+background:#38bdf8;
 }
 button:hover{background:#0ea5e9}
 
-/* TASKS */
-.task{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:rgba(255,255,255,.3);
-  padding:12px;
-  border-radius:14px;
-  margin-top:8px;
-}
-.trash{
-  cursor:pointer;
-  font-size:18px;
-}
-
-/* IA CHAT */
-#chatContainer{
-  height:55vh;
-  overflow-y:auto;
-  background:rgba(255,255,255,.15);
-  border-radius:20px;
-  padding:10px;
-}
-.message{
-  max-width:70%;
-  padding:10px 14px;
-  border-radius:18px;
-  margin:6px 0;
-  word-wrap:break-word;
-}
-.userMsg{
-  background:#38bdf8;
-  color:black;
-  margin-left:auto;
-}
-.iaMsg{
-  background:#22c55e;
-  color:black;
-}
-
-/* IA INPUT */
-#iaInputArea{
-  display:flex;
-  gap:8px;
-  margin-top:10px;
-}
-#iaInput{flex:1;}
-.sendBtn{
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  font-size:20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
 /* FOOTER */
 footer{
-  margin-top:auto;
-  padding:8px 14px;
-  font-size:12px;
-  text-align:right;
-  opacity:.7;
+text-align:right;
+font-size:12px;
+opacity:.7;
+padding:8px 14px;
 }
 </style>
 </head>
@@ -156,141 +135,113 @@ footer{
 <body>
 
 <header>
-  <h3>Daily Life Ultra IA</h3>
-  <div id="time"></div>
+<h2>Daily Life Ultra IA</h2>
+<div id="time"></div>
 </header>
 
-<div id="topNav">
-  <div class="navBox active" onclick="showPage('home',this)">Accueil</div>
-  <div class="navBox" onclick="showPage('ia',this)">IA</div>
-  <div class="navBox" onclick="showPage('promo',this)">Code Promo</div>
+<div id="nav">
+<div class="navBtn" onclick="showPage('home')">Accueil</div>
+<div class="navBtn" onclick="showPage('ia')">IA</div>
+<div class="navBtn" onclick="showPage('promo')">Code Promo</div>
 </div>
 
 <!-- ACCUEIL -->
 <div id="home" class="page active">
-  <div class="card">
-    <h3>🎨 Couleur</h3>
-    <select id="colorSelect">
-      <option value="#064e3b">Vert</option>
-      <option value="#3b82f6">Bleu</option>
-      <option value="#ef4444">Rouge</option>
-      <option value="#f97316">Orange</option>
-      <option value="#a855f7">Violet</option>
-      <option value="#ec4899">Rose</option>
-    </select>
-  </div>
-
-  <div class="card">
-    <h3>🌍 Langue</h3>
-    <select id="langSelect">
-      <option value="fr">Français</option>
-      <option value="en">Anglais</option>
-      <option value="es">Espagnol</option>
-      <option value="de">Allemand</option>
-    </select>
-  </div>
-
-  <div class="card">
-    <h3>✅ Tâches</h3>
-    <input id="taskInput" placeholder="Nouvelle tâche">
-    <button onclick="addTask()">Ajouter</button>
-    <div id="taskList"></div>
-  </div>
+<div class="card">
+<h3>Bienvenue 👋</h3>
+<p>Assistant simple, rapide et local.</p>
+</div>
 </div>
 
 <!-- IA -->
 <div id="ia" class="page">
-  <div id="chatContainer"></div>
-  <div id="iaInputArea">
-    <input id="iaInput" placeholder="Écris ici">
-    <button class="sendBtn" onclick="askIA()">⬆️</button>
-  </div>
+<div id="chatBox"></div>
+
+<div id="inputBar">
+<input id="iaInput" placeholder="Écris ici">
+<button id="sendBtn" onclick="sendMsg()">↑</button>
+</div>
 </div>
 
 <!-- PROMO -->
 <div id="promo" class="page">
-  <div class="card">
-    <h3>🎁 Code Promo</h3>
-    <input id="promoInput" placeholder="Entre ton code">
-    <button onclick="validatePromo()">Valider</button>
-    <div id="promoResult"></div>
-  </div>
+<div class="card">
+<h3>Code Promo</h3>
+<input id="promoInput" placeholder="Entre ton code">
+<button onclick="checkPromo()">Valider</button>
+<p id="promoResult"></p>
+</div>
 </div>
 
-<footer>© 2026 Daily Life Ultra IA ⚡</footer>
+<footer>© 2026 Daily Life Ultra IA</footer>
 
 <script>
-// TIME
-setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
+/* TIME */
+setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000)
 
-// NAV
-function showPage(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.navBox').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
+/* NAV */
+function showPage(id){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
+document.getElementById(id).classList.add('active')
 }
 
-// THEME
-const colorSelect=document.getElementById("colorSelect");
-colorSelect.value=localStorage.getItem("color")||"#064e3b";
-applyColor();
-colorSelect.onchange=()=>{localStorage.setItem("color",colorSelect.value);applyColor();}
-function applyColor(){
-  document.body.style.background=`linear-gradient(180deg,${colorSelect.value},#042f2e)`;
+/* CHAT SAVE */
+const chatBox=document.getElementById('chatBox')
+let history=JSON.parse(localStorage.getItem('chat')||'[]')
+
+function renderChat(){
+chatBox.innerHTML=''
+history.forEach(m=>{
+const d=document.createElement('div')
+d.className='msg '+m.type
+d.textContent=m.text
+chatBox.appendChild(d)
+})
+chatBox.scrollTop=chatBox.scrollHeight
+}
+renderChat()
+
+function addMsg(type,text){
+history.push({type,text})
+localStorage.setItem('chat',JSON.stringify(history))
+renderChat()
 }
 
-// TASKS
-let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
-function renderTasks(){
-  taskList.innerHTML="";
-  tasks.forEach((t,i)=>{
-    const d=document.createElement("div");
-    d.className="task";
-    d.innerHTML=`<span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`;
-    taskList.appendChild(d);
-  });
-}
-function addTask(){
-  if(!taskInput.value.trim())return;
-  tasks.push(taskInput.value.trim());
-  localStorage.setItem("tasks",JSON.stringify(tasks));
-  taskInput.value="";
-  renderTasks();
-}
-function delTask(i){
-  tasks.splice(i,1);
-  localStorage.setItem("tasks",JSON.stringify(tasks));
-  renderTasks();
-}
-renderTasks();
+/* IA LOGIC */
+function iaReply(q){
+q=q.toLowerCase()
 
-// IA
-function askIA(){
-  const q=iaInput.value.trim();
-  if(!q)return;
-
-  chatContainer.innerHTML+=`<div class="message userMsg">${q}</div>`;
-
-  let r="🤔 Dis-m'en plus.";
-  const t=q.toLowerCase();
-
-  if(t.includes("salut")) r="Salut 😄 Je suis là pour t’aider.";
-  else if(t.includes("aide")) r="Dis-moi exactement ce que tu veux faire.";
-  else if(t.includes("repas")) r="🍽️ Pâtes, burger, salade ou pizza ?";
-  else if(t.includes("ennuie")) r="😄 Parle-moi ou ajoute une tâche.";
-
-  chatContainer.innerHTML+=`<div class="message iaMsg">${r}</div>`;
-  chatContainer.scrollTop=chatContainer.scrollHeight;
-  iaInput.value="";
+if(q.includes('salut')) return "Salut 🙂 Je suis là pour t’aider."
+if(q.includes('repas')) return "Tu veux plutôt pâtes, burger, salade ou pizza ?"
+if(q.includes('carbonara')) return "Ingrédients : pâtes, œufs, lardons, parmesan. Tu veux la recette ?"
+if(q.includes('recette')) return "Cuire les pâtes. Mélanger œufs + parmesan. Ajouter lardons. Mélanger hors du feu."
+return "Dis-m’en plus."
 }
 
-// PROMO
-function validatePromo(){
-  const v=promoInput.value.trim();
-  promoResult.textContent=
-    v==="PROMO2026" ? "✅ Code valide — accès activé" : "❌ Code invalide";
+/* SEND */
+function sendMsg(){
+const input=iaInput.value.trim()
+if(!input) return
+addMsg('user',input)
+iaInput.value=''
+
+setTimeout(()=>{
+addMsg('ia',iaReply(input))
+},400)
+}
+
+/* PROMO */
+function checkPromo(){
+const code=promoInput.value.trim().toUpperCase()
+if(code==="ULTRA2026"){
+promoResult.textContent="Code valide 🎉"
+promoResult.style.color="#22c55e"
+}else{
+promoResult.textContent="Code invalide"
+promoResult.style.color="#ef4444"
+}
 }
 </script>
+
 </body>
-    </html>
+                      </html>
