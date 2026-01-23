@@ -140,7 +140,11 @@ button:hover{background:#0ea5e9}
   display:flex;
   align-items:center;
   justify-content:center;
+  background:#38bdf8;
+  cursor:pointer;
+  transition:.2s;
 }
+.sendBtn:hover{background:#0ea5e9; transform:scale(1.1);}
 
 /* FOOTER */
 footer{
@@ -240,8 +244,14 @@ function applyColor(){
   document.body.style.background=`linear-gradient(180deg,${colorSelect.value},#042f2e)`;
 }
 
+// LANGUE
+const langSelect=document.getElementById("langSelect");
+langSelect.value=localStorage.getItem("lang")||"fr";
+langSelect.onchange=()=>{localStorage.setItem("lang",langSelect.value);}
+
 // TASKS
 let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
+const taskList=document.getElementById("taskList");
 function renderTasks(){
   taskList.innerHTML="";
   tasks.forEach((t,i)=>{
@@ -265,20 +275,30 @@ function delTask(i){
 }
 renderTasks();
 
-// IA
+// IA AMÉLIORÉE
+const chatContainer=document.getElementById("chatContainer");
 function askIA(){
   const q=iaInput.value.trim();
   if(!q)return;
 
   chatContainer.innerHTML+=`<div class="message userMsg">${q}</div>`;
 
-  let r="🤔 Dis-m'en plus.";
   const t=q.toLowerCase();
+  let r="🤔 Dis-m'en plus.";
 
-  if(t.includes("salut")) r="Salut 😄 Je suis là pour t’aider.";
-  else if(t.includes("aide")) r="Dis-moi exactement ce que tu veux faire.";
-  else if(t.includes("repas")) r="🍽️ Pâtes, burger, salade ou pizza ?";
-  else if(t.includes("ennuie")) r="😄 Parle-moi ou ajoute une tâche.";
+  if(t.includes("salut") || t.includes("bonjour")) r="Salut 😄 Je suis là pour t’aider.";
+  else if(t.includes("aide") || t.includes("que faire")) r="Explique-moi ce que tu veux faire, je t’accompagne.";
+  else if(t.includes("repas")){
+    const match = q.match(/\d+/);
+    const n = match ? parseInt(match[0]) : 1;
+    r="";
+    for(let i=1;i<=n;i++) r+=`🍽️ Idée de repas ${i}: Pâtes, burger, salade ou pizza\n`;
+  }
+  else if(t.includes("carbonara")) r="Voici une recette simple de carbonara : 1️⃣ Cuire les pâtes. 2️⃣ Mélanger œufs, parmesan et poivre. 3️⃣ Ajouter les lardons. 4️⃣ Mélanger avec les pâtes chaudes. Bon appétit ! 😋";
+  else if(t.includes("blague")) r="😂 Pourquoi les programmeurs confondent Halloween et Noël ? Parce que OCT 31 = DEC 25 !";
+  else if(t.includes("ennuie")) r="😄 Ajoute une tâche ou parle-moi de ce que tu veux.";
+  else if(t.includes("quoi de neuf") || t.includes("quoi de beau")) r="Tout va bien ici ! Et toi ?";
+  else r="🤔 Intéressant... peux-tu m’en dire plus ?";
 
   chatContainer.innerHTML+=`<div class="message iaMsg">${r}</div>`;
   chatContainer.scrollTop=chatContainer.scrollHeight;
@@ -293,4 +313,4 @@ function validatePromo(){
 }
 </script>
 </body>
-  </html>
+      </html>
