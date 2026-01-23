@@ -6,102 +6,149 @@
 <title>Daily Life Ultra IA</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(180deg, #1e4fd8, #0b1d3a);
-  color: white;
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui;}
+body{
+  min-height:100vh;
+  background:linear-gradient(180deg,#064e3b,#042f2e);
+  color:white;
+  display:flex;
+  flex-direction:column;
+  transition:background .4s;
 }
 
 /* HEADER */
-header {
-  padding: 15px;
-  background: #1f4fc9;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 18px;
+  background:rgba(0,0,0,.3);
 }
-
-header h1 {
-  font-size: 18px;
-  margin: 0;
+header h3{font-size:18px;}
+#time{
+  margin-left:auto;
+  background:rgba(0,0,0,.35);
+  padding:6px 14px;
+  border-radius:14px;
+  font-size:13px;
 }
 
 /* NAV */
-nav {
-  display: flex;
-  gap: 10px;
-  padding: 15px;
+#topNav{
+  display:flex;
+  gap:12px;
+  padding:14px;
 }
+.navBox{
+  flex:1;
+  padding:18px 0;
+  background:rgba(255,255,255,.25);
+  border-radius:22px;
+  text-align:center;
+  font-weight:800;
+  cursor:pointer;
+  transition:.3s;
+}
+.navBox.active,
+.navBox:hover{background:rgba(255,255,255,.45);}
 
-nav button {
-  flex: 1;
-  border: none;
-  border-radius: 20px;
-  padding: 12px;
-  background: #5f8fe8;
-  color: white;
-  font-size: 16px;
+/* PAGES */
+.page{
+  display:none;
+  flex-direction:column;
+  padding:14px;
 }
+.page.active{display:flex;}
 
-/* CHAT */
-#chat {
-  padding: 15px;
-  height: calc(100vh - 230px);
-  overflow-y: auto;
+/* CARD */
+.card{
+  background:rgba(255,255,255,.2);
+  border-radius:22px;
+  padding:20px;
+  margin-bottom:16px;
 }
-
-.message {
-  max-width: 80%;
-  padding: 10px 14px;
-  border-radius: 16px;
-  margin-bottom: 10px;
-  word-wrap: break-word;
-}
-
-.user {
-  background: #4fc3ff;
-  margin-left: auto;
-  color: #000;
-}
-
-.bot {
-  background: #2ecc71;
-  margin-right: auto;
-  color: #000;
-}
+.card h3{margin-bottom:12px;}
 
 /* INPUT */
-#inputBar {
-  display: flex;
-  padding: 15px;
-  background: #0b1d3a;
+input,select,button{
+  width:100%;
+  padding:14px;
+  border-radius:16px;
+  border:none;
+  font-size:15px;
+}
+button{
+  background:#38bdf8;
+  font-weight:700;
+  margin-top:10px;
+  cursor:pointer;
+}
+button:hover{background:#0ea5e9}
+
+/* TASKS */
+.task{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(255,255,255,.3);
+  padding:12px;
+  border-radius:14px;
+  margin-top:8px;
+}
+.trash{
+  cursor:pointer;
+  font-size:18px;
 }
 
-#inputBar input {
-  flex: 1;
-  border-radius: 20px;
-  border: none;
-  padding: 12px;
-  font-size: 16px;
+/* IA CHAT */
+#chatContainer{
+  height:55vh;
+  overflow-y:auto;
+  background:rgba(255,255,255,.15);
+  border-radius:20px;
+  padding:10px;
+}
+.message{
+  max-width:70%;
+  padding:10px 14px;
+  border-radius:18px;
+  margin:6px 0;
+  word-wrap:break-word;
+}
+.userMsg{
+  background:#38bdf8;
+  color:black;
+  margin-left:auto;
+}
+.iaMsg{
+  background:#22c55e;
+  color:black;
 }
 
-#inputBar button {
-  margin-left: 10px;
-  border-radius: 50%;
-  border: none;
-  width: 45px;
-  height: 45px;
-  background: #4fc3ff;
-  font-size: 20px;
+/* IA INPUT */
+#iaInputArea{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+#iaInput{flex:1;}
+.sendBtn{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  font-size:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-/* WELCOME */
-#welcome {
-  background: rgba(255,255,255,0.15);
-  margin: 15px;
-  padding: 15px;
-  border-radius: 16px;
+/* FOOTER */
+footer{
+  margin-top:auto;
+  padding:8px 14px;
+  font-size:12px;
+  text-align:right;
+  opacity:.7;
 }
 </style>
 </head>
@@ -109,116 +156,141 @@ nav button {
 <body>
 
 <header>
-  <h1>Daily Life Ultra IA</h1>
-  <span id="time"></span>
+  <h3>Daily Life Ultra IA</h3>
+  <div id="time"></div>
 </header>
 
-<nav>
-  <button>Accueil</button>
-  <button>IA</button>
-  <button>Code Promo</button>
-</nav>
-
-<div id="welcome">
-  <strong>Bienvenue 👋</strong><br>
-  Assistant simple, rapide et local.
+<div id="topNav">
+  <div class="navBox active" onclick="showPage('home',this)">Accueil</div>
+  <div class="navBox" onclick="showPage('ia',this)">IA</div>
+  <div class="navBox" onclick="showPage('promo',this)">Code Promo</div>
 </div>
 
-<div id="chat"></div>
+<!-- ACCUEIL -->
+<div id="home" class="page active">
+  <div class="card">
+    <h3>🎨 Couleur</h3>
+    <select id="colorSelect">
+      <option value="#064e3b">Vert</option>
+      <option value="#3b82f6">Bleu</option>
+      <option value="#ef4444">Rouge</option>
+      <option value="#f97316">Orange</option>
+      <option value="#a855f7">Violet</option>
+      <option value="#ec4899">Rose</option>
+    </select>
+  </div>
 
-<div id="inputBar">
-  <input id="userInput" placeholder="Écris ici">
-  <button onclick="sendMessage()">⬆️</button>
+  <div class="card">
+    <h3>🌍 Langue</h3>
+    <select id="langSelect">
+      <option value="fr">Français</option>
+      <option value="en">Anglais</option>
+      <option value="es">Espagnol</option>
+      <option value="de">Allemand</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <h3>✅ Tâches</h3>
+    <input id="taskInput" placeholder="Nouvelle tâche">
+    <button onclick="addTask()">Ajouter</button>
+    <div id="taskList"></div>
+  </div>
 </div>
+
+<!-- IA -->
+<div id="ia" class="page">
+  <div id="chatContainer"></div>
+  <div id="iaInputArea">
+    <input id="iaInput" placeholder="Écris ici">
+    <button class="sendBtn" onclick="askIA()">⬆️</button>
+  </div>
+</div>
+
+<!-- PROMO -->
+<div id="promo" class="page">
+  <div class="card">
+    <h3>🎁 Code Promo</h3>
+    <input id="promoInput" placeholder="Entre ton code">
+    <button onclick="validatePromo()">Valider</button>
+    <div id="promoResult"></div>
+  </div>
+</div>
+
+<footer>© 2026 Daily Life Ultra IA ⚡</footer>
 
 <script>
-/* HEURE */
-setInterval(() => {
-  document.getElementById("time").textContent =
-    new Date().toLocaleTimeString();
-}, 1000);
+// TIME
+setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
 
-/* CHAT + STORAGE */
-const chat = document.getElementById("chat");
-const input = document.getElementById("userInput");
-
-let messages = JSON.parse(localStorage.getItem("messages")) || [];
-
-messages.forEach(m => addMessage(m.text, m.type));
-
-function save() {
-  localStorage.setItem("messages", JSON.stringify(messages));
+// NAV
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.navBox').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
 }
 
-function addMessage(text, type) {
-  const div = document.createElement("div");
-  div.className = "message " + type;
-  div.textContent = text;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+// THEME
+const colorSelect=document.getElementById("colorSelect");
+colorSelect.value=localStorage.getItem("color")||"#064e3b";
+applyColor();
+colorSelect.onchange=()=>{localStorage.setItem("color",colorSelect.value);applyColor();}
+function applyColor(){
+  document.body.style.background=`linear-gradient(180deg,${colorSelect.value},#042f2e)`;
 }
 
-/* ENVOI */
-function sendMessage() {
-  const text = input.value.trim();
-  if (!text) return;
+// TASKS
+let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
+function renderTasks(){
+  taskList.innerHTML="";
+  tasks.forEach((t,i)=>{
+    const d=document.createElement("div");
+    d.className="task";
+    d.innerHTML=`<span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span>`;
+    taskList.appendChild(d);
+  });
+}
+function addTask(){
+  if(!taskInput.value.trim())return;
+  tasks.push(taskInput.value.trim());
+  localStorage.setItem("tasks",JSON.stringify(tasks));
+  taskInput.value="";
+  renderTasks();
+}
+function delTask(i){
+  tasks.splice(i,1);
+  localStorage.setItem("tasks",JSON.stringify(tasks));
+  renderTasks();
+}
+renderTasks();
 
-  addMessage(text, "user");
-  messages.push({ text, type: "user" });
-  save();
-  input.value = "";
+// IA
+function askIA(){
+  const q=iaInput.value.trim();
+  if(!q)return;
 
-  setTimeout(() => {
-    const reply = iaReply(text);
-    addMessage(reply, "bot");
-    messages.push({ text: reply, type: "bot" });
-    save();
-  }, 600);
+  chatContainer.innerHTML+=`<div class="message userMsg">${q}</div>`;
+
+  let r="🤔 Dis-m'en plus.";
+  const t=q.toLowerCase();
+
+  if(t.includes("salut")) r="Salut 😄 Je suis là pour t’aider.";
+  else if(t.includes("aide")) r="Dis-moi exactement ce que tu veux faire.";
+  else if(t.includes("repas")) r="🍽️ Pâtes, burger, salade ou pizza ?";
+  else if(t.includes("ennuie")) r="😄 Parle-moi ou ajoute une tâche.";
+
+  chatContainer.innerHTML+=`<div class="message iaMsg">${r}</div>`;
+  chatContainer.scrollTop=chatContainer.scrollHeight;
+  iaInput.value="";
 }
 
-/* IA AMÉLIORÉE */
-function iaReply(userMessage) {
-  const msg = userMessage.toLowerCase();
-
-  if (msg.includes("salut") || msg.includes("bonjour")) {
-    return "Salut 😄 Je suis là pour t’aider. Tu veux faire quoi aujourd’hui ?";
-  }
-
-  if (msg.includes("repas") || msg.includes("manger")) {
-    return "Tu veux une idée rapide ou une vraie recette détaillée ?";
-  }
-
-  if (msg.includes("carbonara")) {
-    return `🍝 Pâtes Carbonara (facile)
-
-Ingrédients :
-- Pâtes
-- Lardons
-- 2 œufs
-- Parmesan
-- Poivre
-
-Étapes :
-1. Cuire les pâtes
-2. Faire revenir les lardons
-3. Mélanger œufs + fromage
-4. Ajouter pâtes hors du feu
-5. Poivrer et mélanger
-
-Tu veux une version encore plus simple ?`;
-  }
-
-  if (msg.includes("aide")) {
-    return "Explique-moi ce que tu veux faire et je te guide étape par étape 👍";
-  }
-
-  if (msg.length < 4) {
-    return "Tu peux préciser un peu ? 🙂";
-  }
-
-  return "Ok 👍 dis-m’en plus, je t’écoute.";
+// PROMO
+function validatePromo(){
+  const v=promoInput.value.trim();
+  promoResult.textContent=
+    v==="PROMO2026" ? "✅ Code valide — accès activé" : "❌ Code invalide";
 }
 </script>
-
 </body>
-</html>
+  </html>
