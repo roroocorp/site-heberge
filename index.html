@@ -6,128 +6,102 @@
 <title>Daily Life Ultra IA</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
-body{
-height:100vh;
-background:linear-gradient(180deg,#2563eb,#0f172a);
-color:white;
-display:flex;
-flex-direction:column;
-overflow:hidden;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(180deg, #1e4fd8, #0b1d3a);
+  color: white;
 }
 
 /* HEADER */
-header{
-display:flex;
-align-items:center;
-padding:14px 18px;
-background:rgba(0,0,0,.3);
+header {
+  padding: 15px;
+  background: #1f4fc9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-header h2{font-size:20px}
-#time{
-margin-left:auto;
-background:rgba(0,0,0,.35);
-padding:6px 14px;
-border-radius:14px;
-font-size:14px;
+
+header h1 {
+  font-size: 18px;
+  margin: 0;
 }
 
 /* NAV */
-#nav{
-display:flex;
-gap:10px;
-padding:14px;
+nav {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
 }
-.navBtn{
-flex:1;
-background:rgba(255,255,255,.25);
-padding:18px 0;
-border-radius:20px;
-text-align:center;
-font-weight:700;
-cursor:pointer;
-}
-.navBtn:hover{background:rgba(255,255,255,.35)}
 
-/* PAGES */
-.page{
-flex:1;
-display:none;
-padding:14px;
-overflow:hidden;
+nav button {
+  flex: 1;
+  border: none;
+  border-radius: 20px;
+  padding: 12px;
+  background: #5f8fe8;
+  color: white;
+  font-size: 16px;
 }
-.page.active{display:flex;flex-direction:column}
 
 /* CHAT */
-#chatBox{
-flex:1;
-background:rgba(255,255,255,.12);
-border-radius:20px;
-padding:12px;
-overflow-y:auto;
-display:flex;
-flex-direction:column;
-gap:10px;
-scroll-behavior:smooth;
+#chat {
+  padding: 15px;
+  height: calc(100vh - 230px);
+  overflow-y: auto;
 }
 
-.msg{
-max-width:75%;
-padding:10px 14px;
-border-radius:18px;
-font-size:15px;
+.message {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
 }
-.user{align-self:flex-end;background:#38bdf8;color:black}
-.ia{align-self:flex-start;background:#22c55e;color:black}
+
+.user {
+  background: #4fc3ff;
+  margin-left: auto;
+  color: #000;
+}
+
+.bot {
+  background: #2ecc71;
+  margin-right: auto;
+  color: #000;
+}
 
 /* INPUT */
-#inputBar{
-display:flex;
-gap:10px;
-padding-top:10px;
-}
-#iaInput{
-flex:1;
-padding:14px;
-border-radius:18px;
-border:none;
-font-size:16px;
-}
-#sendBtn{
-width:54px;
-border-radius:50%;
-border:none;
-background:#38bdf8;
-font-size:22px;
-cursor:pointer;
-}
-#sendBtn:hover{background:#0ea5e9}
-
-/* CARD */
-.card{
-background:rgba(255,255,255,.2);
-border-radius:22px;
-padding:20px;
+#inputBar {
+  display: flex;
+  padding: 15px;
+  background: #0b1d3a;
 }
 
-/* BUTTON */
-button{
-margin-top:10px;
-padding:14px;
-border:none;
-border-radius:18px;
-font-weight:700;
-cursor:pointer;
-background:#38bdf8;
+#inputBar input {
+  flex: 1;
+  border-radius: 20px;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
 }
-button:hover{background:#0ea5e9}
 
-/* FOOTER */
-footer{
-text-align:right;
-font-size:12px;
-opacity:.7;
-padding:8px 14px;
+#inputBar button {
+  margin-left: 10px;
+  border-radius: 50%;
+  border: none;
+  width: 45px;
+  height: 45px;
+  background: #4fc3ff;
+  font-size: 20px;
+}
+
+/* WELCOME */
+#welcome {
+  background: rgba(255,255,255,0.15);
+  margin: 15px;
+  padding: 15px;
+  border-radius: 16px;
 }
 </style>
 </head>
@@ -135,113 +109,116 @@ padding:8px 14px;
 <body>
 
 <header>
-<h2>Daily Life Ultra IA</h2>
-<div id="time"></div>
+  <h1>Daily Life Ultra IA</h1>
+  <span id="time"></span>
 </header>
 
-<div id="nav">
-<div class="navBtn" onclick="showPage('home')">Accueil</div>
-<div class="navBtn" onclick="showPage('ia')">IA</div>
-<div class="navBtn" onclick="showPage('promo')">Code Promo</div>
+<nav>
+  <button>Accueil</button>
+  <button>IA</button>
+  <button>Code Promo</button>
+</nav>
+
+<div id="welcome">
+  <strong>Bienvenue 👋</strong><br>
+  Assistant simple, rapide et local.
 </div>
 
-<!-- ACCUEIL -->
-<div id="home" class="page active">
-<div class="card">
-<h3>Bienvenue 👋</h3>
-<p>Assistant simple, rapide et local.</p>
-</div>
-</div>
-
-<!-- IA -->
-<div id="ia" class="page">
-<div id="chatBox"></div>
+<div id="chat"></div>
 
 <div id="inputBar">
-<input id="iaInput" placeholder="Écris ici">
-<button id="sendBtn" onclick="sendMsg()">↑</button>
+  <input id="userInput" placeholder="Écris ici">
+  <button onclick="sendMessage()">⬆️</button>
 </div>
-</div>
-
-<!-- PROMO -->
-<div id="promo" class="page">
-<div class="card">
-<h3>Code Promo</h3>
-<input id="promoInput" placeholder="Entre ton code">
-<button onclick="checkPromo()">Valider</button>
-<p id="promoResult"></p>
-</div>
-</div>
-
-<footer>© 2026 Daily Life Ultra IA</footer>
 
 <script>
-/* TIME */
-setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000)
+/* HEURE */
+setInterval(() => {
+  document.getElementById("time").textContent =
+    new Date().toLocaleTimeString();
+}, 1000);
 
-/* NAV */
-function showPage(id){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
-document.getElementById(id).classList.add('active')
+/* CHAT + STORAGE */
+const chat = document.getElementById("chat");
+const input = document.getElementById("userInput");
+
+let messages = JSON.parse(localStorage.getItem("messages")) || [];
+
+messages.forEach(m => addMessage(m.text, m.type));
+
+function save() {
+  localStorage.setItem("messages", JSON.stringify(messages));
 }
 
-/* CHAT SAVE */
-const chatBox=document.getElementById('chatBox')
-let history=JSON.parse(localStorage.getItem('chat')||'[]')
-
-function renderChat(){
-chatBox.innerHTML=''
-history.forEach(m=>{
-const d=document.createElement('div')
-d.className='msg '+m.type
-d.textContent=m.text
-chatBox.appendChild(d)
-})
-chatBox.scrollTop=chatBox.scrollHeight
-}
-renderChat()
-
-function addMsg(type,text){
-history.push({type,text})
-localStorage.setItem('chat',JSON.stringify(history))
-renderChat()
+function addMessage(text, type) {
+  const div = document.createElement("div");
+  div.className = "message " + type;
+  div.textContent = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-/* IA LOGIC */
-function iaReply(q){
-q=q.toLowerCase()
+/* ENVOI */
+function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
 
-if(q.includes('salut')) return "Salut 🙂 Je suis là pour t’aider."
-if(q.includes('repas')) return "Tu veux plutôt pâtes, burger, salade ou pizza ?"
-if(q.includes('carbonara')) return "Ingrédients : pâtes, œufs, lardons, parmesan. Tu veux la recette ?"
-if(q.includes('recette')) return "Cuire les pâtes. Mélanger œufs + parmesan. Ajouter lardons. Mélanger hors du feu."
-return "Dis-m’en plus."
+  addMessage(text, "user");
+  messages.push({ text, type: "user" });
+  save();
+  input.value = "";
+
+  setTimeout(() => {
+    const reply = iaReply(text);
+    addMessage(reply, "bot");
+    messages.push({ text: reply, type: "bot" });
+    save();
+  }, 600);
 }
 
-/* SEND */
-function sendMsg(){
-const input=iaInput.value.trim()
-if(!input) return
-addMsg('user',input)
-iaInput.value=''
+/* IA AMÉLIORÉE */
+function iaReply(userMessage) {
+  const msg = userMessage.toLowerCase();
 
-setTimeout(()=>{
-addMsg('ia',iaReply(input))
-},400)
-}
+  if (msg.includes("salut") || msg.includes("bonjour")) {
+    return "Salut 😄 Je suis là pour t’aider. Tu veux faire quoi aujourd’hui ?";
+  }
 
-/* PROMO */
-function checkPromo(){
-const code=promoInput.value.trim().toUpperCase()
-if(code==="ULTRA2026"){
-promoResult.textContent="Code valide 🎉"
-promoResult.style.color="#22c55e"
-}else{
-promoResult.textContent="Code invalide"
-promoResult.style.color="#ef4444"
-}
+  if (msg.includes("repas") || msg.includes("manger")) {
+    return "Tu veux une idée rapide ou une vraie recette détaillée ?";
+  }
+
+  if (msg.includes("carbonara")) {
+    return `🍝 Pâtes Carbonara (facile)
+
+Ingrédients :
+- Pâtes
+- Lardons
+- 2 œufs
+- Parmesan
+- Poivre
+
+Étapes :
+1. Cuire les pâtes
+2. Faire revenir les lardons
+3. Mélanger œufs + fromage
+4. Ajouter pâtes hors du feu
+5. Poivrer et mélanger
+
+Tu veux une version encore plus simple ?`;
+  }
+
+  if (msg.includes("aide")) {
+    return "Explique-moi ce que tu veux faire et je te guide étape par étape 👍";
+  }
+
+  if (msg.length < 4) {
+    return "Tu peux préciser un peu ? 🙂";
+  }
+
+  return "Ok 👍 dis-m’en plus, je t’écoute.";
 }
 </script>
 
 </body>
-                      </html>
+</html>
