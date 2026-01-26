@@ -13,6 +13,7 @@ body{
   color:white;
   display:flex;
   flex-direction:column;
+  transition:background .4s;
 }
 
 /* HEADER */
@@ -23,6 +24,7 @@ header{
   padding:14px 18px;
   background:rgba(0,0,0,.3);
 }
+header h3{font-size:18px;}
 #time{
   margin-left:auto;
   background:rgba(0,0,0,.35);
@@ -44,10 +46,58 @@ header{
   border-radius:22px;
   text-align:center;
   font-weight:800;
+  cursor:pointer;
+  transition:.3s;
 }
-.navBox.active{background:rgba(255,255,255,.45);}
+.navBox.active,
+.navBox:hover{background:rgba(255,255,255,.45);}
 
-/* CHAT */
+/* PAGES */
+.page{
+  display:none;
+  flex-direction:column;
+  padding:14px;
+}
+.page.active{display:flex;}
+
+/* CARD */
+.card{
+  background:rgba(255,255,255,.2);
+  border-radius:22px;
+  padding:20px;
+  margin-bottom:16px;
+}
+.card h3{margin-bottom:12px;}
+
+/* INPUT */
+input,select,button{
+  width:100%;
+  padding:14px;
+  border-radius:16px;
+  border:none;
+  font-size:15px;
+}
+button{
+  background:#38bdf8;
+  font-weight:700;
+  margin-top:10px;
+  cursor:pointer;
+}
+button:hover{background:#0ea5e9}
+
+/* TASKS */
+.task{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(255,255,255,.3);
+  padding:12px;
+  border-radius:14px;
+  margin-top:8px;
+}
+.trash{cursor:pointer;font-size:18px;}
+
+/* IA CHAT */
 #chatContainer{
   height:55vh;
   overflow-y:auto;
@@ -56,21 +106,29 @@ header{
   padding:10px;
 }
 .message{
-  max-width:75%;
+  max-width:70%;
   padding:10px 14px;
   border-radius:18px;
   margin:6px 0;
   white-space:pre-line;
 }
-.userMsg{background:#38bdf8;color:black;margin-left:auto;}
-.iaMsg{background:#22c55e;color:black;}
+.userMsg{
+  background:#38bdf8;
+  color:black;
+  margin-left:auto;
+}
+.iaMsg{
+  background:#22c55e;
+  color:black;
+}
 
+/* IA INPUT */
 #iaInputArea{
   display:flex;
   gap:8px;
   margin-top:10px;
 }
-#iaInput{flex:1;padding:14px;border-radius:16px;border:none;}
+#iaInput{flex:1;}
 .sendBtn{
   width:50px;
   height:50px;
@@ -78,9 +136,10 @@ header{
   font-size:20px;
 }
 
+/* FOOTER */
 footer{
   margin-top:auto;
-  padding:8px;
+  padding:8px 14px;
   font-size:12px;
   text-align:right;
   opacity:.7;
@@ -96,14 +155,60 @@ footer{
 </header>
 
 <div id="topNav">
-  <div class="navBox active">IA</div>
+  <div class="navBox active" onclick="showPage('home',this)">Accueil</div>
+  <div class="navBox" onclick="showPage('ia',this)">IA</div>
+  <div class="navBox" onclick="showPage('promo',this)">Code Promo</div>
 </div>
 
-<div id="chatContainer"></div>
+<!-- ACCUEIL -->
+<div id="home" class="page active">
+  <div class="card">
+    <h3>🎨 Couleur</h3>
+    <select id="colorSelect">
+      <option value="#064e3b">Vert</option>
+      <option value="#3b82f6">Bleu</option>
+      <option value="#ef4444">Rouge</option>
+      <option value="#f97316">Orange</option>
+      <option value="#a855f7">Violet</option>
+      <option value="#ec4899">Rose</option>
+    </select>
+  </div>
 
-<div id="iaInputArea">
-  <input id="iaInput" placeholder="Ex : pâtes / la recette / enfant / 10 min">
-  <button class="sendBtn" onclick="askIA()">⬆️</button>
+  <div class="card">
+    <h3>🌍 Langue</h3>
+    <select>
+      <option>Français</option>
+      <option>Anglais</option>
+      <option>Espagnol</option>
+      <option>Allemand</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <h3>✅ Tâches</h3>
+    <input id="taskInput" placeholder="Nouvelle tâche">
+    <button onclick="addTask()">Ajouter</button>
+    <div id="taskList"></div>
+  </div>
+</div>
+
+<!-- IA -->
+<div id="ia" class="page">
+  <div id="chatContainer"></div>
+  <div id="iaInputArea">
+    <input id="iaInput" placeholder="Pâtes, pain, pizza, poulet, four…">
+    <button class="sendBtn" onclick="askIA()">⬆️</button>
+  </div>
+</div>
+
+<!-- PROMO -->
+<div id="promo" class="page">
+  <div class="card">
+    <h3>🎁 Code Promo</h3>
+    <input id="promoInput" placeholder="Entre ton code">
+    <button onclick="validatePromo()">Valider</button>
+    <div id="promoResult"></div>
+  </div>
 </div>
 
 <footer>© 2026 Daily Life Ultra IA ⚡</footer>
@@ -112,10 +217,54 @@ footer{
 // TIME
 setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
 
-// CHAT MEMORY
-let chatHistory = JSON.parse(localStorage.getItem("chatHistory")||"[]");
-let lastDish = localStorage.getItem("lastDish") || "";
-let kidMode = false;
+// NAV
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.navBox').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// THEME
+const colorSelect=document.getElementById("colorSelect");
+colorSelect.value=localStorage.getItem("color")||"#064e3b";
+applyColor();
+colorSelect.onchange=()=>{
+  localStorage.setItem("color",colorSelect.value);
+  applyColor();
+}
+function applyColor(){
+  document.body.style.background=`linear-gradient(180deg,${colorSelect.value},#042f2e)`;
+}
+
+// TASKS
+let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
+function renderTasks(){
+  taskList.innerHTML="";
+  tasks.forEach((t,i)=>{
+    taskList.innerHTML+=`
+      <div class="task">
+        <span>${t}</span>
+        <span class="trash" onclick="delTask(${i})">🗑️</span>
+      </div>`;
+  });
+}
+function addTask(){
+  if(!taskInput.value.trim())return;
+  tasks.push(taskInput.value.trim());
+  localStorage.setItem("tasks",JSON.stringify(tasks));
+  taskInput.value="";
+  renderTasks();
+}
+function delTask(i){
+  tasks.splice(i,1);
+  localStorage.setItem("tasks",JSON.stringify(tasks));
+  renderTasks();
+}
+renderTasks();
+
+// IA AMÉLIORÉE + HISTORIQUE
+let chatHistory=JSON.parse(localStorage.getItem("chatHistory")||"[]");
 
 function renderChat(){
   chatContainer.innerHTML="";
@@ -125,102 +274,31 @@ function renderChat(){
   chatContainer.scrollTop=chatContainer.scrollHeight;
 }
 
-function recipe(dish, kid=false){
-  const recipes = {
-    pates:
-`🍝 PÂTES
-⏱️ 15 min
-
-1️⃣ Fais bouillir de l’eau
-2️⃣ Ajoute les pâtes
-3️⃣ Cuire 10 min
-4️⃣ Égoutte et mange 😋`,
-
-    pizza:
-`🍕 PIZZA
-🔥 Four 220°C
-⏱️ 12–15 min
-
-1️⃣ Préchauffe le four
-2️⃣ Mets la pizza
-3️⃣ Attends
-4️⃣ Mange 😋`,
-
-    pain:
-`🥖 PAIN
-🔥 Four 180°C
-⏱️ 6–8 min
-
-1️⃣ Humidifie le pain
-2️⃣ Mets au four
-3️⃣ Surveille
-4️⃣ Croustillant 😋`,
-
-    burger:
-`🍔 BURGER
-⏱️ 10 min
-
-1️⃣ Cuire steak 4 min/face
-2️⃣ Pain 3 min four
-3️⃣ Assemble
-4️⃣ Mange 😋`
-  };
-
-  let txt = recipes[dish] || "❓ Recette inconnue";
-  if(kid){
-    txt = "🧒 MODE ENFANT\n\n" + txt.replace(/\d️⃣/g,"👉");
-  }
-  return txt;
-}
-
 function askIA(){
-  const q = iaInput.value.trim();
-  if(!q) return;
+  const q=iaInput.value.trim();
+  if(!q)return;
 
   chatHistory.push({type:"userMsg",text:q});
-  const t = q.toLowerCase();
-  let r="";
+  const t=q.toLowerCase();
+  let r="🤖 Dis-moi un plat ou un mode de cuisson.";
 
-  // MODE ENFANT
-  if(t.includes("enfant")||t.includes("simple")||t.includes("facile")){
-    kidMode = true;
-    r="🧒 Mode enfant activé ! Dis-moi un plat 😊";
-  }
+  if(t.includes("pâtes")||t.includes("pates"))
+    r="🍝 Pâtes\n⏱️ Total : 15 min\n🔥 Cuisson : 8–10 min dans eau bouillante salée\n💡 Égoutter et assaisonner";
+  else if(t.includes("pain"))
+    r="🥖 Pain\n🔥 Four : 180°C\n⏱️ 6–8 min\n💡 Humidifie légèrement pour croustillant";
+  else if(t.includes("pizza"))
+    r="🍕 Pizza\n🔥 Four : 220°C\n⏱️ 12–15 min\n💡 Préchauffe obligatoire";
+  else if(t.includes("poulet"))
+    r="🍗 Poulet\n🔥 Four : 200°C\n⏱️ 35–45 min\n💡 Arroser à mi-cuisson";
+  else if(t.includes("riz"))
+    r="🍚 Riz\n🔥 Eau bouillante\n⏱️ 10–12 min\n💡 Couvrir après cuisson";
+  else if(t.includes("steak"))
+    r="🥩 Steak\n🔥 Poêle\n⏱️ 2–4 min par face\n💡 Sortir avant cuisson";
+  else if(t.includes("gateau"))
+    r="🍰 Gâteau\n🔥 Four : 180°C\n⏱️ 30–40 min\n💡 Tester avec couteau";
+  else if(t.includes("salut"))
+    r="Salut 😄 Je suis ton assistant cuisine.";
 
-  // RECETTES
-  else if(t.includes("pâte")||t.includes("pate")){
-    lastDish="pates";
-    r=recipe("pates",kidMode);
-  }
-  else if(t.includes("pizza")){
-    lastDish="pizza";
-    r=recipe("pizza",kidMode);
-  }
-  else if(t.includes("pain")){
-    lastDish="pain";
-    r=recipe("pain",kidMode);
-  }
-  else if(t.includes("burger")){
-    lastDish="burger";
-    r=recipe("burger",kidMode);
-  }
-
-  // RAPPEL
-  else if(t.includes("recette")||t.includes("comment")){
-    if(lastDish) r=recipe(lastDish,kidMode);
-    else r="❓ Dis-moi d’abord le plat";
-  }
-
-  // TEMPS
-  else if(t.match(/\d+/)){
-    r=`⏱️ Ok ${q} de cuisson.\nTu cuisines quoi ?`;
-  }
-
-  else{
-    r="🙂 Tu veux cuisiner quoi ? (pâtes, pizza, pain, burger)";
-  }
-
-  localStorage.setItem("lastDish",lastDish);
   chatHistory.push({type:"iaMsg",text:r});
   localStorage.setItem("chatHistory",JSON.stringify(chatHistory));
   renderChat();
@@ -228,7 +306,15 @@ function askIA(){
 }
 
 renderChat();
+
+// PROMO
+function validatePromo(){
+  promoResult.textContent =
+    promoInput.value==="PROMO2026"
+    ? "✅ Code valide"
+    : "❌ Code invalide";
+}
 </script>
 
 </body>
-</html>
+        </html>
