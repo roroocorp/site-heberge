@@ -127,22 +127,27 @@ button:hover{background:#0ea5e9}
   gap:8px;
   margin-top:10px;
 }
-#iaInput{flex:1;}
-.sendBtn{
+#iaInput{
+  flex:1;
+  border-radius:24px;
+  padding:12px 16px;
+  font-size:15px;
+  border:none;
+}
+.iconBtn{
   width:50px;
   height:50px;
+  background:#38bdf8;
   border-radius:50%;
-  font-size:20px;
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
+  font-size:22px;
   cursor:pointer;
   transition:0.2s;
 }
-.sendBtn.active{
-  background:red;
-  transform:scale(1.1);
-}
+.iconBtn:hover{background:#0ea5e9; transform:scale(1.1);}
+.iconBtn svg{width:24px;height:24px;fill:white;}
 
 /* FOOTER */
 footer{
@@ -203,9 +208,13 @@ footer{
 <div id="ia" class="page">
   <div id="chatContainer"></div>
   <div id="iaInputArea">
-    <input id="iaInput" placeholder="Pâtes, pain, pizza, poulet, four…">
-    <button class="sendBtn" id="voiceBtn">🎙️</button>
-    <button class="sendBtn" onclick="askIA()">⬆️</button>
+    <input id="iaInput" placeholder="Écris un plat ou mode de cuisson…">
+    <div class="iconBtn" onclick="askIA()" title="Envoyer">
+      <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+    </div>
+    <div class="iconBtn" onclick="startVoice()" title="Parler">
+      <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M5 10v2a7 7 0 0 0 14 0v-2h-2v2a5 5 0 0 1-10 0v-2H5z"/></svg>
+    </div>
   </div>
 </div>
 
@@ -250,11 +259,7 @@ let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
 function renderTasks(){
   taskList.innerHTML="";
   tasks.forEach((t,i)=>{
-    taskList.innerHTML+=`
-      <div class="task">
-        <span>${t}</span>
-        <span class="trash" onclick="delTask(${i})">🗑️</span>
-      </div>`;
+    taskList.innerHTML+=`<div class="task"><span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span></div>`;
   });
 }
 function addTask(){
@@ -273,7 +278,6 @@ renderTasks();
 
 // IA + HISTORIQUE
 let chatHistory=JSON.parse(localStorage.getItem("chatHistory")||"[]");
-
 function renderChat(){
   chatContainer.innerHTML="";
   chatHistory.forEach(m=>{
@@ -281,31 +285,38 @@ function renderChat(){
   });
   chatContainer.scrollTop=chatContainer.scrollHeight;
 }
+renderChat();
 
-function askIA(text){
-  const q = text || iaInput.value.trim();
-  if(!q) return;
-
+// IA LOCAL + VOCAL
+function askIA(){
+  const q=iaInput.value.trim();
+  if(!q)return;
   chatHistory.push({type:"userMsg",text:q});
-  const t=q.toLowerCase();
-  let r="🤖 Dis-moi un plat ou un mode de cuisson.";
+
+  let t=q.toLowerCase();
+  let r="🤖 Dis-moi un plat ou mode de cuisson.";
 
   if(t.includes("pâtes")||t.includes("pates"))
-    r="🍝 Pâtes\n⏱️ Total : 15 min\n🔥 Cuisson : 8–10 min dans eau bouillante salée\n💡 Égoutter et assaisonner";
+    r="🍝 Pâtes\n⏱️ 15 min\n🔥 Cuisson 8–10 min dans eau bouillante\n💡 Égoutter et assaisonner";
   else if(t.includes("pain"))
-    r="🥖 Pain\n🔥 Four : 180°C\n⏱️ 6–8 min\n💡 Humidifie légèrement pour croustillant";
+    r="🥖 Pain\n🔥 Four 180°C\n⏱️ 6–8 min\n💡 Humidifie légèrement";
   else if(t.includes("pizza"))
-    r="🍕 Pizza\n🔥 Four : 220°C\n⏱️ 12–15 min\n💡 Préchauffe obligatoire";
+    r="🍕 Pizza\n🔥 Four 220°C\n⏱️ 12–15 min\n💡 Préchauffe obligatoire";
   else if(t.includes("poulet"))
-    r="🍗 Poulet\n🔥 Four : 200°C\n⏱️ 35–45 min\n💡 Arroser à mi-cuisson";
+    r="🍗 Poulet\n🔥 Four 200°C\n⏱️ 35–45 min\n💡 Arroser à mi-cuisson";
   else if(t.includes("riz"))
     r="🍚 Riz\n🔥 Eau bouillante\n⏱️ 10–12 min\n💡 Couvrir après cuisson";
   else if(t.includes("steak"))
     r="🥩 Steak\n🔥 Poêle\n⏱️ 2–4 min par face\n💡 Sortir avant cuisson";
   else if(t.includes("gateau"))
-    r="🍰 Gâteau\n🔥 Four : 180°C\n⏱️ 30–40 min\n💡 Tester avec couteau";
+    r="🍰 Gâteau\n🔥 Four 180°C\n⏱️ 30–40 min\n💡 Tester avec couteau";
   else if(t.includes("salut"))
     r="Salut 😄 Je suis ton assistant cuisine.";
+
+  // Speech
+  const speech=new SpeechSynthesisUtterance(r);
+  speech.lang='fr-FR';
+  window.speechSynthesis.speak(speech);
 
   chatHistory.push({type:"iaMsg",text:r});
   localStorage.setItem("chatHistory",JSON.stringify(chatHistory));
@@ -313,38 +324,24 @@ function askIA(text){
   iaInput.value="";
 }
 
-// VOICE RECOGNITION
-const voiceBtn = document.getElementById("voiceBtn");
-let recognition;
-if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+// VOCAL RECO
+function startVoice(){
+  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+    alert("Reconnaissance vocale non supportée.");
+    return;
+  }
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SpeechRecognition();
-  recognition.lang = "fr-FR";
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'fr-FR';
   recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
 
-  voiceBtn.onclick = ()=>{
-    if(voiceBtn.classList.contains("active")){
-      recognition.stop();
-    }else{
-      recognition.start();
-    }
+  recognition.start();
+  recognition.onresult = (event)=>{
+    iaInput.value = event.results[0][0].transcript;
+    askIA();
   }
-
-  recognition.onstart = ()=>{
-    voiceBtn.classList.add("active");
-  }
-  recognition.onend = ()=>{
-    voiceBtn.classList.remove("active");
-  }
-  recognition.onresult = (e)=>{
-    const transcript = e.results[0][0].transcript;
-    askIA(transcript);
-  }
-}else{
-  voiceBtn.style.display="none";
 }
-
-renderChat();
 
 // PROMO
 function validatePromo(){
@@ -354,5 +351,6 @@ function validatePromo(){
     : "❌ Code invalide";
 }
 </script>
+
 </body>
-        </html>
+                            </html>
