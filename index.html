@@ -134,7 +134,7 @@ button:hover{background:#0ea5e9}
   font-size:15px;
   border:none;
 }
-.iconBtn{
+#sendBtn{
   width:50px;
   height:50px;
   background:#38bdf8;
@@ -146,8 +146,8 @@ button:hover{background:#0ea5e9}
   cursor:pointer;
   transition:0.2s;
 }
-.iconBtn:hover{background:#0ea5e9; transform:scale(1.1);}
-.iconBtn svg{width:24px;height:24px;fill:white;}
+#sendBtn:hover{background:#0ea5e9; transform:scale(1.1);}
+#sendBtn svg{width:24px;height:24px;fill:white;}
 
 /* FOOTER */
 footer{
@@ -209,11 +209,8 @@ footer{
   <div id="chatContainer"></div>
   <div id="iaInputArea">
     <input id="iaInput" placeholder="Écris un plat ou mode de cuisson…">
-    <div class="iconBtn" onclick="askIA()" title="Envoyer">
+    <div id="sendBtn" title="Envoyer / Parler">
       <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
-    </div>
-    <div class="iconBtn" onclick="startVoice()" title="Parler">
-      <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M5 10v2a7 7 0 0 0 14 0v-2h-2v2a5 5 0 0 1-10 0v-2H5z"/></svg>
     </div>
   </div>
 </div>
@@ -276,7 +273,7 @@ function delTask(i){
 }
 renderTasks();
 
-// IA + HISTORIQUE
+// IA
 let chatHistory=JSON.parse(localStorage.getItem("chatHistory")||"[]");
 function renderChat(){
   chatContainer.innerHTML="";
@@ -287,7 +284,13 @@ function renderChat(){
 }
 renderChat();
 
-// IA LOCAL + VOCAL
+// ENVOI + VOCAL
+const sendBtn=document.getElementById("sendBtn");
+sendBtn.addEventListener("click",()=>{
+  if(iaInput.value.trim()!=="") askIA();
+  else startVoice();
+});
+
 function askIA(){
   const q=iaInput.value.trim();
   if(!q)return;
@@ -313,7 +316,7 @@ function askIA(){
   else if(t.includes("salut"))
     r="Salut 😄 Je suis ton assistant cuisine.";
 
-  // Speech
+  // Synthèse vocale
   const speech=new SpeechSynthesisUtterance(r);
   speech.lang='fr-FR';
   window.speechSynthesis.speak(speech);
@@ -324,7 +327,7 @@ function askIA(){
   iaInput.value="";
 }
 
-// VOCAL RECO
+// RECO VOCALE
 function startVoice(){
   if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
     alert("Reconnaissance vocale non supportée.");
@@ -353,4 +356,4 @@ function validatePromo(){
 </script>
 
 </body>
-        </html>
+  </html>
