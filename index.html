@@ -28,6 +28,7 @@ header{
   background:rgba(0,0,0,.35);
   padding:6px 14px;
   border-radius:14px;
+  font-size:13px;
 }
 
 /* NAV */
@@ -47,45 +48,7 @@ header{
 }
 .navBox.active{background:rgba(255,255,255,.45);}
 
-/* PAGES */
-.page{display:none;flex-direction:column;padding:14px;}
-.page.active{display:flex;}
-
-/* CARD */
-.card{
-  background:rgba(255,255,255,.2);
-  border-radius:22px;
-  padding:20px;
-  margin-bottom:16px;
-}
-
-/* INPUT */
-input,select,button{
-  width:100%;
-  padding:14px;
-  border-radius:16px;
-  border:none;
-  font-size:15px;
-}
-button{
-  background:#38bdf8;
-  font-weight:700;
-  margin-top:10px;
-}
-
-/* TASKS */
-.task{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:rgba(255,255,255,.3);
-  padding:12px;
-  border-radius:14px;
-  margin-top:8px;
-}
-.trash{cursor:pointer;font-size:18px;}
-
-/* IA */
+/* CHAT */
 #chatContainer{
   height:55vh;
   overflow-y:auto;
@@ -102,26 +65,32 @@ button{
 }
 .userMsg{background:#38bdf8;color:black;margin-left:auto;}
 .iaMsg{background:#22c55e;color:black;}
+.iaMsg img{
+  width:100%;
+  border-radius:14px;
+  margin-top:8px;
+}
 
-#iaInputArea{
-  display:flex;
-  gap:8px;
+/* INPUT */
+#iaInputArea{display:flex;gap:8px;margin-top:10px;}
+#iaInput{flex:1;padding:14px;border-radius:16px;border:none;}
+.sendBtn,.micBtn{
+  width:50px;height:50px;border-radius:50%;
+  border:none;font-size:20px;cursor:pointer;
+}
+.sendBtn{background:#38bdf8;}
+.micBtn{background:#f97316;}
+
+#timerBox{
   margin-top:10px;
-}
-.sendBtn{
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  font-size:20px;
+  background:rgba(255,255,255,.2);
+  padding:12px;
+  border-radius:16px;
+  display:none;
 }
 
-/* FOOTER */
 footer{
-  margin-top:auto;
-  padding:8px 14px;
-  font-size:12px;
-  text-align:right;
-  opacity:.7;
+  margin-top:auto;padding:8px 14px;font-size:12px;text-align:right;opacity:.7;
 }
 </style>
 </head>
@@ -134,46 +103,21 @@ footer{
 </header>
 
 <div id="topNav">
-  <div class="navBox active" onclick="showPage('home',this)">Accueil</div>
-  <div class="navBox" onclick="showPage('ia',this)">IA</div>
-  <div class="navBox" onclick="showPage('promo',this)">Code Promo</div>
+  <div class="navBox active" onclick="showPage('ia',this)">IA</div>
 </div>
 
-<!-- ACCUEIL -->
-<div id="home" class="page active">
-  <div class="card">
-    <h3>🎨 Couleur</h3>
-    <select id="colorSelect">
-      <option value="#064e3b">Vert</option>
-      <option value="#3b82f6">Bleu</option>
-      <option value="#ef4444">Rouge</option>
-    </select>
-  </div>
-
-  <div class="card">
-    <h3>✅ Tâches</h3>
-    <input id="taskInput" placeholder="Nouvelle tâche">
-    <button onclick="addTask()">Ajouter</button>
-    <div id="taskList"></div>
-  </div>
-</div>
-
-<!-- IA -->
-<div id="ia" class="page">
+<div id="ia" class="page active">
   <div id="chatContainer"></div>
-  <div id="iaInputArea">
-    <input id="iaInput" placeholder="Ex : pâtes / recette / 10 min / enfant">
-    <button class="sendBtn" onclick="askIA()">⬆️</button>
-  </div>
-</div>
 
-<!-- PROMO -->
-<div id="promo" class="page">
-  <div class="card">
-    <h3>🎁 Code Promo</h3>
-    <input id="promoInput">
-    <button onclick="validatePromo()">Valider</button>
-    <div id="promoResult"></div>
+  <div id="timerBox">
+    ⏲️ <span id="timerText"></span>
+    <button onclick="startTimer()">Démarrer</button>
+  </div>
+
+  <div id="iaInputArea">
+    <input id="iaInput" placeholder="Ex : pâtes / italien / 10 min">
+    <button class="micBtn" onclick="startVoice()">🎤</button>
+    <button class="sendBtn" onclick="askIA()">⬆️</button>
   </div>
 </div>
 
@@ -183,87 +127,27 @@ footer{
 // TIME
 setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
 
-// NAV
-function showPage(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.navBox').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-}
+// DATA
+let chatHistory = JSON.parse(localStorage.getItem("chatHistory")||"[]");
+let lastDish="";
+let timerSeconds=0;
 
-// THEME
-colorSelect.value=localStorage.getItem("color")||"#064e3b";
-applyColor();
-colorSelect.onchange=()=>{
-  localStorage.setItem("color",colorSelect.value);
-  applyColor();
-}
-function applyColor(){
-  document.body.style.background=`linear-gradient(180deg,${colorSelect.value},#042f2e)`;
-}
+const recipes={
+  pates:{
+    text:"🍝 PÂTES\n1️⃣ Eau bouillante salée\n2️⃣ Cuire 8–10 min\n3️⃣ Égoutter",
+    img:"https://images.unsplash.com/photo-1521389508051-d7ffb5dc8bbd"
+  },
+  pizza:{
+    text:"🍕 PIZZA\n🔥 Four 220°C\n⏱️ 12–15 min",
+    img:"https://images.unsplash.com/photo-1601924638867-3ec62f0c8fda"
+  },
+  couscous:{
+    text:"🍲 COUSCOUS\n1️⃣ Semoule\n2️⃣ Légumes\n3️⃣ Viande",
+    img:"https://images.unsplash.com/photo-1604908177522-402f9a09f9fd"
+  }
+};
 
-// TASKS
-let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
-function renderTasks(){
-  taskList.innerHTML="";
-  tasks.forEach((t,i)=>{
-    taskList.innerHTML+=`
-    <div class="task">
-      <span>${t}</span>
-      <span class="trash" onclick="delTask(${i})">🗑️</span>
-    </div>`;
-  });
-}
-function addTask(){
-  if(!taskInput.value.trim())return;
-  tasks.push(taskInput.value.trim());
-  localStorage.setItem("tasks",JSON.stringify(tasks));
-  taskInput.value="";
-  renderTasks();
-}
-function delTask(i){
-  tasks.splice(i,1);
-  localStorage.setItem("tasks",JSON.stringify(tasks));
-  renderTasks();
-}
-renderTasks();
-
-// IA
-let chatHistory=JSON.parse(localStorage.getItem("chatHistory")||"[]");
-let lastDish=localStorage.getItem("lastDish")||"";
-let kidMode=localStorage.getItem("kidMode")==="1";
-
-function recipe(d){
-  const r={
-    pates:"🍝 PÂTES\n⏱️ 10 min\n1️⃣ Eau bouillante\n2️⃣ Pâtes\n3️⃣ Égoutter",
-    pain:"🥖 PAIN\n🔥 Four 180°C\n⏱️ 6–8 min",
-    pizza:"🍕 PIZZA\n🔥 Four 220°C\n⏱️ 12–15 min"
-  };
-  return r[d]||"❓ Je ne connais pas ce plat.";
-}
-
-function askIA(){
-  const q=iaInput.value.trim();
-  if(!q)return;
-  chatHistory.push({type:"userMsg",text:q});
-  const t=q.toLowerCase();
-  let r="🙂 Dis-moi un plat ou une durée.";
-
-  if(t.match(/\d/)) r=`⏱️ Ok, ${t.replace(/[^0-9]/g,"")} minutes.`;
-  else if(t.includes("enfant")){kidMode=!kidMode;localStorage.setItem("kidMode",kidMode?"1":"0");r="🧒 Mode enfant "+(kidMode?"activé":"désactivé");}
-  else if(t.includes("pâte")){lastDish="pates";r=recipe("pates");}
-  else if(t.includes("pain")){lastDish="pain";r=recipe("pain");}
-  else if(t.includes("pizza")){lastDish="pizza";r=recipe("pizza");}
-  else if(t.includes("recette")&&lastDish) r=recipe(lastDish);
-  else if(t.includes("salut")) r="Salut 😄 Je suis ton assistant cuisine.";
-
-  chatHistory.push({type:"iaMsg",text:r});
-  localStorage.setItem("lastDish",lastDish);
-  localStorage.setItem("chatHistory",JSON.stringify(chatHistory));
-  renderChat();
-  iaInput.value="";
-}
-
+// RENDER
 function renderChat(){
   chatContainer.innerHTML="";
   chatHistory.forEach(m=>{
@@ -273,10 +157,70 @@ function renderChat(){
 }
 renderChat();
 
-// PROMO
-function validatePromo(){
-  promoResult.textContent=
-    promoInput.value==="PROMO2026"?"✅ Code valide":"❌ Code invalide";
+// VOICE OUTPUT
+function speak(text){
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang="fr-FR";
+  speechSynthesis.speak(u);
+}
+
+// IA
+function askIA(text){
+  const q=text||iaInput.value.trim();
+  if(!q)return;
+
+  chatHistory.push({type:"userMsg",text:q});
+  const t=q.toLowerCase();
+  let r="🤔 Dis-moi un plat ou une durée.";
+
+  // TIMER
+  const match=t.match(/(\d+)\s*(min|m)/);
+  if(match){
+    timerSeconds=parseInt(match[1])*60;
+    timerText.textContent=`${match[1]} minutes`;
+    timerBox.style.display="block";
+    r=`⏲️ Minuteur réglé sur ${match[1]} minutes`;
+  }
+
+  // RECIPES
+  Object.keys(recipes).forEach(k=>{
+    if(t.includes(k)){
+      lastDish=k;
+      r=recipes[k].text+`\n<img src="${recipes[k].img}">`;
+    }
+  });
+
+  chatHistory.push({type:"iaMsg",text:r});
+  localStorage.setItem("chatHistory",JSON.stringify(chatHistory));
+  renderChat();
+  speak(r.replace(/<[^>]+>/g,""));
+  iaInput.value="";
+}
+
+// TIMER
+function startTimer(){
+  timerBox.style.display="none";
+  let s=timerSeconds;
+  const i=setInterval(()=>{
+    s--;
+    if(s<=0){
+      clearInterval(i);
+      alert("⏰ Temps écoulé !");
+      speak("Le minuteur est terminé");
+    }
+  },1000);
+}
+
+// VOICE INPUT
+function startVoice(){
+  if(!('webkitSpeechRecognition'in window)){
+    alert("Vocal non supporté");
+    return;
+  }
+  const rec=new webkitSpeechRecognition();
+  rec.lang="fr-FR";
+  rec.onresult=e=>askIA(e.results[0][0].transcript);
+  rec.start();
 }
 </script>
 
