@@ -44,7 +44,6 @@ header{
   border-radius:22px;
   text-align:center;
   font-weight:800;
-  cursor:pointer;
 }
 .navBox.active{background:rgba(255,255,255,.45);}
 
@@ -65,32 +64,26 @@ header{
 }
 .userMsg{background:#38bdf8;color:black;margin-left:auto;}
 .iaMsg{background:#22c55e;color:black;}
-.iaMsg img{
-  width:100%;
-  border-radius:14px;
-  margin-top:8px;
-}
 
-/* INPUT */
-#iaInputArea{display:flex;gap:8px;margin-top:10px;}
-#iaInput{flex:1;padding:14px;border-radius:16px;border:none;}
-.sendBtn,.micBtn{
-  width:50px;height:50px;border-radius:50%;
-  border:none;font-size:20px;cursor:pointer;
-}
-.sendBtn{background:#38bdf8;}
-.micBtn{background:#f97316;}
-
-#timerBox{
+#iaInputArea{
+  display:flex;
+  gap:8px;
   margin-top:10px;
-  background:rgba(255,255,255,.2);
-  padding:12px;
-  border-radius:16px;
-  display:none;
+}
+#iaInput{flex:1;padding:14px;border-radius:16px;border:none;}
+.sendBtn{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  font-size:20px;
 }
 
 footer{
-  margin-top:auto;padding:8px 14px;font-size:12px;text-align:right;opacity:.7;
+  margin-top:auto;
+  padding:8px;
+  font-size:12px;
+  text-align:right;
+  opacity:.7;
 }
 </style>
 </head>
@@ -103,22 +96,14 @@ footer{
 </header>
 
 <div id="topNav">
-  <div class="navBox active" onclick="showPage('ia',this)">IA</div>
+  <div class="navBox active">IA</div>
 </div>
 
-<div id="ia" class="page active">
-  <div id="chatContainer"></div>
+<div id="chatContainer"></div>
 
-  <div id="timerBox">
-    ⏲️ <span id="timerText"></span>
-    <button onclick="startTimer()">Démarrer</button>
-  </div>
-
-  <div id="iaInputArea">
-    <input id="iaInput" placeholder="Ex : pâtes / italien / 10 min">
-    <button class="micBtn" onclick="startVoice()">🎤</button>
-    <button class="sendBtn" onclick="askIA()">⬆️</button>
-  </div>
+<div id="iaInputArea">
+  <input id="iaInput" placeholder="Ex : pâtes / la recette / enfant / 10 min">
+  <button class="sendBtn" onclick="askIA()">⬆️</button>
 </div>
 
 <footer>© 2026 Daily Life Ultra IA ⚡</footer>
@@ -127,27 +112,11 @@ footer{
 // TIME
 setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
 
-// DATA
+// CHAT MEMORY
 let chatHistory = JSON.parse(localStorage.getItem("chatHistory")||"[]");
-let lastDish="";
-let timerSeconds=0;
+let lastDish = localStorage.getItem("lastDish") || "";
+let kidMode = false;
 
-const recipes={
-  pates:{
-    text:"🍝 PÂTES\n1️⃣ Eau bouillante salée\n2️⃣ Cuire 8–10 min\n3️⃣ Égoutter",
-    img:"https://images.unsplash.com/photo-1521389508051-d7ffb5dc8bbd"
-  },
-  pizza:{
-    text:"🍕 PIZZA\n🔥 Four 220°C\n⏱️ 12–15 min",
-    img:"https://images.unsplash.com/photo-1601924638867-3ec62f0c8fda"
-  },
-  couscous:{
-    text:"🍲 COUSCOUS\n1️⃣ Semoule\n2️⃣ Légumes\n3️⃣ Viande",
-    img:"https://images.unsplash.com/photo-1604908177522-402f9a09f9fd"
-  }
-};
-
-// RENDER
 function renderChat(){
   chatContainer.innerHTML="";
   chatHistory.forEach(m=>{
@@ -155,73 +124,110 @@ function renderChat(){
   });
   chatContainer.scrollTop=chatContainer.scrollHeight;
 }
-renderChat();
 
-// VOICE OUTPUT
-function speak(text){
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang="fr-FR";
-  speechSynthesis.speak(u);
+function recipe(dish, kid=false){
+  const recipes = {
+    pates:
+`🍝 PÂTES
+⏱️ 15 min
+
+1️⃣ Fais bouillir de l’eau
+2️⃣ Ajoute les pâtes
+3️⃣ Cuire 10 min
+4️⃣ Égoutte et mange 😋`,
+
+    pizza:
+`🍕 PIZZA
+🔥 Four 220°C
+⏱️ 12–15 min
+
+1️⃣ Préchauffe le four
+2️⃣ Mets la pizza
+3️⃣ Attends
+4️⃣ Mange 😋`,
+
+    pain:
+`🥖 PAIN
+🔥 Four 180°C
+⏱️ 6–8 min
+
+1️⃣ Humidifie le pain
+2️⃣ Mets au four
+3️⃣ Surveille
+4️⃣ Croustillant 😋`,
+
+    burger:
+`🍔 BURGER
+⏱️ 10 min
+
+1️⃣ Cuire steak 4 min/face
+2️⃣ Pain 3 min four
+3️⃣ Assemble
+4️⃣ Mange 😋`
+  };
+
+  let txt = recipes[dish] || "❓ Recette inconnue";
+  if(kid){
+    txt = "🧒 MODE ENFANT\n\n" + txt.replace(/\d️⃣/g,"👉");
+  }
+  return txt;
 }
 
-// IA
-function askIA(text){
-  const q=text||iaInput.value.trim();
-  if(!q)return;
+function askIA(){
+  const q = iaInput.value.trim();
+  if(!q) return;
 
   chatHistory.push({type:"userMsg",text:q});
-  const t=q.toLowerCase();
-  let r="🤔 Dis-moi un plat ou une durée.";
+  const t = q.toLowerCase();
+  let r="";
 
-  // TIMER
-  const match=t.match(/(\d+)\s*(min|m)/);
-  if(match){
-    timerSeconds=parseInt(match[1])*60;
-    timerText.textContent=`${match[1]} minutes`;
-    timerBox.style.display="block";
-    r=`⏲️ Minuteur réglé sur ${match[1]} minutes`;
+  // MODE ENFANT
+  if(t.includes("enfant")||t.includes("simple")||t.includes("facile")){
+    kidMode = true;
+    r="🧒 Mode enfant activé ! Dis-moi un plat 😊";
   }
 
-  // RECIPES
-  Object.keys(recipes).forEach(k=>{
-    if(t.includes(k)){
-      lastDish=k;
-      r=recipes[k].text+`\n<img src="${recipes[k].img}">`;
-    }
-  });
+  // RECETTES
+  else if(t.includes("pâte")||t.includes("pate")){
+    lastDish="pates";
+    r=recipe("pates",kidMode);
+  }
+  else if(t.includes("pizza")){
+    lastDish="pizza";
+    r=recipe("pizza",kidMode);
+  }
+  else if(t.includes("pain")){
+    lastDish="pain";
+    r=recipe("pain",kidMode);
+  }
+  else if(t.includes("burger")){
+    lastDish="burger";
+    r=recipe("burger",kidMode);
+  }
 
+  // RAPPEL
+  else if(t.includes("recette")||t.includes("comment")){
+    if(lastDish) r=recipe(lastDish,kidMode);
+    else r="❓ Dis-moi d’abord le plat";
+  }
+
+  // TEMPS
+  else if(t.match(/\d+/)){
+    r=`⏱️ Ok ${q} de cuisson.\nTu cuisines quoi ?`;
+  }
+
+  else{
+    r="🙂 Tu veux cuisiner quoi ? (pâtes, pizza, pain, burger)";
+  }
+
+  localStorage.setItem("lastDish",lastDish);
   chatHistory.push({type:"iaMsg",text:r});
   localStorage.setItem("chatHistory",JSON.stringify(chatHistory));
   renderChat();
-  speak(r.replace(/<[^>]+>/g,""));
   iaInput.value="";
 }
 
-// TIMER
-function startTimer(){
-  timerBox.style.display="none";
-  let s=timerSeconds;
-  const i=setInterval(()=>{
-    s--;
-    if(s<=0){
-      clearInterval(i);
-      alert("⏰ Temps écoulé !");
-      speak("Le minuteur est terminé");
-    }
-  },1000);
-}
-
-// VOICE INPUT
-function startVoice(){
-  if(!('webkitSpeechRecognition'in window)){
-    alert("Vocal non supporté");
-    return;
-  }
-  const rec=new webkitSpeechRecognition();
-  rec.lang="fr-FR";
-  rec.onresult=e=>askIA(e.results[0][0].transcript);
-  rec.start();
-}
+renderChat();
 </script>
 
 </body>
