@@ -7,314 +7,131 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui;}
-body{
-  min-height:100vh;
-  background:linear-gradient(180deg,#064e3b,#042f2e);
-  color:white;
-  display:flex;
-  flex-direction:column;
-  transition:background .4s;
-}
-
-/* HEADER */
-header{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:14px 18px;
-  background:rgba(0,0,0,.3);
-}
-header h3{font-size:18px;}
-#time{
-  margin-left:auto;
-  background:rgba(0,0,0,.35);
-  padding:6px 14px;
-  border-radius:14px;
-  font-size:13px;
-}
-
-/* NAV */
-#topNav{
-  display:flex;
-  gap:12px;
-  padding:14px;
-}
-.navBox{
-  flex:1;
-  padding:18px 0;
-  background:rgba(255,255,255,.25);
-  border-radius:22px;
-  text-align:center;
-  font-weight:800;
-  cursor:pointer;
-  transition:.3s;
-}
-.navBox.active,
-.navBox:hover{background:rgba(255,255,255,.45);}
-
-/* PAGES */
-.page{
-  display:none;
-  flex-direction:column;
-  padding:14px;
-}
+body{min-height:100vh;background:linear-gradient(180deg,#064e3b,#042f2e);color:white;display:flex;flex-direction:column;}
+header{display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(0,0,0,.3);}
+#time{margin-left:auto;background:rgba(0,0,0,.35);padding:6px 14px;border-radius:14px;font-size:13px;}
+#topNav{display:flex;gap:12px;padding:14px;}
+.navBox{flex:1;padding:18px 0;background:rgba(255,255,255,.25);border-radius:22px;text-align:center;font-weight:800;cursor:pointer;}
+.navBox.active,.navBox:hover{background:rgba(255,255,255,.45);}
+.page{display:none;flex-direction:column;padding:14px;}
 .page.active{display:flex;}
-
-/* CARD */
-.card{
-  background:rgba(255,255,255,.2);
-  border-radius:22px;
-  padding:20px;
-  margin-bottom:16px;
-}
-.card h3{margin-bottom:12px;}
-
-/* INPUT */
-input,select,button{
-  width:100%;
-  padding:14px;
-  border-radius:16px;
-  border:none;
-  font-size:15px;
-}
-button{
-  background:#38bdf8;
-  font-weight:700;
-  margin-top:10px;
-  cursor:pointer;
-}
-button:hover{background:#0ea5e9}
-
-/* TASKS */
-.task{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:rgba(255,255,255,.3);
-  padding:12px;
-  border-radius:14px;
-  margin-top:8px;
-}
-.trash{cursor:pointer;font-size:18px;}
-
-/* IA CHAT */
-#chatContainer{
-  height:55vh;
-  overflow-y:auto;
-  background:rgba(255,255,255,.15);
-  border-radius:20px;
-  padding:10px;
-}
-.message{
-  max-width:70%;
-  padding:10px 14px;
-  border-radius:18px;
-  margin:6px 0;
-  white-space:pre-line;
-}
-.userMsg{
-  background:#38bdf8;
-  color:black;
-  margin-left:auto;
-}
-.iaMsg{
-  background:#22c55e;
-  color:black;
-}
-
-/* IA INPUT */
-#iaInputArea{
-  display:flex;
-  gap:8px;
-  margin-top:10px;
-}
-#iaInput{flex:1;}
-.sendBtn{
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  font-size:20px;
-}
-
-/* FOOTER */
-footer{
-  margin-top:auto;
-  padding:8px 14px;
-  font-size:12px;
-  text-align:right;
-  opacity:.7;
-}
+.card{background:rgba(255,255,255,.2);border-radius:22px;padding:20px;margin-bottom:16px;}
+input,select,button{width:100%;padding:14px;border-radius:16px;border:none;font-size:15px;}
+button{background:#38bdf8;font-weight:700;margin-top:10px;cursor:pointer;}
+#chatContainer{height:55vh;overflow-y:auto;background:rgba(255,255,255,.15);border-radius:20px;padding:10px;}
+.message{max-width:75%;padding:10px 14px;border-radius:18px;margin:6px 0;white-space:pre-line;}
+.userMsg{background:#38bdf8;color:black;margin-left:auto;}
+.iaMsg{background:#22c55e;color:black;}
+img.food{width:100%;border-radius:14px;margin-top:6px;}
+#iaInputArea{display:flex;gap:8px;margin-top:10px;}
+.sendBtn{width:50px;height:50px;border-radius:50%;font-size:20px;}
+.toggle{display:flex;align-items:center;gap:10px;}
+footer{margin-top:auto;padding:8px 14px;font-size:12px;text-align:right;opacity:.7;}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h3>Daily Life Ultra IA</h3>
-  <div id="time"></div>
+<h3>Daily Life Ultra IA</h3>
+<div id="time"></div>
 </header>
 
 <div id="topNav">
-  <div class="navBox active" onclick="showPage('home',this)">Accueil</div>
-  <div class="navBox" onclick="showPage('ia',this)">IA</div>
-  <div class="navBox" onclick="showPage('promo',this)">Code Promo</div>
+<div class="navBox active" onclick="showPage('home',this)">Accueil</div>
+<div class="navBox" onclick="showPage('ia',this)">IA</div>
 </div>
 
-<!-- ACCUEIL -->
 <div id="home" class="page active">
-  <div class="card">
-    <h3>🎨 Couleur</h3>
-    <select id="colorSelect">
-      <option value="#064e3b">Vert</option>
-      <option value="#3b82f6">Bleu</option>
-      <option value="#ef4444">Rouge</option>
-      <option value="#f97316">Orange</option>
-      <option value="#a855f7">Violet</option>
-      <option value="#ec4899">Rose</option>
-    </select>
-  </div>
-
-  <div class="card">
-    <h3>🌍 Langue</h3>
-    <select>
-      <option>Français</option>
-      <option>Anglais</option>
-      <option>Espagnol</option>
-      <option>Allemand</option>
-    </select>
-  </div>
-
-  <div class="card">
-    <h3>✅ Tâches</h3>
-    <input id="taskInput" placeholder="Nouvelle tâche">
-    <button onclick="addTask()">Ajouter</button>
-    <div id="taskList"></div>
-  </div>
+<div class="card">
+<h3>👶 Mode enfant</h3>
+<div class="toggle">
+<input type="checkbox" id="kidMode">
+<label>Activer</label>
+</div>
+</div>
 </div>
 
-<!-- IA -->
 <div id="ia" class="page">
-  <div id="chatContainer"></div>
-  <div id="iaInputArea">
-    <input id="iaInput" placeholder="Pâtes, pain, pizza, poulet, four…">
-    <button class="sendBtn" onclick="askIA()">⬆️</button>
-  </div>
+<div id="chatContainer"></div>
+<div id="iaInputArea">
+<input id="iaInput" placeholder="Parle ou écris (ex: pâtes)">
+<button class="sendBtn" onclick="askIA()">⬆️</button>
+<button class="sendBtn" onclick="startVoice()">🎤</button>
 </div>
-
-<!-- PROMO -->
-<div id="promo" class="page">
-  <div class="card">
-    <h3>🎁 Code Promo</h3>
-    <input id="promoInput" placeholder="Entre ton code">
-    <button onclick="validatePromo()">Valider</button>
-    <div id="promoResult"></div>
-  </div>
 </div>
 
 <footer>© 2026 Daily Life Ultra IA ⚡</footer>
 
 <script>
-// TIME
 setInterval(()=>time.textContent=new Date().toLocaleTimeString(),1000);
-
-// NAV
 function showPage(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.navBox').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelectorAll('.navBox').forEach(b=>b.classList.remove('active'));
+el.classList.add('active');
 }
 
-// THEME
-const colorSelect=document.getElementById("colorSelect");
-colorSelect.value=localStorage.getItem("color")||"#064e3b";
-applyColor();
-colorSelect.onchange=()=>{
-  localStorage.setItem("color",colorSelect.value);
-  applyColor();
-}
-function applyColor(){
-  document.body.style.background=`linear-gradient(180deg,${colorSelect.value},#042f2e)`;
-}
-
-// TASKS
-let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
-function renderTasks(){
-  taskList.innerHTML="";
-  tasks.forEach((t,i)=>{
-    taskList.innerHTML+=`
-      <div class="task">
-        <span>${t}</span>
-        <span class="trash" onclick="delTask(${i})">🗑️</span>
-      </div>`;
-  });
-}
-function addTask(){
-  if(!taskInput.value.trim())return;
-  tasks.push(taskInput.value.trim());
-  localStorage.setItem("tasks",JSON.stringify(tasks));
-  taskInput.value="";
-  renderTasks();
-}
-function delTask(i){
-  tasks.splice(i,1);
-  localStorage.setItem("tasks",JSON.stringify(tasks));
-  renderTasks();
-}
-renderTasks();
-
-// IA AMÉLIORÉE + HISTORIQUE
 let chatHistory=JSON.parse(localStorage.getItem("chatHistory")||"[]");
+let kidMode=false;
+document.getElementById("kidMode").onchange=e=>kidMode=e.target.checked;
+
+function speak(t){
+let u=new SpeechSynthesisUtterance(t);
+u.lang="fr-FR";
+speechSynthesis.speak(u);
+}
 
 function renderChat(){
-  chatContainer.innerHTML="";
-  chatHistory.forEach(m=>{
-    chatContainer.innerHTML+=`<div class="message ${m.type}">${m.text}</div>`;
-  });
-  chatContainer.scrollTop=chatContainer.scrollHeight;
+chatContainer.innerHTML="";
+chatHistory.forEach(m=>chatContainer.innerHTML+=m);
+chatContainer.scrollTop=chatContainer.scrollHeight;
+}
+
+function recipe(name,origin,time,steps,img){
+return `
+<div class="message iaMsg">
+<b>${name}</b><br>🌍 Origine : ${origin}<br>⏱️ ${time}<br>
+${steps}<br>
+<img class="food" src="${img}">
+</div>`;
 }
 
 function askIA(){
-  const q=iaInput.value.trim();
-  if(!q)return;
+let q=iaInput.value.toLowerCase();
+chatHistory.push(`<div class="message userMsg">${q}</div>`);
+let r="🤖 Je ne connais pas encore ce plat.";
 
-  chatHistory.push({type:"userMsg",text:q});
-  const t=q.toLowerCase();
-  let r="🤖 Dis-moi un plat ou un mode de cuisson.";
+if(q.includes("pâtes")){
+r=recipe(
+"🍝 Pâtes",
+"Italie 🇮🇹",
+"15 minutes",
+kidMode?"1️⃣ Eau chaude\n2️⃣ Pâtes\n3️⃣ Manger 😋":"1️⃣ Faire bouillir l’eau\n2️⃣ Cuire 10 min\n3️⃣ Égoutter",
+"https://images.unsplash.com/photo-1525755662778-989d0524087e"
+);
+}
 
-  if(t.includes("pâtes")||t.includes("pates"))
-    r="🍝 Pâtes\n⏱️ Total : 15 min\n🔥 Cuisson : 8–10 min dans eau bouillante salée\n💡 Égoutter et assaisonner";
-  else if(t.includes("pain"))
-    r="🥖 Pain\n🔥 Four : 180°C\n⏱️ 6–8 min\n💡 Humidifie légèrement pour croustillant";
-  else if(t.includes("pizza"))
-    r="🍕 Pizza\n🔥 Four : 220°C\n⏱️ 12–15 min\n💡 Préchauffe obligatoire";
-  else if(t.includes("poulet"))
-    r="🍗 Poulet\n🔥 Four : 200°C\n⏱️ 35–45 min\n💡 Arroser à mi-cuisson";
-  else if(t.includes("riz"))
-    r="🍚 Riz\n🔥 Eau bouillante\n⏱️ 10–12 min\n💡 Couvrir après cuisson";
-  else if(t.includes("steak"))
-    r="🥩 Steak\n🔥 Poêle\n⏱️ 2–4 min par face\n💡 Sortir avant cuisson";
-  else if(t.includes("gateau"))
-    r="🍰 Gâteau\n🔥 Four : 180°C\n⏱️ 30–40 min\n💡 Tester avec couteau";
-  else if(t.includes("salut"))
-    r="Salut 😄 Je suis ton assistant cuisine.";
-
-  chatHistory.push({type:"iaMsg",text:r});
-  localStorage.setItem("chatHistory",JSON.stringify(chatHistory));
-  renderChat();
-  iaInput.value="";
+chatHistory.push(r);
+localStorage.setItem("chatHistory",JSON.stringify(chatHistory));
+renderChat();
+speak(kidMode?"Voilà 😄":"Voici la recette.");
+iaInput.value="";
 }
 
 renderChat();
 
-// PROMO
-function validatePromo(){
-  promoResult.textContent =
-    promoInput.value==="PROMO2026"
-    ? "✅ Code valide"
-    : "❌ Code invalide";
+// 🎙️ VOICE
+function startVoice(){
+if(!('webkitSpeechRecognition'in window)){alert("Non supporté");return;}
+let r=new webkitSpeechRecognition();
+r.lang="fr-FR";
+r.onresult=e=>{
+iaInput.value=e.results[0][0].transcript;
+askIA();
+}
+r.start();
 }
 </script>
-
 </body>
-        </html>
+</html>
