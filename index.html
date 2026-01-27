@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui;}
 body{
@@ -12,7 +13,6 @@ body{
   color:white;
   display:flex;
   flex-direction:column;
-  transition:background .4s;
 }
 
 /* HEADER */
@@ -23,7 +23,6 @@ header{
   padding:14px 18px;
   background:rgba(0,0,0,.3);
 }
-header h3{font-size:18px;}
 #time{
   margin-left:auto;
   background:rgba(0,0,0,.35);
@@ -46,17 +45,11 @@ header h3{font-size:18px;}
   text-align:center;
   font-weight:800;
   cursor:pointer;
-  transition:.3s;
 }
-.navBox.active,
-.navBox:hover{background:rgba(255,255,255,.45);}
+.navBox.active{background:rgba(255,255,255,.45);}
 
 /* PAGES */
-.page{
-  display:none;
-  flex-direction:column;
-  padding:14px;
-}
+.page{display:none;flex-direction:column;padding:14px;}
 .page.active{display:flex;}
 
 /* CARD */
@@ -66,7 +59,6 @@ header h3{font-size:18px;}
   padding:20px;
   margin-bottom:16px;
 }
-.card h3{margin-bottom:12px;}
 
 /* INPUT */
 input,select,button{
@@ -74,29 +66,24 @@ input,select,button{
   padding:14px;
   border-radius:16px;
   border:none;
-  font-size:15px;
 }
 button{
   background:#38bdf8;
   font-weight:700;
   margin-top:10px;
-  cursor:pointer;
 }
-button:hover{background:#0ea5e9}
 
 /* TASKS */
 .task{
   display:flex;
   justify-content:space-between;
-  align-items:center;
   background:rgba(255,255,255,.3);
   padding:12px;
   border-radius:14px;
   margin-top:8px;
 }
-.trash{cursor:pointer;font-size:18px;}
 
-/* IA CHAT */
+/* CHAT */
 #chatContainer{
   height:55vh;
   overflow-y:auto;
@@ -111,15 +98,8 @@ button:hover{background:#0ea5e9}
   margin:6px 0;
   white-space:pre-line;
 }
-.userMsg{
-  background:#38bdf8;
-  color:black;
-  margin-left:auto;
-}
-.iaMsg{
-  background:#22c55e;
-  color:black;
-}
+.userMsg{background:#38bdf8;color:black;margin-left:auto;}
+.iaMsg{background:#22c55e;color:black;}
 
 /* IA INPUT */
 #iaInputArea{
@@ -131,34 +111,28 @@ button:hover{background:#0ea5e9}
   flex:1;
   border-radius:24px;
   padding:12px 16px;
-  font-size:15px;
-  border:none;
 }
 .iconBtn{
   width:50px;
   height:50px;
-  background:#38bdf8;
   border-radius:50%;
+  background:#38bdf8;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:22px;
   cursor:pointer;
-  transition:0.2s;
 }
-.iconBtn:hover{background:#0ea5e9; transform:scale(1.1);}
 .iconBtn svg{width:24px;height:24px;fill:white;}
 
-/* FOOTER */
 footer{
   margin-top:auto;
   padding:8px 14px;
   font-size:12px;
   text-align:right;
-  opacity:.7;
 }
 </style>
 </head>
+
 <body>
 
 <header>
@@ -187,16 +161,6 @@ footer{
   </div>
 
   <div class="card">
-    <h3>🌍 Langue</h3>
-    <select>
-      <option>Français</option>
-      <option>Anglais</option>
-      <option>Espagnol</option>
-      <option>Allemand</option>
-    </select>
-  </div>
-
-  <div class="card">
     <h3>✅ Tâches</h3>
     <input id="taskInput" placeholder="Nouvelle tâche">
     <button onclick="addTask()">Ajouter</button>
@@ -208,12 +172,12 @@ footer{
 <div id="ia" class="page">
   <div id="chatContainer"></div>
   <div id="iaInputArea">
-    <input id="iaInput" placeholder="Écris un plat ou mode de cuisson…">
-    <div class="iconBtn" onclick="askIA()" title="Envoyer">
-      <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+    <input id="iaInput" placeholder="Parle ou écris un plat…">
+    <div class="iconBtn" onclick="startVoice()">
+      🎤
     </div>
-    <div class="iconBtn" onclick="startVoice()" title="Parler">
-      <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M5 10v2a7 7 0 0 0 14 0v-2h-2v2a5 5 0 0 1-10 0v-2H5z"/></svg>
+    <div class="iconBtn" onclick="askIA()">
+      ➤
     </div>
   </div>
 </div>
@@ -222,7 +186,7 @@ footer{
 <div id="promo" class="page">
   <div class="card">
     <h3>🎁 Code Promo</h3>
-    <input id="promoInput" placeholder="Entre ton code">
+    <input id="promoInput">
     <button onclick="validatePromo()">Valider</button>
     <div id="promoResult"></div>
   </div>
@@ -242,8 +206,7 @@ function showPage(id,el){
   el.classList.add('active');
 }
 
-// THEME
-const colorSelect=document.getElementById("colorSelect");
+// COLOR
 colorSelect.value=localStorage.getItem("color")||"#064e3b";
 applyColor();
 colorSelect.onchange=()=>{
@@ -259,12 +222,12 @@ let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
 function renderTasks(){
   taskList.innerHTML="";
   tasks.forEach((t,i)=>{
-    taskList.innerHTML+=`<div class="task"><span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span></div>`;
+    taskList.innerHTML+=`<div class="task">${t}<span onclick="delTask(${i})">🗑️</span></div>`;
   });
 }
 function addTask(){
-  if(!taskInput.value.trim())return;
-  tasks.push(taskInput.value.trim());
+  if(!taskInput.value)return;
+  tasks.push(taskInput.value);
   localStorage.setItem("tasks",JSON.stringify(tasks));
   taskInput.value="";
   renderTasks();
@@ -276,7 +239,7 @@ function delTask(i){
 }
 renderTasks();
 
-// IA + HISTORIQUE
+// CHAT
 let chatHistory=JSON.parse(localStorage.getItem("chatHistory")||"[]");
 function renderChat(){
   chatContainer.innerHTML="";
@@ -287,36 +250,20 @@ function renderChat(){
 }
 renderChat();
 
-// IA LOCAL + VOCAL
+// IA
 function askIA(){
   const q=iaInput.value.trim();
   if(!q)return;
   chatHistory.push({type:"userMsg",text:q});
 
-  let t=q.toLowerCase();
-  let r="🤖 Dis-moi un plat ou mode de cuisson.";
+  let r="🤖 Dis-moi un plat.";
+  if(q.includes("pizza")) r="🍕 Pizza\nFour 220°C\n12–15 min";
+  if(q.includes("pâtes")) r="🍝 Pâtes\nEau bouillante\n8–10 min";
+  if(q.includes("pain")) r="🥖 Pain\nFour 180°C\n6–8 min";
 
-  if(t.includes("pâtes")||t.includes("pates"))
-    r="🍝 Pâtes\n⏱️ 15 min\n🔥 Cuisson 8–10 min dans eau bouillante\n💡 Égoutter et assaisonner";
-  else if(t.includes("pain"))
-    r="🥖 Pain\n🔥 Four 180°C\n⏱️ 6–8 min\n💡 Humidifie légèrement";
-  else if(t.includes("pizza"))
-    r="🍕 Pizza\n🔥 Four 220°C\n⏱️ 12–15 min\n💡 Préchauffe obligatoire";
-  else if(t.includes("poulet"))
-    r="🍗 Poulet\n🔥 Four 200°C\n⏱️ 35–45 min\n💡 Arroser à mi-cuisson";
-  else if(t.includes("riz"))
-    r="🍚 Riz\n🔥 Eau bouillante\n⏱️ 10–12 min\n💡 Couvrir après cuisson";
-  else if(t.includes("steak"))
-    r="🥩 Steak\n🔥 Poêle\n⏱️ 2–4 min par face\n💡 Sortir avant cuisson";
-  else if(t.includes("gateau"))
-    r="🍰 Gâteau\n🔥 Four 180°C\n⏱️ 30–40 min\n💡 Tester avec couteau";
-  else if(t.includes("salut"))
-    r="Salut 😄 Je suis ton assistant cuisine.";
-
-  // Speech
   const speech=new SpeechSynthesisUtterance(r);
-  speech.lang='fr-FR';
-  window.speechSynthesis.speak(speech);
+  speech.lang="fr-FR";
+  speechSynthesis.speak(speech);
 
   chatHistory.push({type:"iaMsg",text:r});
   localStorage.setItem("chatHistory",JSON.stringify(chatHistory));
@@ -324,33 +271,26 @@ function askIA(){
   iaInput.value="";
 }
 
-// VOCAL RECO
+// VOCAL
+let recognition;
 function startVoice(){
-  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
-    alert("Reconnaissance vocale non supportée.");
-    return;
-  }
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-  recognition.lang = 'fr-FR';
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();
+  recognition.lang="fr-FR";
   recognition.start();
-  recognition.onresult = (event)=>{
-    iaInput.value = event.results[0][0].transcript;
-    askIA();
+  recognition.onresult=e=>{
+    iaInput.value=e.results[0][0].transcript;
+  };
+  recognition.onend=()=>{
+    if(iaInput.value) askIA();
   }
 }
 
 // PROMO
 function validatePromo(){
-  promoResult.textContent =
-    promoInput.value==="PROMO2026"
-    ? "✅ Code valide"
-    : "❌ Code invalide";
+  promoResult.textContent=promoInput.value==="PROMO2026"?"✅ Code valide":"❌ Code invalide";
 }
 </script>
 
 </body>
-    </html>
+  </html>
