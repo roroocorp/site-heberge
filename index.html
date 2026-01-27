@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Life Ultra IA</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui;}
 body{
@@ -12,7 +13,6 @@ body{
   color:white;
   display:flex;
   flex-direction:column;
-  transition:background .4s;
 }
 
 /* HEADER */
@@ -23,21 +23,10 @@ header{
   padding:14px 18px;
   background:rgba(0,0,0,.3);
 }
-header h3{font-size:18px;}
-#time{
-  margin-left:auto;
-  background:rgba(0,0,0,.35);
-  padding:6px 14px;
-  border-radius:14px;
-  font-size:13px;
-}
+#time{margin-left:auto;font-size:13px;opacity:.8}
 
 /* NAV */
-#topNav{
-  display:flex;
-  gap:12px;
-  padding:14px;
-}
+#topNav{display:flex;gap:12px;padding:14px}
 .navBox{
   flex:1;
   padding:18px 0;
@@ -46,18 +35,12 @@ header h3{font-size:18px;}
   text-align:center;
   font-weight:800;
   cursor:pointer;
-  transition:.3s;
 }
-.navBox.active,
-.navBox:hover{background:rgba(255,255,255,.45);}
+.navBox.active{background:rgba(255,255,255,.45)}
 
 /* PAGES */
-.page{
-  display:none;
-  flex-direction:column;
-  padding:14px;
-}
-.page.active{display:flex;}
+.page{display:none;flex-direction:column;padding:14px}
+.page.active{display:flex}
 
 /* CARD */
 .card{
@@ -66,7 +49,6 @@ header h3{font-size:18px;}
   padding:20px;
   margin-bottom:16px;
 }
-.card h3{margin-bottom:12px;}
 
 /* INPUT */
 input,select,button{
@@ -76,89 +58,69 @@ input,select,button{
   border:none;
   font-size:15px;
 }
-button{
-  background:#38bdf8;
-  font-weight:700;
-  margin-top:10px;
-  cursor:pointer;
-}
-button:hover{background:#0ea5e9}
 
 /* TASKS */
 .task{
   display:flex;
   justify-content:space-between;
-  align-items:center;
   background:rgba(255,255,255,.3);
   padding:12px;
   border-radius:14px;
   margin-top:8px;
 }
-.trash{cursor:pointer;font-size:18px;}
 
-/* IA CHAT */
+/* CHAT */
 #chatContainer{
-  height:55vh;
+  flex:1;
   overflow-y:auto;
-  background:rgba(255,255,255,.15);
-  border-radius:20px;
-  padding:10px;
+  padding:14px;
 }
 .message{
-  max-width:70%;
-  padding:10px 14px;
+  max-width:75%;
+  padding:12px 16px;
   border-radius:18px;
-  margin:6px 0;
+  margin:8px 0;
   white-space:pre-line;
 }
-.userMsg{
-  background:#38bdf8;
-  color:black;
-  margin-left:auto;
-}
-.iaMsg{
-  background:#22c55e;
-  color:black;
-}
+.userMsg{background:#38bdf8;color:black;margin-left:auto}
+.iaMsg{background:#22c55e;color:black}
 
-/* IA INPUT */
-#iaInputArea{
+/* CHATGPT-LIKE INPUT */
+#iaInputBar{
   display:flex;
+  align-items:center;
   gap:8px;
-  margin-top:10px;
+  padding:12px;
+  background:rgba(0,0,0,.35);
+  border-radius:18px;
 }
 #iaInput{
   flex:1;
-  border-radius:24px;
-  padding:12px 16px;
-  font-size:15px;
-  border:none;
+  background:transparent;
+  color:white;
+  font-size:16px;
 }
-#sendBtn{
-  width:50px;
-  height:50px;
-  background:#38bdf8;
+#iaInput::placeholder{color:#ccc}
+
+/* ICON BUTTONS */
+.iconBtn{
+  width:42px;
+  height:42px;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:22px;
   cursor:pointer;
-  transition:0.2s;
+  background:rgba(255,255,255,.15);
 }
-#sendBtn:hover{background:#0ea5e9; transform:scale(1.1);}
-#sendBtn svg{width:24px;height:24px;fill:white;}
+.iconBtn:hover{background:rgba(255,255,255,.3)}
+svg{width:20px;height:20px;fill:white}
 
 /* FOOTER */
-footer{
-  margin-top:auto;
-  padding:8px 14px;
-  font-size:12px;
-  text-align:right;
-  opacity:.7;
-}
+footer{padding:8px 14px;font-size:12px;text-align:right;opacity:.7}
 </style>
 </head>
+
 <body>
 
 <header>
@@ -187,16 +149,6 @@ footer{
   </div>
 
   <div class="card">
-    <h3>🌍 Langue</h3>
-    <select>
-      <option>Français</option>
-      <option>Anglais</option>
-      <option>Espagnol</option>
-      <option>Allemand</option>
-    </select>
-  </div>
-
-  <div class="card">
     <h3>✅ Tâches</h3>
     <input id="taskInput" placeholder="Nouvelle tâche">
     <button onclick="addTask()">Ajouter</button>
@@ -207,10 +159,24 @@ footer{
 <!-- IA -->
 <div id="ia" class="page">
   <div id="chatContainer"></div>
-  <div id="iaInputArea">
-    <input id="iaInput" placeholder="Écris un plat ou mode de cuisson…">
-    <div id="sendBtn" title="Envoyer / Parler">
-      <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+
+  <div id="iaInputBar">
+    <input id="iaInput" placeholder="Demande une recette, cuisson, origine…">
+    
+    <!-- MICRO -->
+    <div class="iconBtn" onclick="startVoice()">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/>
+        <path d="M19 11a7 7 0 0 1-14 0"/>
+        <path d="M12 19v4"/>
+      </svg>
+    </div>
+
+    <!-- SEND -->
+    <div class="iconBtn" onclick="askIA()">
+      <svg viewBox="0 0 24 24">
+        <path d="M2 21l21-9L2 3v7l15 2-15 2z"/>
+      </svg>
     </div>
   </div>
 </div>
@@ -225,7 +191,7 @@ footer{
   </div>
 </div>
 
-<footer>© 2026 Daily Life Ultra IA ⚡</footer>
+<footer>© 2026 Daily Life Ultra IA</footer>
 
 <script>
 // TIME
@@ -240,13 +206,9 @@ function showPage(id,el){
 }
 
 // THEME
-const colorSelect=document.getElementById("colorSelect");
 colorSelect.value=localStorage.getItem("color")||"#064e3b";
 applyColor();
-colorSelect.onchange=()=>{
-  localStorage.setItem("color",colorSelect.value);
-  applyColor();
-}
+colorSelect.onchange=()=>{localStorage.setItem("color",colorSelect.value);applyColor();}
 function applyColor(){
   document.body.style.background=`linear-gradient(180deg,${colorSelect.value},#042f2e)`;
 }
@@ -256,12 +218,12 @@ let tasks=JSON.parse(localStorage.getItem("tasks")||"[]");
 function renderTasks(){
   taskList.innerHTML="";
   tasks.forEach((t,i)=>{
-    taskList.innerHTML+=`<div class="task"><span>${t}</span><span class="trash" onclick="delTask(${i})">🗑️</span></div>`;
+    taskList.innerHTML+=`<div class="task"><span>${t}</span><span onclick="delTask(${i})">🗑️</span></div>`;
   });
 }
 function addTask(){
-  if(!taskInput.value.trim())return;
-  tasks.push(taskInput.value.trim());
+  if(!taskInput.value)return;
+  tasks.push(taskInput.value);
   localStorage.setItem("tasks",JSON.stringify(tasks));
   taskInput.value="";
   renderTasks();
@@ -273,7 +235,7 @@ function delTask(i){
 }
 renderTasks();
 
-// IA
+// CHAT + IA
 let chatHistory=JSON.parse(localStorage.getItem("chatHistory")||"[]");
 function renderChat(){
   chatContainer.innerHTML="";
@@ -284,42 +246,30 @@ function renderChat(){
 }
 renderChat();
 
-// ENVOI + VOCAL
-const sendBtn=document.getElementById("sendBtn");
-sendBtn.addEventListener("click",()=>{
-  if(iaInput.value.trim()!=="") askIA();
-  else startVoice();
-});
-
 function askIA(){
   const q=iaInput.value.trim();
   if(!q)return;
   chatHistory.push({type:"userMsg",text:q});
 
-  let t=q.toLowerCase();
-  let r="🤖 Dis-moi un plat ou mode de cuisson.";
+  let r="Je peux te donner une recette complète.";
+  const t=q.toLowerCase();
 
-  if(t.includes("pâtes")||t.includes("pates"))
-    r="🍝 Pâtes\n⏱️ 15 min\n🔥 Cuisson 8–10 min dans eau bouillante\n💡 Égoutter et assaisonner";
-  else if(t.includes("pain"))
-    r="🥖 Pain\n🔥 Four 180°C\n⏱️ 6–8 min\n💡 Humidifie légèrement";
-  else if(t.includes("pizza"))
-    r="🍕 Pizza\n🔥 Four 220°C\n⏱️ 12–15 min\n💡 Préchauffe obligatoire";
-  else if(t.includes("poulet"))
-    r="🍗 Poulet\n🔥 Four 200°C\n⏱️ 35–45 min\n💡 Arroser à mi-cuisson";
-  else if(t.includes("riz"))
-    r="🍚 Riz\n🔥 Eau bouillante\n⏱️ 10–12 min\n💡 Couvrir après cuisson";
-  else if(t.includes("steak"))
-    r="🥩 Steak\n🔥 Poêle\n⏱️ 2–4 min par face\n💡 Sortir avant cuisson";
-  else if(t.includes("gateau"))
-    r="🍰 Gâteau\n🔥 Four 180°C\n⏱️ 30–40 min\n💡 Tester avec couteau";
-  else if(t.includes("salut"))
-    r="Salut 😄 Je suis ton assistant cuisine.";
+  if(t.includes("pâtes"))
+    r=`🍝 Pâtes (Italie)
+1. Faire bouillir l’eau salée
+2. Cuire 8–10 min
+3. Égoutter
 
-  // Synthèse vocale
-  const speech=new SpeechSynthesisUtterance(r);
-  speech.lang='fr-FR';
-  window.speechSynthesis.speak(speech);
+⏱️ Total : 15 min`;
+  if(t.includes("pizza"))
+    r=`🍕 Pizza (Italie)
+1. Préchauffer 220°C
+2. Enfourner 12–15 min
+⏱️ Total : 20 min`;
+  if(t.includes("pain"))
+    r=`🥖 Pain (France)
+Four 180°C – 6 à 8 min
+💡 Vaporiser un peu d’eau`;
 
   chatHistory.push({type:"iaMsg",text:r});
   localStorage.setItem("chatHistory",JSON.stringify(chatHistory));
@@ -327,31 +277,19 @@ function askIA(){
   iaInput.value="";
 }
 
-// RECO VOCALE
+// VOICE
 function startVoice(){
-  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
-    alert("Reconnaissance vocale non supportée.");
-    return;
-  }
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-  recognition.lang = 'fr-FR';
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-
-  recognition.start();
-  recognition.onresult = (event)=>{
-    iaInput.value = event.results[0][0].transcript;
-    askIA();
-  }
+  if(!('webkitSpeechRecognition'in window))return alert("Micro non supporté");
+  const rec=new webkitSpeechRecognition();
+  rec.lang="fr-FR";
+  rec.onresult=e=>iaInput.value=e.results[0][0].transcript;
+  rec.start();
 }
 
 // PROMO
 function validatePromo(){
-  promoResult.textContent =
-    promoInput.value==="PROMO2026"
-    ? "✅ Code valide"
-    : "❌ Code invalide";
+  promoResult.textContent=
+    promoInput.value==="PROMO2026"?"Code valide":"Code invalide";
 }
 </script>
 
