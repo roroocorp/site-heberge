@@ -58,6 +58,11 @@ input,select,button{
   border:none;
   font-size:15px;
 }
+button{
+  background:#38bdf8;
+  font-weight:700;
+  margin-top:10px;
+}
 
 /* TASKS */
 .task{
@@ -85,12 +90,12 @@ input,select,button{
 .userMsg{background:#38bdf8;color:black;margin-left:auto}
 .iaMsg{background:#22c55e;color:black}
 
-/* CHATGPT-LIKE INPUT */
+/* IA BAR (CHATGPT STYLE) */
 #iaInputBar{
   display:flex;
   align-items:center;
   gap:8px;
-  padding:12px;
+  padding:10px;
   background:rgba(0,0,0,.35);
   border-radius:18px;
 }
@@ -98,11 +103,9 @@ input,select,button{
   flex:1;
   background:transparent;
   color:white;
-  font-size:16px;
 }
 #iaInput::placeholder{color:#ccc}
 
-/* ICON BUTTONS */
 .iconBtn{
   width:42px;
   height:42px;
@@ -110,8 +113,8 @@ input,select,button{
   display:flex;
   align-items:center;
   justify-content:center;
-  cursor:pointer;
   background:rgba(255,255,255,.15);
+  cursor:pointer;
 }
 .iconBtn:hover{background:rgba(255,255,255,.3)}
 svg{width:20px;height:20px;fill:white}
@@ -156,19 +159,18 @@ footer{padding:8px 14px;font-size:12px;text-align:right;opacity:.7}
   </div>
 </div>
 
-<!-- IA -->
+<!-- IA (SEULE PARTIE MODIFIÉE) -->
 <div id="ia" class="page">
   <div id="chatContainer"></div>
 
   <div id="iaInputBar">
-    <input id="iaInput" placeholder="Demande une recette, cuisson, origine…">
-    
+    <input id="iaInput" placeholder="Écris ou parle à l’IA…">
+
     <!-- MICRO -->
     <div class="iconBtn" onclick="startVoice()">
       <svg viewBox="0 0 24 24">
         <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/>
         <path d="M19 11a7 7 0 0 1-14 0"/>
-        <path d="M12 19v4"/>
       </svg>
     </div>
 
@@ -235,7 +237,7 @@ function delTask(i){
 }
 renderTasks();
 
-// CHAT + IA
+// IA
 let chatHistory=JSON.parse(localStorage.getItem("chatHistory")||"[]");
 function renderChat(){
   chatContainer.innerHTML="";
@@ -251,25 +253,9 @@ function askIA(){
   if(!q)return;
   chatHistory.push({type:"userMsg",text:q});
 
-  let r="Je peux te donner une recette complète.";
-  const t=q.toLowerCase();
-
-  if(t.includes("pâtes"))
-    r=`🍝 Pâtes (Italie)
-1. Faire bouillir l’eau salée
-2. Cuire 8–10 min
-3. Égoutter
-
-⏱️ Total : 15 min`;
-  if(t.includes("pizza"))
-    r=`🍕 Pizza (Italie)
-1. Préchauffer 220°C
-2. Enfourner 12–15 min
-⏱️ Total : 20 min`;
-  if(t.includes("pain"))
-    r=`🥖 Pain (France)
-Four 180°C – 6 à 8 min
-💡 Vaporiser un peu d’eau`;
+  let r="Je peux t’aider pour la cuisine.";
+  if(q.toLowerCase().includes("pâtes"))
+    r="🍝 Pâtes : eau bouillante salée, 8–10 min.";
 
   chatHistory.push({type:"iaMsg",text:r});
   localStorage.setItem("chatHistory",JSON.stringify(chatHistory));
@@ -294,4 +280,4 @@ function validatePromo(){
 </script>
 
 </body>
-  </html>
+</html>
